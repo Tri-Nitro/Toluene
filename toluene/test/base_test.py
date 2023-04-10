@@ -1,7 +1,7 @@
 import math
 import unittest
 
-from base.ellipsoid import *
+from toluene.base.ellipsoid import *
 
 bad_latitudes = [91, -91.0, 135.0, 1999999.0, -20000000, 360, 90.00000000000001]
 
