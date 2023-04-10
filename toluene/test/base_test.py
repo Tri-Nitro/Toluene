@@ -32,7 +32,7 @@ class EllipsoidTestCase(unittest.TestCase):
         """
         for test_latitude in wgs_66_test_latitudes:
             ellipsoid_class_answer = wgs_66_ellipsoid.ellipsoid_radius(math.radians(test_latitude))
-            self.assertEqual(wgs_66_test_latitudes[test_latitude], ellipsoid_class_answer)
+            self.assertAlmostEqual(wgs_66_test_latitudes[test_latitude], ellipsoid_class_answer)
 
     def test_wgs_66_ellipsoid_radius_bad(self):
         """
@@ -48,7 +48,7 @@ class EllipsoidTestCase(unittest.TestCase):
         """
         for test_latitude in wgs_72_test_latitudes:
             ellipsoid_class_answer = wgs_72_ellipsoid.ellipsoid_radius(math.radians(test_latitude))
-            self.assertEqual(wgs_72_test_latitudes[test_latitude], ellipsoid_class_answer)
+            self.assertAlmostEqual(wgs_72_test_latitudes[test_latitude], ellipsoid_class_answer)
 
     def test_wgs_72_ellipsoid_radius_bad(self):
         for bad_latitude in bad_latitudes:
@@ -61,7 +61,7 @@ class EllipsoidTestCase(unittest.TestCase):
         """
         for test_latitude in wgs_84_test_latitudes:
             ellipsoid_class_answer = wgs_84_ellipsoid.ellipsoid_radius(math.radians(test_latitude))
-            self.assertEqual(wgs_84_test_latitudes[test_latitude], ellipsoid_class_answer)
+            self.assertAlmostEqual(wgs_84_test_latitudes[test_latitude], ellipsoid_class_answer)
 
     def test_wgs_84_ellipsoid_radius_bad(self):
         for bad_latitude in bad_latitudes:
@@ -74,7 +74,7 @@ class EllipsoidTestCase(unittest.TestCase):
         """
         for test_latitude in grs_80_test_latitudes:
             ellipsoid_class_answer = grs_80_ellipsoid.ellipsoid_radius(math.radians(test_latitude))
-            self.assertEqual(grs_80_test_latitudes[test_latitude], ellipsoid_class_answer)
+            self.assertAlmostEqual(grs_80_test_latitudes[test_latitude], ellipsoid_class_answer)
 
     def test_grs_80_ellipsoid_radius_bad(self):
         for bad_latitude in bad_latitudes:
@@ -94,10 +94,10 @@ class EllipsoidTestCase(unittest.TestCase):
         """
         Test if the given ellipsoids give the right semi-minor axis.
         """
-        self.assertEqual(wgs_66_ellipsoid.semi_minor_axis(), 6356759.769488684)
-        self.assertEqual(wgs_72_ellipsoid.semi_minor_axis(), 6356750.520016094)
-        self.assertEqual(wgs_84_ellipsoid.semi_minor_axis(), 6356752.314245179)
-        self.assertEqual(grs_80_ellipsoid.semi_minor_axis(), 6356752.314140355)
+        self.assertAlmostEqual(wgs_66_ellipsoid.semi_minor_axis(), 6356759.769488684)
+        self.assertAlmostEqual(wgs_72_ellipsoid.semi_minor_axis(), 6356750.520016094)
+        self.assertAlmostEqual(wgs_84_ellipsoid.semi_minor_axis(), 6356752.314245179)
+        self.assertAlmostEqual(grs_80_ellipsoid.semi_minor_axis(), 6356752.314140355)
 
     def test_flattening_getter(self):
         """
