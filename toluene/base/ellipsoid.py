@@ -21,6 +21,9 @@ class Ellipsoid:
 
         self.__semi_minor_axis = self.ellipsoid_radius(radians(90))
 
+    def __eq__(self, other) -> bool:
+        return self.__semi_major_axis == other.semi_major_axis() and 1/self.__inverse_flattening == other.flattening()
+
     def ellipsoid_radius(self, latitude: float = None) -> float:
         """
         Using the defined ellipsoid calculates the radius of the ellipsoid.

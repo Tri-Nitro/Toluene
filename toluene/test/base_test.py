@@ -1,6 +1,7 @@
 import math
 import unittest
 
+from toluene.base.coordinates import *
 from toluene.base.ellipsoid import *
 
 bad_latitudes = [91, -91.0, 135.0, 1999999.0, -20000000, 360, 90.00000000000001]
@@ -26,6 +27,7 @@ class EllipsoidTestCase(unittest.TestCase):
     """
     Test for the Ellipsoid module in the base package.
     """
+
     def test_wgs_66_ellipsoid_radius_good(self):
         """
         Test the if WGS66 ellipsoid radius gives the right radius.
@@ -116,6 +118,33 @@ class EllipsoidTestCase(unittest.TestCase):
         self.assertEqual(wgs_72_ellipsoid.epsg(), 4322)
         self.assertEqual(wgs_84_ellipsoid.epsg(), 4326)
         self.assertEqual(grs_80_ellipsoid.epsg(), 7019)
+
+
+ecef_lla_test_examples = {
+    LLA(64.0, 29.0): ECEF(2452068.321971885, 1359203.6656496185, 5709714.935455258),
+    LLA(90, 0): ECEF(0.0, 0.0, 6356752.314245179),
+    LLA(-14, 123): ECEF(-3371256.686406562, 5191280.055423112, -1532981.8295057514),
+    LLA(45, -176.0): ECEF(-4506586.254521379, -315131.20952712646, 4487348.40886592),
+    LLA(45.67890, 144.323043, 8000): ECEF(-3630666.472126026, 2606685.03830834, 4546107.080585875),
+}
+
+
+class ECEFTestCase(unittest.TestCase):
+
+    def test_to_lla(self):
+        for lla in ecef_lla_test_examples:
+            ecef = lla.to_ecef()
+            accepted_ecef = ecef_lla_test_examples[lla]
+            self.assertAlmostEqual(ecef.x, accepted_ecef.x)
+            self.assertAlmostEqual(ecef.y, accepted_ecef.y)
+            self.assertAlmostEqual(ecef.z, accepted_ecef.z)
+            self.assertEqual(ecef.ellipsoid(), accepted_ecef.ellipsoid())
+
+
+class LLATestCase(unittest.TestCase):
+
+    def test_to_ecef(self):
+        pass
 
 
 if __name__ == '__main__':
