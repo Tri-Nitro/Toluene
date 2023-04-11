@@ -129,9 +129,12 @@ ecef_lla_test_examples = {
 }
 
 
-class ECEFTestCase(unittest.TestCase):
+class LLATestCase(unittest.TestCase):
 
-    def test_to_lla(self):
+    def test_to_ecef(self):
+        """
+        Test to ensure proper conversion between LLA and ECEF
+        """
         for lla in ecef_lla_test_examples:
             ecef = lla.to_ecef()
             accepted_ecef = ecef_lla_test_examples[lla]
@@ -141,10 +144,18 @@ class ECEFTestCase(unittest.TestCase):
             self.assertEqual(ecef.ellipsoid(), accepted_ecef.ellipsoid())
 
 
-class LLATestCase(unittest.TestCase):
+class ECEFTestCase(unittest.TestCase):
 
-    def test_to_ecef(self):
-        pass
+    def test_to_lla(self):
+        """
+        Test to ensure estimated ECEF from LLA is within tolerance.
+        """
+        for accepted_lla in ecef_lla_test_examples:
+            lla = ecef_lla_test_examples[accepted_lla].to_lla()
+            self.assertAlmostEqual(lla.latitude, accepted_lla.latitude)
+            self.assertAlmostEqual(lla.longitude, accepted_lla.longitude)
+            self.assertAlmostEqual(lla.altitude, accepted_lla.altitude)
+            self.assertEqual(lla.ellipsoid(), accepted_lla.ellipsoid())
 
 
 if __name__ == '__main__':

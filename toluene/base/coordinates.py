@@ -106,7 +106,8 @@ def ecef_from_lla(latitude: float, longitude: float, altitude: float = 0.0,
 
 
 def lla_from_ecef(x: float, y: float, z: float, ellipsoid: Ellipsoid) -> LLA:
-
+    if x == 0 and y == 0:
+        x = 0.000000001
     e_numerator = ellipsoid.semi_major_axis() ** 2 - ellipsoid.semi_minor_axis() ** 2
     e_2 = e_numerator / ellipsoid.semi_major_axis() ** 2
     e_r2 = e_numerator / ellipsoid.semi_minor_axis() ** 2
@@ -120,7 +121,7 @@ def lla_from_ecef(x: float, y: float, z: float, ellipsoid: Ellipsoid) -> LLA:
     big_q = sqrt(1 + 2 * e_2 * e_2 * big_p)
     r_0 = ((-1 * big_p * e_2 * p) / (1 + big_q)) + \
           sqrt((ellipsoid.semi_major_axis() ** 2 / 2) * (1 + 1 / big_q) - (
-                      (big_p * (1 - e_2) * z * z) / (big_q * (1 + big_q))) - (big_p * p * p) / 2)
+                  (big_p * (1 - e_2) * z * z) / (big_q * (1 + big_q))) - (big_p * p * p) / 2)
     p_e_2_r_0 = p - e_2 * r_0
     big_u = sqrt(p_e_2_r_0 * p_e_2_r_0 + z * z)
     big_v = sqrt(p_e_2_r_0 * p_e_2_r_0 + (1 - e_2) * z * z)

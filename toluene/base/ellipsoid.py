@@ -1,8 +1,6 @@
-from ctypes import c_double
 from math import radians, sin, sqrt
 
-from toluene.base.c_loader import CLibrary
-from toluene.base.exception import CLibraryNotFound, LatitudeOutOfRange
+from toluene.base.exception import LatitudeOutOfRange
 
 
 class Ellipsoid:
@@ -83,21 +81,3 @@ wgs_84_ellipsoid = Ellipsoid(semi_major_axis=6378137.0, inverse_flattening=298.2
 
 grs_80_ellipsoid = Ellipsoid(semi_major_axis=6378137.0, inverse_flattening=298.257222101, epsg=7019)
 """ GRS80/EPSG:7019 ellipsoid https://epsg.io/7019-ellipsoid """
-
-
-class EllipsoidC(CLibrary):
-    def __init__(self):
-        super().__init__('toluene')
-        if not self.found_library():
-            raise CLibraryNotFound()
-        self.library.ellipsoid_radius.restype = c_double
-        self.library.ellipsoid_radius.argtypes = [c_double, c_double, c_double]
-
-    def ellipsoid_radius(self, latitude: float, semi_major_axis: float, inverse_flattening: float) -> float:
-        return self.library.ellipsoid_radius(latitude, semi_major_axis, inverse_flattening)
-
-
-try:
-    ellipsoid_c_library = EllipsoidC()
-except CLibraryNotFound:
-    pass
