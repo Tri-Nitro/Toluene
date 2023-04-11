@@ -131,3 +131,6 @@ dmypy.json
 # Cmake build dirs
 cmake-build-debug
 cmake-build-release
+
+#Intellij
+.idea
