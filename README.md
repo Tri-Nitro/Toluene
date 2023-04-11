@@ -1,2 +1,3 @@
 # Toluene
-Python library for geospactial and image processing functions.
+Python library for geospatial and image processing functions.
+
