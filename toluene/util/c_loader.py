@@ -34,7 +34,7 @@ class CLibrary:
             library_type (str): the library type being searched for. Defaults to dynamic.
 
         Returns:
-            A True if the library was able to be located and installed.
+            A True if the library was able to located and installed.
         """
         if library_type == 'dynamic':
             library_extension = self.__dynamic_library_extension

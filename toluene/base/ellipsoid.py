@@ -1,6 +1,6 @@
 from math import radians, sin, sqrt
 
-from toluene.base.exception import LatitudeOutOfRange
+from toluene.util.exception import LatitudeOutOfRange
 
 
 class Ellipsoid:

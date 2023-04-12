@@ -1,8 +1,8 @@
 from ctypes import POINTER, byref, c_double
 
-from toluene.base.c_loader import CLibrary
 from toluene.base.ellipsoid import Ellipsoid, wgs_84_ellipsoid
-from toluene.base.exception import CLibraryNotFound, LatitudeOutOfRange
+from toluene.util.c_loader import CLibrary
+from toluene.util.exception import CLibraryNotFound, LatitudeOutOfRange
 
 
 class BaseCLibrary(CLibrary):
