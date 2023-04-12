@@ -15,24 +15,26 @@ class CLibrary:
             self.__dynamic_library_extension = '.dll'
             self.__static_library_extension = '.a'
             self.__install_path = os.environ['PATH']
+            self.__file_separator = ';'
         elif os.name == 'posix':
             self.__dynamic_library_extension = '.so'
             self.__static_library_extension = '.a'
             self.__install_path = os.environ['LD_LIBRARY_PATH']
+            self.__file_separator = ':'
 
         if library_name is not None:
             self.find_library(hint_path=self.__install_path)
 
-    def find_library(self, hint_path: str = None, library_type: str = 'dynamic') -> bool:
+    def find_library(self, hint_path: str, library_type: str = 'dynamic') -> bool:
 
         if library_type == 'dynamic':
             library_extension = self.__dynamic_library_extension
         else:
             library_extension = self.__static_library_extension
 
-        if hint_path is not None:
-            given_dirs = hint_path.split(':')
-            for hint in given_dirs:
+        given_dirs = hint_path.split(self.__file_separator)
+        for hint in given_dirs:
+            if os.path.exists(hint):
                 for file in os.listdir(hint):
                     if not os.path.isdir(file):
                         if file.startswith(f'lib{self.__library_name}{library_extension}'):

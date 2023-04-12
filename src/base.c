@@ -19,7 +19,7 @@ double ellipsoid_radius(double latitude, double semi_major_axis, double inverse_
     double e = 1-1/inverse_flattening;
     double sin_latitude = sin(latitude);
 
-    return sqrt((semi_major_axis*semi_major_axis)/(1+(1/e*e-1)*sin_latitude*sin_latitude));
+    return sqrt((semi_major_axis*semi_major_axis)/(1+(1/(e*e)-1)*sin_latitude*sin_latitude));
 }
 
 void lla_from_ecef(double semi_major_axis, double semi_minor_axis, double x, double y, double z,

@@ -4,6 +4,7 @@ import unittest
 from toluene.base.coordinates import *
 from toluene.base.ellipsoid import *
 
+
 bad_latitudes = [91, -91.0, 135.0, 1999999.0, -20000000, 360, 90.00000000000001]
 
 wgs_66_test_latitudes = {0: 6378145.0, 45: 6367425.45124896, 90: 6356759.769488684, -90: 6356759.769488684,
@@ -156,6 +157,19 @@ class ECEFTestCase(unittest.TestCase):
             self.assertAlmostEqual(lla.longitude, accepted_lla.longitude)
             self.assertAlmostEqual(lla.altitude, accepted_lla.altitude)
             self.assertEqual(lla.ellipsoid(), accepted_lla.ellipsoid())
+
+
+class TolueneBaseCLibraryTestCase(unittest.TestCase):
+
+    def test_toluene_base_library_found(self):
+        """
+        Test to ensure Toluene Base C Library was built and found.
+        """
+        try:
+            from toluene.base.base_c_library import base_c_library
+            self.assertTrue(base_c_library.found_library())
+        except ImportError:
+            self.assertFalse(True)
 
 
 if __name__ == '__main__':

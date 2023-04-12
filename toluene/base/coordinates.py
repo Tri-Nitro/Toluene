@@ -2,6 +2,7 @@ from __future__ import annotations
 from math import atan, atan2, cos, degrees, radians, sin, sqrt
 from numpy import cbrt
 
+from toluene.base.base_c_library import base_c_library
 from toluene.base.ellipsoid import Ellipsoid, wgs_84_ellipsoid
 
 
@@ -45,7 +46,9 @@ class ECEF:
             The approximate LLA coordinates object. It's only an approximation because the height over the ellipsoid is
             unknown.
         """
-        return lla_from_ecef(self.x, self.y, self.z, self.__ellipsoid)
+        # Faster in C than Python
+        latitude, longitude, altitude = base_c_library.lla_from_ecef(self.x, self.y, self.z, self.__ellipsoid)
+        return LLA(latitude, longitude, altitude, self.__ellipsoid)
 
 
 class LLA:
@@ -70,7 +73,7 @@ class LLA:
         """
         Gives the geodetic coordinates as a list of lat, lon, altitude with the addition of the EPSG number.
         """
-        return f"[{self.latitude}, {self.longitude}, {self.altitude}, epsg := {self.__ellipsoid.epsg()}]"
+        return f"[{self.latitude}, {self.longitude}, {self.altitude}, ESPG:={self.__ellipsoid.epsg()}]"
 
     def ellipsoid(self):
         """
@@ -105,7 +108,7 @@ def ecef_from_lla(latitude: float, longitude: float, altitude: float = 0.0,
     return ECEF(x, y, z, ellipsoid)
 
 
-def lla_from_ecef(x: float, y: float, z: float, ellipsoid: Ellipsoid) -> LLA:
+def lla_from_ecef(x: float, y: float, z: float, ellipsoid: Ellipsoid = wgs_84_ellipsoid) -> LLA:
     if x == 0 and y == 0:
         x = 0.000000001
     e_numerator = ellipsoid.semi_major_axis() ** 2 - ellipsoid.semi_minor_axis() ** 2

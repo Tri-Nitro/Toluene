@@ -9,7 +9,7 @@ def readme():
 setup(
     name='toluene',
     version='0.0.9',
-    liscense='MIT',
+    license='MIT',
     description='Python library for geospatial and image processing functions',
     long_description=readme(),
     classifiers=[
