@@ -1,0 +1,4 @@
+#ifndef TOLUENE_IMAGE_H
+#define TOLUENE_IMAGE_H
+
+#endif //TOLUENE_IMAGE_H

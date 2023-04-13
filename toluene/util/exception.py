@@ -5,15 +5,22 @@ class CLibraryNotFound(Exception):
     pass
 
 
-class ReadError(Exception):
+class LatitudeOutOfRange(Exception):
     """
-    Used when unable to read a file, dir, or archive
+    Used when Latitude is out of range, I.E. -90 <= latitude <= 90
     """
     pass
 
 
-class LatitudeOutOfRange(Exception):
+class MagicNumberError(Exception):
     """
-    Used when Latitude is out of range, I.E. -90 <= latitude <= 90
+    Used when magic number in file doesn't match the specification.
+    """
+    pass
+
+
+class ReadError(Exception):
+    """
+    Used when unable to read a file, dir, or archive
     """
     pass
