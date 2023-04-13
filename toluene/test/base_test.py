@@ -1,8 +1,17 @@
 import math
+import sys
 import unittest
 
 from toluene.base.coordinates import *
 from toluene.base.ellipsoid import *
+
+import logging
+logger = logging.getLogger('toluene')
+logger.setLevel(logging.DEBUG)
+stream_handler = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+stream_handler.setFormatter(formatter)
+logging.basicConfig(level=logging.DEBUG, handlers=[stream_handler])
 
 
 bad_latitudes = [91, -91.0, 135.0, 1999999.0, -20000000, 360, 90.00000000000001]
@@ -34,7 +43,7 @@ class EllipsoidTestCase(unittest.TestCase):
         Test the if WGS66 ellipsoid radius gives the right radius.
         """
         for test_latitude in wgs_66_test_latitudes:
-            ellipsoid_class_answer = wgs_66_ellipsoid.ellipsoid_radius(math.radians(test_latitude))
+            ellipsoid_class_answer = wgs_66_ellipsoid.ellipsoid_radius(test_latitude)
             self.assertAlmostEqual(wgs_66_test_latitudes[test_latitude], ellipsoid_class_answer)
 
     def test_wgs_66_ellipsoid_radius_bad(self):
@@ -50,7 +59,7 @@ class EllipsoidTestCase(unittest.TestCase):
         Test the if WGS72 ellipsoid radius gives the right radius.
         """
         for test_latitude in wgs_72_test_latitudes:
-            ellipsoid_class_answer = wgs_72_ellipsoid.ellipsoid_radius(math.radians(test_latitude))
+            ellipsoid_class_answer = wgs_72_ellipsoid.ellipsoid_radius(test_latitude)
             self.assertAlmostEqual(wgs_72_test_latitudes[test_latitude], ellipsoid_class_answer)
 
     def test_wgs_72_ellipsoid_radius_bad(self):
@@ -63,7 +72,7 @@ class EllipsoidTestCase(unittest.TestCase):
         Test the if WGS84 ellipsoid radius gives the right radius.
         """
         for test_latitude in wgs_84_test_latitudes:
-            ellipsoid_class_answer = wgs_84_ellipsoid.ellipsoid_radius(math.radians(test_latitude))
+            ellipsoid_class_answer = wgs_84_ellipsoid.ellipsoid_radius(test_latitude)
             self.assertAlmostEqual(wgs_84_test_latitudes[test_latitude], ellipsoid_class_answer)
 
     def test_wgs_84_ellipsoid_radius_bad(self):
@@ -76,7 +85,7 @@ class EllipsoidTestCase(unittest.TestCase):
         Test the if GRS80 ellipsoid radius gives the right radius.
         """
         for test_latitude in grs_80_test_latitudes:
-            ellipsoid_class_answer = grs_80_ellipsoid.ellipsoid_radius(math.radians(test_latitude))
+            ellipsoid_class_answer = grs_80_ellipsoid.ellipsoid_radius(test_latitude)
             self.assertAlmostEqual(grs_80_test_latitudes[test_latitude], ellipsoid_class_answer)
 
     def test_grs_80_ellipsoid_radius_bad(self):

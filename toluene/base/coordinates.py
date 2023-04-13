@@ -1,9 +1,13 @@
 from __future__ import annotations
+
+import logging
 from math import atan, atan2, cos, degrees, radians, sin, sqrt
 from numpy import cbrt
 
 from toluene.base.base_c_library import base_c_library
 from toluene.base.ellipsoid import Ellipsoid, wgs_84_ellipsoid
+
+logger = logging.getLogger('toluene.base.coordinates')
 
 
 class ECEF:
@@ -18,10 +22,15 @@ class ECEF:
     """
 
     def __init__(self, x: float = 0.0, y: float = 0.0, z: float = 0.0, ellipsoid: Ellipsoid = wgs_84_ellipsoid):
+
+        logger.debug(f'Initializing ECEF({x}, {y}, {z}, {ellipsoid})')
+
         self.x = x
         self.y = y
         self.z = z
         self.__ellipsoid = ellipsoid
+
+        logger.debug(f'Finished Initializing ECEF')
 
     def __str__(self):
         """
@@ -36,6 +45,9 @@ class ECEF:
         Returns:
             The ellipsoid object in the ECEF vector
         """
+
+        logger.debug(f'Entering ECEF.ellipsoid()')
+
         return self.__ellipsoid
 
     def to_lla(self) -> LLA:
@@ -46,6 +58,9 @@ class ECEF:
             The approximate LLA coordinates object. It's only an approximation because the height over the ellipsoid is
             unknown.
         """
+
+        logger.debug(f'Entering ECEF.to_lla()')
+
         # Faster in C than Python
         latitude, longitude, altitude = base_c_library.lla_from_ecef(self.x, self.y, self.z, self.__ellipsoid)
         return LLA(latitude, longitude, altitude, self.__ellipsoid)
@@ -64,10 +79,15 @@ class LLA:
 
     def __init__(self, latitude: float = None, longitude: float = None, altitude: float = 0.0,
                  ellipsoid: Ellipsoid = wgs_84_ellipsoid):
+
+        logger.debug(f'Initializing LLA({latitude}, {longitude}, {altitude}, {ellipsoid})')
+
         self.latitude = latitude
         self.longitude = longitude
         self.altitude = altitude
         self.__ellipsoid = ellipsoid
+
+        logger.debug(f'Finished Initializing LLA')
 
     def __str__(self):
         """
@@ -83,6 +103,10 @@ class LLA:
             The ellipsoid object in the LLA coordinates
         """
 
+        logger.debug('Entering LLA.ellipsoid()')
+
+        return self.__ellipsoid
+
     def to_ecef(self) -> ECEF:
         """
         Converts the geodetic coordinates into an ECEF vector.
@@ -90,6 +114,9 @@ class LLA:
         Returns:
             The equal ECEF vector object.
         """
+
+        logger.debug('Entering LLA.to_ecef()')
+
         return ecef_from_lla(self.latitude, self.longitude, self.altitude, self.__ellipsoid)
 
 

@@ -1,4 +1,4 @@
-
+from toluene.util.file_reader import Directory
 
 class GMTED2010:
     """
@@ -8,4 +8,7 @@ class GMTED2010:
         data_path (str): The path where the data is installed. Defaults to /data.
     """
     def __init__(self, data_path: str = '/data'):
-        self.__data_path = data_path
+        self.__data_path = Directory(data_path)
+        print(self.__data_path)
+        print(self.__data_path.listdir())
+        print(self.__data_path['10n000e_20101117_gmted_bln075.tif'])
