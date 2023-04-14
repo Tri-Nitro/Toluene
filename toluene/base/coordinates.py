@@ -1,8 +1,13 @@
 from __future__ import annotations
+
+import logging
 from math import atan, atan2, cos, degrees, radians, sin, sqrt
 from numpy import cbrt
 
+from toluene.base.base_c_library import base_c_library
 from toluene.base.ellipsoid import Ellipsoid, wgs_84_ellipsoid
+
+logger = logging.getLogger('toluene.base.coordinates')
 
 
 class ECEF:
@@ -17,10 +22,15 @@ class ECEF:
     """
 
     def __init__(self, x: float = 0.0, y: float = 0.0, z: float = 0.0, ellipsoid: Ellipsoid = wgs_84_ellipsoid):
+
+        logger.debug(f'Initializing ECEF({x}, {y}, {z}, {ellipsoid})')
+
         self.x = x
         self.y = y
         self.z = z
         self.__ellipsoid = ellipsoid
+
+        logger.debug(f'Finished Initializing ECEF')
 
     def __str__(self):
         """
@@ -35,6 +45,9 @@ class ECEF:
         Returns:
             The ellipsoid object in the ECEF vector
         """
+
+        logger.debug(f'Entering ECEF.ellipsoid()')
+
         return self.__ellipsoid
 
     def to_lla(self) -> LLA:
@@ -45,7 +58,12 @@ class ECEF:
             The approximate LLA coordinates object. It's only an approximation because the height over the ellipsoid is
             unknown.
         """
-        return lla_from_ecef(self.x, self.y, self.z, self.__ellipsoid)
+
+        logger.debug(f'Entering ECEF.to_lla()')
+
+        # Faster in C than Python
+        latitude, longitude, altitude = base_c_library.lla_from_ecef(self.x, self.y, self.z, self.__ellipsoid)
+        return LLA(latitude, longitude, altitude, self.__ellipsoid)
 
 
 class LLA:
@@ -61,16 +79,21 @@ class LLA:
 
     def __init__(self, latitude: float = None, longitude: float = None, altitude: float = 0.0,
                  ellipsoid: Ellipsoid = wgs_84_ellipsoid):
+
+        logger.debug(f'Initializing LLA({latitude}, {longitude}, {altitude}, {ellipsoid})')
+
         self.latitude = latitude
         self.longitude = longitude
         self.altitude = altitude
         self.__ellipsoid = ellipsoid
 
+        logger.debug(f'Finished Initializing LLA')
+
     def __str__(self):
         """
         Gives the geodetic coordinates as a list of lat, lon, altitude with the addition of the EPSG number.
         """
-        return f"[{self.latitude}, {self.longitude}, {self.altitude}, epsg := {self.__ellipsoid.epsg()}]"
+        return f"[{self.latitude}, {self.longitude}, {self.altitude}, ESPG:={self.__ellipsoid.epsg()}]"
 
     def ellipsoid(self):
         """
@@ -80,6 +103,10 @@ class LLA:
             The ellipsoid object in the LLA coordinates
         """
 
+        logger.debug('Entering LLA.ellipsoid()')
+
+        return self.__ellipsoid
+
     def to_ecef(self) -> ECEF:
         """
         Converts the geodetic coordinates into an ECEF vector.
@@ -87,6 +114,9 @@ class LLA:
         Returns:
             The equal ECEF vector object.
         """
+
+        logger.debug('Entering LLA.to_ecef()')
+
         return ecef_from_lla(self.latitude, self.longitude, self.altitude, self.__ellipsoid)
 
 
@@ -105,8 +135,9 @@ def ecef_from_lla(latitude: float, longitude: float, altitude: float = 0.0,
     return ECEF(x, y, z, ellipsoid)
 
 
-def lla_from_ecef(x: float, y: float, z: float, ellipsoid: Ellipsoid) -> LLA:
-
+def lla_from_ecef(x: float, y: float, z: float, ellipsoid: Ellipsoid = wgs_84_ellipsoid) -> LLA:
+    if x == 0 and y == 0:
+        x = 0.000000001
     e_numerator = ellipsoid.semi_major_axis() ** 2 - ellipsoid.semi_minor_axis() ** 2
     e_2 = e_numerator / ellipsoid.semi_major_axis() ** 2
     e_r2 = e_numerator / ellipsoid.semi_minor_axis() ** 2
@@ -120,7 +151,7 @@ def lla_from_ecef(x: float, y: float, z: float, ellipsoid: Ellipsoid) -> LLA:
     big_q = sqrt(1 + 2 * e_2 * e_2 * big_p)
     r_0 = ((-1 * big_p * e_2 * p) / (1 + big_q)) + \
           sqrt((ellipsoid.semi_major_axis() ** 2 / 2) * (1 + 1 / big_q) - (
-                      (big_p * (1 - e_2) * z * z) / (big_q * (1 + big_q))) - (big_p * p * p) / 2)
+                  (big_p * (1 - e_2) * z * z) / (big_q * (1 + big_q))) - (big_p * p * p) / 2)
     p_e_2_r_0 = p - e_2 * r_0
     big_u = sqrt(p_e_2_r_0 * p_e_2_r_0 + z * z)
     big_v = sqrt(p_e_2_r_0 * p_e_2_r_0 + (1 - e_2) * z * z)

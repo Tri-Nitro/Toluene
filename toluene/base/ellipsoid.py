@@ -1,6 +1,10 @@
+import logging
+import math
 from math import radians, sin, sqrt
 
-from toluene.base.exception import LatitudeOutOfRange
+from toluene.util.exception import LatitudeOutOfRange
+
+logger = logging.getLogger('toluene.base.ellipsoid')
 
 
 class Ellipsoid:
@@ -15,14 +19,25 @@ class Ellipsoid:
     """
 
     def __init__(self, semi_major_axis: float, inverse_flattening: float, epsg: int = None):
+
+        logger.debug(f'Initializing Ellipsoid({semi_major_axis}, {inverse_flattening}, {epsg})')
+
         self.__semi_major_axis = semi_major_axis
         self.__inverse_flattening = inverse_flattening
         self.__epsg = epsg
+        self.__semi_minor_axis = self.ellipsoid_radius(90)
 
-        self.__semi_minor_axis = self.ellipsoid_radius(radians(90))
+        logger.debug('Finished Initializing Ellipsoid')
 
     def __eq__(self, other) -> bool:
-        return self.__semi_major_axis == other.semi_major_axis() and 1/self.__inverse_flattening == other.flattening()
+
+        logger.debug(f'Asserting If {self} == {other}')
+
+        return self.__semi_major_axis == other.semi_major_axis() and 1 / self.__inverse_flattening == other.flattening()
+
+    def __str__(self) -> str:
+
+        return f'ellipsoid<{self.__semi_major_axis}, {self.__semi_minor_axis}>'
 
     def ellipsoid_radius(self, latitude: float = None) -> float:
         """
@@ -31,11 +46,21 @@ class Ellipsoid:
         Args:
             latitude (float): The latitude in which the desired radius is to be given.
 
+        Raises:
+            toluene.util.exception.LatitudeOutOfRange
+
         Returns:
             The radius at the given latitude.
         """
+
+        logger.debug(f'Entering Ellipsoid.ellipsoid_radius({latitude})')
+
         if latitude > 90 or latitude < -90:
+            logger.warning(f'Unable to handle Latitudes < -90 or > 90, {latitude} was given')
             raise LatitudeOutOfRange
+
+        latitude = math.radians(latitude)
+
         return sqrt((self.__semi_major_axis ** 2) /
                     (1 + (1 / (1 - 1 / self.__inverse_flattening) ** 2 - 1) * (sin(latitude) ** 2)))
 
@@ -44,6 +69,9 @@ class Ellipsoid:
         Returns:
             The semi-major axis of the ellipsoid.
         """
+
+        logger.debug(f'Entering Ellipsoid.semi_major_axis()')
+
         return self.__semi_major_axis
 
     def semi_minor_axis(self) -> float:
@@ -51,6 +79,9 @@ class Ellipsoid:
         Returns:
             The semi-minor axis of the ellipsoid.
         """
+
+        logger.debug(f'Entering Ellipsoid.semi_minor_axis()')
+
         return self.__semi_minor_axis
 
     def flattening(self) -> float:
@@ -58,6 +89,9 @@ class Ellipsoid:
         Returns:
             The flattening factor of the ellipsoid.
         """
+
+        logger.debug(f'Entering Ellipsoid.flattening()')
+
         return 1 / self.__inverse_flattening
 
     def epsg(self) -> int:
@@ -65,6 +99,9 @@ class Ellipsoid:
         Returns:
             The EPSG number of the ellipsoid.
         """
+
+        logger.debug(f'Entering Ellipsoid.epsg()')
+
         return self.__epsg
 
 

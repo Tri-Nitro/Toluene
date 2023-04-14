@@ -1,8 +1,18 @@
 import math
+import sys
 import unittest
 
 from toluene.base.coordinates import *
 from toluene.base.ellipsoid import *
+
+import logging
+logger = logging.getLogger('toluene')
+logger.setLevel(logging.DEBUG)
+stream_handler = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+stream_handler.setFormatter(formatter)
+logging.basicConfig(level=logging.DEBUG, handlers=[stream_handler])
+
 
 bad_latitudes = [91, -91.0, 135.0, 1999999.0, -20000000, 360, 90.00000000000001]
 
@@ -33,7 +43,7 @@ class EllipsoidTestCase(unittest.TestCase):
         Test the if WGS66 ellipsoid radius gives the right radius.
         """
         for test_latitude in wgs_66_test_latitudes:
-            ellipsoid_class_answer = wgs_66_ellipsoid.ellipsoid_radius(math.radians(test_latitude))
+            ellipsoid_class_answer = wgs_66_ellipsoid.ellipsoid_radius(test_latitude)
             self.assertAlmostEqual(wgs_66_test_latitudes[test_latitude], ellipsoid_class_answer)
 
     def test_wgs_66_ellipsoid_radius_bad(self):
@@ -49,7 +59,7 @@ class EllipsoidTestCase(unittest.TestCase):
         Test the if WGS72 ellipsoid radius gives the right radius.
         """
         for test_latitude in wgs_72_test_latitudes:
-            ellipsoid_class_answer = wgs_72_ellipsoid.ellipsoid_radius(math.radians(test_latitude))
+            ellipsoid_class_answer = wgs_72_ellipsoid.ellipsoid_radius(test_latitude)
             self.assertAlmostEqual(wgs_72_test_latitudes[test_latitude], ellipsoid_class_answer)
 
     def test_wgs_72_ellipsoid_radius_bad(self):
@@ -62,7 +72,7 @@ class EllipsoidTestCase(unittest.TestCase):
         Test the if WGS84 ellipsoid radius gives the right radius.
         """
         for test_latitude in wgs_84_test_latitudes:
-            ellipsoid_class_answer = wgs_84_ellipsoid.ellipsoid_radius(math.radians(test_latitude))
+            ellipsoid_class_answer = wgs_84_ellipsoid.ellipsoid_radius(test_latitude)
             self.assertAlmostEqual(wgs_84_test_latitudes[test_latitude], ellipsoid_class_answer)
 
     def test_wgs_84_ellipsoid_radius_bad(self):
@@ -75,7 +85,7 @@ class EllipsoidTestCase(unittest.TestCase):
         Test the if GRS80 ellipsoid radius gives the right radius.
         """
         for test_latitude in grs_80_test_latitudes:
-            ellipsoid_class_answer = grs_80_ellipsoid.ellipsoid_radius(math.radians(test_latitude))
+            ellipsoid_class_answer = grs_80_ellipsoid.ellipsoid_radius(test_latitude)
             self.assertAlmostEqual(grs_80_test_latitudes[test_latitude], ellipsoid_class_answer)
 
     def test_grs_80_ellipsoid_radius_bad(self):
@@ -129,9 +139,12 @@ ecef_lla_test_examples = {
 }
 
 
-class ECEFTestCase(unittest.TestCase):
+class LLATestCase(unittest.TestCase):
 
-    def test_to_lla(self):
+    def test_to_ecef(self):
+        """
+        Test to ensure proper conversion between LLA and ECEF
+        """
         for lla in ecef_lla_test_examples:
             ecef = lla.to_ecef()
             accepted_ecef = ecef_lla_test_examples[lla]
@@ -141,10 +154,31 @@ class ECEFTestCase(unittest.TestCase):
             self.assertEqual(ecef.ellipsoid(), accepted_ecef.ellipsoid())
 
 
-class LLATestCase(unittest.TestCase):
+class ECEFTestCase(unittest.TestCase):
 
-    def test_to_ecef(self):
-        pass
+    def test_to_lla(self):
+        """
+        Test to ensure estimated ECEF from LLA is within tolerance.
+        """
+        for accepted_lla in ecef_lla_test_examples:
+            lla = ecef_lla_test_examples[accepted_lla].to_lla()
+            self.assertAlmostEqual(lla.latitude, accepted_lla.latitude)
+            self.assertAlmostEqual(lla.longitude, accepted_lla.longitude)
+            self.assertAlmostEqual(lla.altitude, accepted_lla.altitude)
+            self.assertEqual(lla.ellipsoid(), accepted_lla.ellipsoid())
+
+
+class TolueneBaseCLibraryTestCase(unittest.TestCase):
+
+    def test_toluene_base_library_found(self):
+        """
+        Test to ensure Toluene Base C Library was built and found.
+        """
+        try:
+            from toluene.base.base_c_library import base_c_library
+            self.assertTrue(base_c_library.found_library())
+        except ImportError:
+            self.assertFalse(True)
 
 
 if __name__ == '__main__':

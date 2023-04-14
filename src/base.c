@@ -19,11 +19,15 @@ double ellipsoid_radius(double latitude, double semi_major_axis, double inverse_
     double e = 1-1/inverse_flattening;
     double sin_latitude = sin(latitude);
 
-    return sqrt((semi_major_axis*semi_major_axis)/(1+(1/e*e-1)*sin_latitude*sin_latitude));
+    return sqrt((semi_major_axis*semi_major_axis)/(1+(1/(e*e)-1)*sin_latitude*sin_latitude));
 }
 
 void lla_from_ecef(double semi_major_axis, double semi_minor_axis, double x, double y, double z,
                    double *latitude, double *longitude, double *altitude) {
+
+    // Causes a divide by 0 bug because of p if x and y are 0. Just put a little offset so longitude can be set if
+    // directly above the pole.
+    if(x == 0 && y == 0) x = 0.000000001;
 
     double e_numerator = semi_major_axis*semi_major_axis - semi_minor_axis*semi_minor_axis;
     double e_2 = e_numerator/(semi_major_axis*semi_major_axis);
