@@ -24,3 +24,10 @@ class ReadError(Exception):
     Used when unable to read a file, dir, or archive
     """
     pass
+
+
+class UndefinedTagError(Exception):
+    """
+    Used when a bad TIFF tag is encountered.
+    """
+    pass

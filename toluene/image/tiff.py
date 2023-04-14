@@ -1,8 +1,11 @@
+import logging
 from numpy import float32, float64, frombuffer
 from typing import Literal
 
 from toluene.image.image import Image
-from toluene.util.exception import MagicNumberError
+from toluene.util.exception import MagicNumberError, UndefinedTagError
+
+logger = logging.getLogger('toluene.image.tiff')
 
 
 def rationalize(value: bytes, byte_order: Literal['little', 'big']) -> float:
@@ -28,9 +31,9 @@ tiff_ifd_entry_type_length = {
 }
 
 tiff_ifd_entry_value_convert_function = {
-    1: create_string, 2: create_string, 3: int.from_bytes, 4: int.from_bytes,
+    1: int.from_bytes, 2: create_string, 3: int.from_bytes, 4: int.from_bytes,
     5: rationalize, 6: create_string, 7: create_string, 8: int.from_bytes,
-    9: int.from_bytes, 10: rationalize, 11: unpack_float
+    9: int.from_bytes, 10: rationalize, 11: unpack_float, 12: unpack_double
 }
 
 baseline_tags = {
@@ -48,12 +51,52 @@ baseline_tags = {
     33432: 'Copyright'
 }
 
+extended_tags = {
+    269: 'DocumentName', 285: 'PageName', 286: 'XPosition', 287: 'YPosition',
+    292: 'T4Options', 293: 'T6Options', 297: 'PageNumber',
+    301: 'TransferFunction', 317: 'Predictor', 318: 'WhitePoint',
+    319: 'PrimaryChromaticities', 321: 'HalftoneHints', 322: 'TileWidth',
+    323: 'TileLength', 324: 'TileOffsets', 325: 'TileByteCounts',
+    326: 'BadFaxLines', 327: 'CleanFaxData', 328: 'ConsecutiveBadFaxLines',
+    330: 'SubIFDs', 332: 'InkSet', 333: 'InkNames', 334: 'NumberOfInks',
+    336: 'DotRange', 337: 'TargetPrinter', 339: 'SampleFormat',
+    340: 'SMinSampleValue', 341: 'SMaxSampleValue', 342: 'TransferRange',
+    343: 'ClipPath', 344: 'XClipPathUnits', 345: 'YClipPathUnits',
+    346: 'Indexed'
+}
+
+basic_tags = {}
+
+basic_tags.update(baseline_tags)
+basic_tags.update(extended_tags)
+
 
 class TIFF(Image):
-    def __init__(self, file: str = None):
-        super().__init__(file)
+    """
+    Defines a TIFF image.
 
-    def _parse(self):
+    Args:
+        file (str): The tiff file path.
+    """
+
+    def __init__(self, file: str = None):
+        logger.debug(f'Initializing TIFF({file})')
+        super().__init__(file)
+        logger.debug(f'Finished Initializing TIFF')
+
+    def _parse(self, tags=None):
+        """
+        Overwritten Image._parse() loads the image header into memory.
+
+        Raises:
+            UndefinedTagError
+        """
+
+        logger.debug(f'Entering TIFF._parse({tags})')
+
+        if tags is None:
+            tags = {}
+        tags.update(basic_tags)
 
         # Determine the byteorder
         byte_order_flag = self._image_file[:2]
@@ -91,13 +134,17 @@ class TIFF(Image):
                         offset = int.from_bytes(value_offset, self._byte_order)
                         value_offset = \
                             self._image_file[offset:offset + value_size]
-                    ifd_entry[baseline_tags[tag]] = conversion(
-                        value_offset, self._byte_order)
+                    try:
+                        ifd_entry[tags[tag]] = conversion(
+                            value_offset, self._byte_order)
+                    except KeyError:
+                        raise UndefinedTagError
                 else:
                     offset = int.from_bytes(value_offset, self._byte_order)
                     if value_size == 1:
-                        ifd_entry[baseline_tags[tag]] = str(
-                            self._image_file[offset:offset + num_of_values])
+                        ifd_entry[tags[tag]] = str(
+                            self._image_file[offset:offset + num_of_values],
+                            'UTF-8')
                     else:
                         value_list = []
                         for idx in range(num_of_values):
@@ -107,15 +154,10 @@ class TIFF(Image):
                                                      offset + value_size],
                                     self._byte_order))
                             offset += value_size
-                        ifd_entry[baseline_tags[tag]] = value_list
+                        ifd_entry[tags[tag]] = value_list
 
                 ifd_offset += 12
             ifd_offset = int.from_bytes(
                 self._image_file[ifd_offset:ifd_offset + 4],
                 self._byte_order)
             ifd_directories.append(ifd_entry)
-
-        print(ifd_directories)
-
-
-tif = TIFF('C:/Users/DTCan/Downloads/at3_1m4_10.tif')

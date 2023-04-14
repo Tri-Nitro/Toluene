@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='toluene',
-    version='0.0.21',
+    version='0.0.22',
     license='MIT',
     description='Python library for geospatial and image processing functions',
     long_description=readme(),
