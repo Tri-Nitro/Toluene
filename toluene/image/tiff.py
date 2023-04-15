@@ -3,6 +3,8 @@ from numpy import float32, float64, frombuffer
 from typing import Literal
 
 from toluene.image.image import Image
+from toluene.image.tiff_pixel_data import TiffPixelData
+from toluene.image.tiled_tiff import TiledTiff, is_tiled_tiff
 from toluene.util.exception import MagicNumberError, UndefinedTagError
 
 logger = logging.getLogger('toluene.image.tiff')
@@ -99,41 +101,41 @@ class TIFF(Image):
         tags.update(basic_tags)
 
         # Determine the byteorder
-        byte_order_flag = self._image_file[:2]
+        byte_order_flag = self._image_data[:2]
         if byte_order_flag == b'II':
             self._byte_order: Literal["little", "big"] = 'little'
         elif byte_order_flag == b'MM':
             self._byte_order = Literal["little", "big"] = 'big'
 
-        if int.from_bytes(self._image_file[2:4], self._byte_order) != 42:
+        if int.from_bytes(self._image_data[2:4], self._byte_order) != 42:
             raise MagicNumberError()
 
-        ifd_offset = int.from_bytes(self._image_file[4:8], self._byte_order)
+        ifd_offset = int.from_bytes(self._image_data[4:8], self._byte_order)
 
         self._ifd_directories = []
         while ifd_offset != 0:
             ifd_entry = {}
             number_of_ifd_entries = int.from_bytes(
-                self._image_file[ifd_offset:ifd_offset + 2], self._byte_order)
+                self._image_data[ifd_offset:ifd_offset + 2], self._byte_order)
             ifd_offset += 2
             for entry_id in range(number_of_ifd_entries):
                 tag = int.from_bytes(
-                    self._image_file[ifd_offset:ifd_offset + 2],
+                    self._image_data[ifd_offset:ifd_offset + 2],
                     self._byte_order)
                 field_type = int.from_bytes(
-                    self._image_file[ifd_offset + 2:ifd_offset + 4],
+                    self._image_data[ifd_offset + 2:ifd_offset + 4],
                     self._byte_order)
                 num_of_values = int.from_bytes(
-                    self._image_file[ifd_offset + 4:ifd_offset + 8],
+                    self._image_data[ifd_offset + 4:ifd_offset + 8],
                     self._byte_order)
-                value_offset = self._image_file[ifd_offset + 8:ifd_offset + 12]
+                value_offset = self._image_data[ifd_offset + 8:ifd_offset + 12]
                 conversion = tiff_ifd_entry_value_convert_function[field_type]
                 value_size = tiff_ifd_entry_type_length[field_type]
                 if num_of_values == 1:
                     if value_size > 4:
                         offset = int.from_bytes(value_offset, self._byte_order)
                         value_offset = \
-                            self._image_file[offset:offset + value_size]
+                            self._image_data[offset:offset + value_size]
                     try:
                         ifd_entry[tags[tag]] = conversion(
                             value_offset, self._byte_order)
@@ -143,14 +145,14 @@ class TIFF(Image):
                     offset = int.from_bytes(value_offset, self._byte_order)
                     if value_size == 1:
                         ifd_entry[tags[tag]] = str(
-                            self._image_file[offset:offset + num_of_values],
+                            self._image_data[offset:offset + num_of_values],
                             'UTF-8')
                     else:
                         value_list = []
                         for idx in range(num_of_values):
                             value_list.append(
                                 conversion(
-                                    self._image_file[offset:
+                                    self._image_data[offset:
                                                      offset + value_size],
                                     self._byte_order))
                             offset += value_size
@@ -158,10 +160,17 @@ class TIFF(Image):
 
                 ifd_offset += 12
             ifd_offset = int.from_bytes(
-                self._image_file[ifd_offset:ifd_offset + 4],
+                self._image_data[ifd_offset:ifd_offset + 4],
                 self._byte_order)
             self._ifd_directories.append(ifd_entry)
+        self.__pixel_data = self._get_tiff_type()(self._ifd_directories, self._image_data)
+
+    def _get_tiff_type(self) -> type(TiffPixelData):
+        if is_tiled_tiff(self._ifd_directories[0]):
+            return TiledTiff
+
+    def get_pixels(self):
+        return self.__pixel_data.get_pixel_data()
 
     def ifd_directories(self):
         return self._ifd_directories
-
