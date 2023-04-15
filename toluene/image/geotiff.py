@@ -30,3 +30,7 @@ class GeoTIFF(TIFF):
         tags.update(gdal_tags)
 
         super()._parse(tags)
+
+geo = GeoTIFF("C:/Users/DTCan/Downloads/LC08_CU_031006_20220808_20220821_02_BP.TIF")
+for ifd_directory in geo.ifd_directories():
+    print(ifd_directory.keys())

@@ -110,7 +110,7 @@ class TIFF(Image):
 
         ifd_offset = int.from_bytes(self._image_file[4:8], self._byte_order)
 
-        ifd_directories = []
+        self._ifd_directories = []
         while ifd_offset != 0:
             ifd_entry = {}
             number_of_ifd_entries = int.from_bytes(
@@ -160,4 +160,8 @@ class TIFF(Image):
             ifd_offset = int.from_bytes(
                 self._image_file[ifd_offset:ifd_offset + 4],
                 self._byte_order)
-            ifd_directories.append(ifd_entry)
+            self._ifd_directories.append(ifd_entry)
+
+    def ifd_directories(self):
+        return self._ifd_directories
+
