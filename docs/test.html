@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test package &mdash; toluene 0.0.23 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            toluene
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">test package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-test.base_test">test.base_test module</a><ul>
+<li><a class="reference internal" href="#test.base_test.ECEFTestCase"><code class="docutils literal notranslate"><span class="pre">ECEFTestCase</span></code></a><ul>
+<li><a class="reference internal" href="#test.base_test.ECEFTestCase.test_to_lla"><code class="docutils literal notranslate"><span class="pre">ECEFTestCase.test_to_lla()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase</span></code></a><ul>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase.test_epsg_getter"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase.test_epsg_getter()</span></code></a></li>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase.test_flattening_getter"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase.test_flattening_getter()</span></code></a></li>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase.test_grs_80_ellipsoid_radius_bad"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase.test_grs_80_ellipsoid_radius_bad()</span></code></a></li>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase.test_grs_80_ellipsoid_radius_good"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase.test_grs_80_ellipsoid_radius_good()</span></code></a></li>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase.test_semi_major_axis_getter"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase.test_semi_major_axis_getter()</span></code></a></li>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase.test_semi_minor_axis_getter"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase.test_semi_minor_axis_getter()</span></code></a></li>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase.test_wgs_66_ellipsoid_radius_bad"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase.test_wgs_66_ellipsoid_radius_bad()</span></code></a></li>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase.test_wgs_66_ellipsoid_radius_good"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase.test_wgs_66_ellipsoid_radius_good()</span></code></a></li>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase.test_wgs_72_ellipsoid_radius_bad"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase.test_wgs_72_ellipsoid_radius_bad()</span></code></a></li>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase.test_wgs_72_ellipsoid_radius_good"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase.test_wgs_72_ellipsoid_radius_good()</span></code></a></li>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase.test_wgs_84_ellipsoid_radius_bad"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase.test_wgs_84_ellipsoid_radius_bad()</span></code></a></li>
+<li><a class="reference internal" href="#test.base_test.EllipsoidTestCase.test_wgs_84_ellipsoid_radius_good"><code class="docutils literal notranslate"><span class="pre">EllipsoidTestCase.test_wgs_84_ellipsoid_radius_good()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#test.base_test.LLATestCase"><code class="docutils literal notranslate"><span class="pre">LLATestCase</span></code></a><ul>
+<li><a class="reference internal" href="#test.base_test.LLATestCase.test_to_ecef"><code class="docutils literal notranslate"><span class="pre">LLATestCase.test_to_ecef()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#test.base_test.TolueneBaseCLibraryTestCase"><code class="docutils literal notranslate"><span class="pre">TolueneBaseCLibraryTestCase</span></code></a><ul>
+<li><a class="reference internal" href="#test.base_test.TolueneBaseCLibraryTestCase.test_toluene_base_library_found"><code class="docutils literal notranslate"><span class="pre">TolueneBaseCLibraryTestCase.test_toluene_base_library_found()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-test.elevation_test">test.elevation_test module</a><ul>
+<li><a class="reference internal" href="#test.elevation_test.GMTED2010TestCase"><code class="docutils literal notranslate"><span class="pre">GMTED2010TestCase</span></code></a><ul>
+<li><a class="reference internal" href="#test.elevation_test.GMTED2010TestCase.test_loading_dataset"><code class="docutils literal notranslate"><span class="pre">GMTED2010TestCase.test_loading_dataset()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-test.image_test">test.image_test module</a><ul>
+<li><a class="reference internal" href="#test.image_test.MyTestCase"><code class="docutils literal notranslate"><span class="pre">MyTestCase</span></code></a><ul>
+<li><a class="reference internal" href="#test.image_test.MyTestCase.test_something"><code class="docutils literal notranslate"><span class="pre">MyTestCase.test_something()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-test">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">toluene</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">test package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/test.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-package">
+<h1>test package<a class="headerlink" href="#test-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-test.base_test">
+<span id="test-base-test-module"></span><h2>test.base_test module<a class="headerlink" href="#module-test.base_test" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="test.base_test.ECEFTestCase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.base_test.</span></span><span class="sig-name descname"><span class="pre">ECEFTestCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.ECEFTestCase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.ECEFTestCase.test_to_lla">
+<span class="sig-name descname"><span class="pre">test_to_lla</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.ECEFTestCase.test_to_lla" title="Permalink to this definition"></a></dt>
+<dd><p>Test to ensure estimated ECEF from LLA is within tolerance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.base_test.</span></span><span class="sig-name descname"><span class="pre">EllipsoidTestCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<p>Test for the Ellipsoid module in the base package.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase.test_epsg_getter">
+<span class="sig-name descname"><span class="pre">test_epsg_getter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase.test_epsg_getter" title="Permalink to this definition"></a></dt>
+<dd><p>Test if the given ellipsoids give the right EPSG number.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase.test_flattening_getter">
+<span class="sig-name descname"><span class="pre">test_flattening_getter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase.test_flattening_getter" title="Permalink to this definition"></a></dt>
+<dd><p>Test if the given ellipsoids give the right flattening factor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase.test_grs_80_ellipsoid_radius_bad">
+<span class="sig-name descname"><span class="pre">test_grs_80_ellipsoid_radius_bad</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase.test_grs_80_ellipsoid_radius_bad" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase.test_grs_80_ellipsoid_radius_good">
+<span class="sig-name descname"><span class="pre">test_grs_80_ellipsoid_radius_good</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase.test_grs_80_ellipsoid_radius_good" title="Permalink to this definition"></a></dt>
+<dd><p>Test the if GRS80 ellipsoid radius gives the right radius.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase.test_semi_major_axis_getter">
+<span class="sig-name descname"><span class="pre">test_semi_major_axis_getter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase.test_semi_major_axis_getter" title="Permalink to this definition"></a></dt>
+<dd><p>Test if the given ellipsoids give the right semi-major axis.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase.test_semi_minor_axis_getter">
+<span class="sig-name descname"><span class="pre">test_semi_minor_axis_getter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase.test_semi_minor_axis_getter" title="Permalink to this definition"></a></dt>
+<dd><p>Test if the given ellipsoids give the right semi-minor axis.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase.test_wgs_66_ellipsoid_radius_bad">
+<span class="sig-name descname"><span class="pre">test_wgs_66_ellipsoid_radius_bad</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase.test_wgs_66_ellipsoid_radius_bad" title="Permalink to this definition"></a></dt>
+<dd><p>Test the if WGS66 ellipsoid raises the LatitudeOutOfRange if the given latitude is below -90 or above 90</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase.test_wgs_66_ellipsoid_radius_good">
+<span class="sig-name descname"><span class="pre">test_wgs_66_ellipsoid_radius_good</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase.test_wgs_66_ellipsoid_radius_good" title="Permalink to this definition"></a></dt>
+<dd><p>Test the if WGS66 ellipsoid radius gives the right radius.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase.test_wgs_72_ellipsoid_radius_bad">
+<span class="sig-name descname"><span class="pre">test_wgs_72_ellipsoid_radius_bad</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase.test_wgs_72_ellipsoid_radius_bad" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase.test_wgs_72_ellipsoid_radius_good">
+<span class="sig-name descname"><span class="pre">test_wgs_72_ellipsoid_radius_good</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase.test_wgs_72_ellipsoid_radius_good" title="Permalink to this definition"></a></dt>
+<dd><p>Test the if WGS72 ellipsoid radius gives the right radius.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase.test_wgs_84_ellipsoid_radius_bad">
+<span class="sig-name descname"><span class="pre">test_wgs_84_ellipsoid_radius_bad</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase.test_wgs_84_ellipsoid_radius_bad" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.EllipsoidTestCase.test_wgs_84_ellipsoid_radius_good">
+<span class="sig-name descname"><span class="pre">test_wgs_84_ellipsoid_radius_good</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.EllipsoidTestCase.test_wgs_84_ellipsoid_radius_good" title="Permalink to this definition"></a></dt>
+<dd><p>Test the if WGS84 ellipsoid radius gives the right radius.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.base_test.LLATestCase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.base_test.</span></span><span class="sig-name descname"><span class="pre">LLATestCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.LLATestCase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.LLATestCase.test_to_ecef">
+<span class="sig-name descname"><span class="pre">test_to_ecef</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.LLATestCase.test_to_ecef" title="Permalink to this definition"></a></dt>
+<dd><p>Test to ensure proper conversion between LLA and ECEF</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="test.base_test.TolueneBaseCLibraryTestCase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.base_test.</span></span><span class="sig-name descname"><span class="pre">TolueneBaseCLibraryTestCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.TolueneBaseCLibraryTestCase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.base_test.TolueneBaseCLibraryTestCase.test_toluene_base_library_found">
+<span class="sig-name descname"><span class="pre">test_toluene_base_library_found</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.base_test.TolueneBaseCLibraryTestCase.test_toluene_base_library_found" title="Permalink to this definition"></a></dt>
+<dd><p>Test to ensure Toluene Base C Library was built and found.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-test.elevation_test">
+<span id="test-elevation-test-module"></span><h2>test.elevation_test module<a class="headerlink" href="#module-test.elevation_test" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="test.elevation_test.GMTED2010TestCase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.elevation_test.</span></span><span class="sig-name descname"><span class="pre">GMTED2010TestCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.elevation_test.GMTED2010TestCase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.elevation_test.GMTED2010TestCase.test_loading_dataset">
+<span class="sig-name descname"><span class="pre">test_loading_dataset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.elevation_test.GMTED2010TestCase.test_loading_dataset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-test.image_test">
+<span id="test-image-test-module"></span><h2>test.image_test module<a class="headerlink" href="#module-test.image_test" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="test.image_test.MyTestCase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.image_test.</span></span><span class="sig-name descname"><span class="pre">MyTestCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.image_test.MyTestCase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="test.image_test.MyTestCase.test_something">
+<span class="sig-name descname"><span class="pre">test_something</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#test.image_test.MyTestCase.test_something" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-test">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-test" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tri-nitro.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
