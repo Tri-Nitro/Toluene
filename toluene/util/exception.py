@@ -19,6 +19,13 @@ class MagicNumberError(Exception):
     pass
 
 
+class ImplementationError(Exception):
+    """
+    Used when a pure virtual function was not implemented
+    """
+    pass
+
+
 class ReadError(Exception):
     """
     Used when unable to read a file, dir, or archive

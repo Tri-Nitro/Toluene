@@ -1,8 +1,13 @@
 import logging
+
+import numpy as np
 from numpy import float32, float64, frombuffer
 from typing import Literal
 
+from toluene.compression.deflate import deflate_compression
 from toluene.image.image import Image
+from toluene.image.tiff_pixel_data import TIFFPixelData
+from toluene.image.tiled_tiff import TiledTiff, is_tiled_tiff
 from toluene.util.exception import MagicNumberError, UndefinedTagError
 
 logger = logging.getLogger('toluene.image.tiff')
@@ -80,8 +85,11 @@ class TIFF(Image):
     """
 
     def __init__(self, file: str = None):
+
         logger.debug(f'Initializing TIFF({file})')
+
         super().__init__(file)
+
         logger.debug(f'Finished Initializing TIFF')
 
     def _parse(self, tags=None):
@@ -103,7 +111,7 @@ class TIFF(Image):
         if byte_order_flag == b'II':
             self._byte_order: Literal["little", "big"] = 'little'
         elif byte_order_flag == b'MM':
-            self._byte_order = Literal["little", "big"] = 'big'
+            self._byte_order: Literal["little", "big"] = 'big'
 
         if int.from_bytes(self._image_file[2:4], self._byte_order) != 42:
             raise MagicNumberError()
@@ -161,7 +169,31 @@ class TIFF(Image):
                 self._image_file[ifd_offset:ifd_offset + 4],
                 self._byte_order)
             self._ifd_directories.append(ifd_entry)
+        self._pixel_data = [get_tiff_image_type(ifd)(ifd, self._image_file) for ifd in self._ifd_directories]
 
     def ifd_directories(self):
         return self._ifd_directories
 
+    def pixels(self):
+        images = self._pixel_data
+        tile_width = self._ifd_directories[0]['TileWidth']
+        retval = []
+        for image in images:
+            raw_pixel_data = image.raw_pixel_data()
+            for pixel_data in raw_pixel_data:
+                uncompressed_data = deflate_compression.decode(pixel_data)
+                row = []
+                image_uncompressed_data = []
+                for byte in uncompressed_data:
+                    pixel = [byte]
+                    row.append(pixel)
+                    if len(row) == tile_width:
+                        image_uncompressed_data.append(row)
+                        row = []
+                retval.append(np.array(image_uncompressed_data))
+        return retval
+
+
+def get_tiff_image_type(image_ifd: dict) -> type(TIFFPixelData):
+    if is_tiled_tiff(image_ifd):
+        return TiledTiff

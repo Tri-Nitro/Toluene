@@ -15,6 +15,8 @@ class Image:
         logger.debug(f'Initializing Image({file})')
 
         self._image_file = None
+        self._pixel_data = None
+
         if file is not None:
             self.open(file)
 
