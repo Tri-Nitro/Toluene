@@ -169,29 +169,37 @@ class TIFF(Image):
                 self._image_file[ifd_offset:ifd_offset + 4],
                 self._byte_order)
             self._ifd_directories.append(ifd_entry)
-        self._pixel_data = [get_tiff_image_type(ifd)(ifd, self._image_file) for ifd in self._ifd_directories]
+        self._pixel_data = [get_tiff_image_type(ifd)
+                            (ifd, self._image_file, self._byte_order)
+                            for ifd in self._ifd_directories]
 
     def ifd_directories(self):
         return self._ifd_directories
 
-    def pixels(self):
-        images = self._pixel_data
-        tile_width = self._ifd_directories[0]['TileWidth']
-        retval = []
-        for image in images:
-            raw_pixel_data = image.raw_pixel_data()
-            for pixel_data in raw_pixel_data:
-                uncompressed_data = deflate_compression.decode(pixel_data)
-                row = []
-                image_uncompressed_data = []
-                for byte in uncompressed_data:
-                    pixel = [byte]
-                    row.append(pixel)
-                    if len(row) == tile_width:
-                        image_uncompressed_data.append(row)
-                        row = []
-                retval.append(np.array(image_uncompressed_data))
-        return retval
+    def image(self, idx: int = 0):
+        if idx > len(self._pixel_data):
+            raise IndexError
+        return self._pixel_data[idx].image()
+
+    def __getitem__(self, item: int = 0):
+        return self.image(item)
+        # images = self._pixel_data
+        # tile_width = self._ifd_directories[0]['TileWidth']
+        # retval = []
+        # for image in images:
+        #     raw_pixel_data = image.raw_pixel_data()
+        #     for pixel_data in raw_pixel_data:
+        #         uncompressed_data = deflate_compression.decode(pixel_data)
+        #         row = []
+        #         image_uncompressed_data = []
+        #         for byte in uncompressed_data:
+        #             pixel = [byte]
+        #             row.append(pixel)
+        #             if len(row) == tile_width:
+        #                 image_uncompressed_data.append(row)
+        #                 row = []
+        #         retval.append(np.array(image_uncompressed_data))
+        # return retval
 
 
 def get_tiff_image_type(image_ifd: dict) -> type(TIFFPixelData):

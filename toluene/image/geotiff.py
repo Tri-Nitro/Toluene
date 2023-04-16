@@ -30,20 +30,3 @@ class GeoTIFF(TIFF):
         tags.update(gdal_tags)
 
         super()._parse(tags)
-
-
-geo = GeoTIFF("C:/Users/DTCan/Downloads/x31_f18.tif")
-# for ifd in geo.ifd_directories():
-#     print("{")
-#     for key in ifd:
-#         print(f'\t{key} := {ifd[key]}')
-#     print("}")
-#
-# print(len(geo.pixels()))
-
-from matplotlib import pyplot as plt
-images = geo.pixels()
-for image in images:
-    plt.imshow(image)
-plt.show()
-

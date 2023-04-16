@@ -7,4 +7,8 @@ class PixelData:
 
     """
     def __init__(self, image_data: bytes):
-        pass
+
+        self._image_width = 0
+        self._image_length = 0
+        self._bit_depth = 0
+        self._color_depth = 0
