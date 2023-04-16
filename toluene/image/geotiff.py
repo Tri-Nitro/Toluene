@@ -32,3 +32,7 @@ class GeoTIFF(TIFF):
         tags.update(gdal_tags)
 
         super()._parse(tags)
+
+
+# geotiff = GeoTIFF("E:/GMTED2010/GMTED2010N10E000_075/10n000e_20101117_gmted_mea075.tif")
+# print(geotiff.ifd_directories()[0].keys())

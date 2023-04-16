@@ -6,6 +6,7 @@ from typing import Literal
 
 from toluene.compression.deflate import deflate_compression
 from toluene.image.image import Image
+from toluene.image.striped_tiff import StripedTiff, is_striped_tiff
 from toluene.image.tiff_pixel_data import TIFFPixelData
 from toluene.image.tiled_tiff import TiledTiff, is_tiled_tiff
 from toluene.util.exception import MagicNumberError, UndefinedTagError
@@ -188,3 +189,5 @@ class TIFF(Image):
 def get_tiff_image_type(image_ifd: dict) -> type(TIFFPixelData):
     if is_tiled_tiff(image_ifd):
         return TiledTiff
+    elif is_striped_tiff(image_ifd):
+        return StripedTiff
