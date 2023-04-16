@@ -183,23 +183,6 @@ class TIFF(Image):
 
     def __getitem__(self, item: int = 0):
         return self.image(item)
-        # images = self._pixel_data
-        # tile_width = self._ifd_directories[0]['TileWidth']
-        # retval = []
-        # for image in images:
-        #     raw_pixel_data = image.raw_pixel_data()
-        #     for pixel_data in raw_pixel_data:
-        #         uncompressed_data = deflate_compression.decode(pixel_data)
-        #         row = []
-        #         image_uncompressed_data = []
-        #         for byte in uncompressed_data:
-        #             pixel = [byte]
-        #             row.append(pixel)
-        #             if len(row) == tile_width:
-        #                 image_uncompressed_data.append(row)
-        #                 row = []
-        #         retval.append(np.array(image_uncompressed_data))
-        # return retval
 
 
 def get_tiff_image_type(image_ifd: dict) -> type(TIFFPixelData):

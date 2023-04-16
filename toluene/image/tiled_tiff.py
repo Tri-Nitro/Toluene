@@ -4,6 +4,7 @@ from typing import Literal
 import numpy as np
 
 from toluene.compression.deflate import deflate_compression
+from toluene.image.image_c_library import image_c_library
 from toluene.image.tiff_pixel_data import TIFFPixelData
 
 tiled_tiff_tags = ['TileWidth', 'TileLength', 'TileOffsets', 'TileByteCounts']
@@ -45,6 +46,7 @@ class TiledTiff(TIFFPixelData):
 
     def image(self) -> np.array:
 
+        self._uncompressed_pixel_data = None
         if self._uncompressed_pixel_data is not None:
             return self._uncompressed_pixel_data
 
@@ -55,27 +57,15 @@ class TiledTiff(TIFFPixelData):
         bytes_per_channel = self._bit_depth // 8
         bytes_in_pixel = self._color_depth * bytes_per_channel
 
-        for y in range(self._image_length):
-            row = []
-            for x in range(self._image_width):
-                tile_idx = x // self._tile_width + y // self._tile_length * \
-                           ceil(self._image_width / self._tile_width)
-                pixel_idx = (x % self._tile_width +
-                             (y % self._tile_length) * self._tile_width) * \
-                            bytes_per_channel
-                pixel_data = tiles[tile_idx][pixel_idx:
-                                             pixel_idx + bytes_in_pixel]
-                pixel = []
-                for channel in range(self._color_depth):
-                    channel_start = channel * bytes_per_channel
-                    pixel.append(int.from_bytes(
-                        pixel_data[channel_start:channel_start + bytes_per_channel],
-                        byteorder=self._endian
-                    ))
-                row.append(pixel)
-            self._uncompressed_pixel_data.append(row)
+        raw_data = image_c_library.tiled_tiff_decoder(tiles,
+                                                      self._image_length,
+                                                      self._image_width,
+                                                      self._tile_length,
+                                                      self._tile_width,
+                                                      bytes_per_channel,
+                                                      self._color_depth)
 
-        self._uncompressed_pixel_data = np.array(self._uncompressed_pixel_data)
+        self._uncompressed_pixel_data = raw_data
         return self._uncompressed_pixel_data
 
 

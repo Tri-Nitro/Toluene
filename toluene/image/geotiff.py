@@ -1,4 +1,6 @@
 import logging
+from time import time
+from timeit import timeit
 
 from toluene.image.tiff import TIFF
 
