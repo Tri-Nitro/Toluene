@@ -1,11 +1,16 @@
-from typing import List
-
 from toluene.image.pixel_data import PixelData
 
 
-class TiffPixelData(PixelData):
+class TIFFPixelData(PixelData):
+    """
+    Defines pixel data for TIFFs
 
-    def __init__(self, image_ifd: List[dict], image_data: bytes):
-        self._compression = [ifd['Compression'] for ifd in image_ifd]
-        print(self._compression)
+    Args:
+        image_ifd (dict): The TIFF IFDs containing the tags
+        image_data (bytes): The TIFF file data or stream data
+    """
+
+    def __init__(self, image_ifd: dict, image_data: bytes):
         super().__init__(image_data)
+
+        self._compressions = image_ifd['Compression']

@@ -1,33 +1,41 @@
-from typing import List
+from toluene.image.tiff_pixel_data import TIFFPixelData
 
-from toluene.image.tiff_pixel_data import TiffPixelData
-
-tags = ['TileWidth', 'TileLength', 'TileOffsets', 'TileByteCounts']
+tiled_tiff_tags = ['TileWidth', 'TileLength', 'TileOffsets', 'TileByteCounts']
 
 
-class TiledTiff(TiffPixelData):
+class TiledTiff(TIFFPixelData):
+    """
+    Defines pixel data for Tiled TIFFs
 
-    def __init__(self, image_ifd: List[dict], image_data: bytes):
+    Args:
+        image_ifd (dict): The TIFF IFDs containing the tags
+        image_data (bytes): The TIFF file data or stream data
+    """
+
+    def __init__(self, image_ifd: dict, image_data: bytes):
+
         super().__init__(image_ifd, image_data)
-        self.__raw_pixel_data = []
-        for ifd in image_ifd:
-            raw_pixel_data_for_ifd = []
-            tile_offsets = ifd['TileOffsets']
-            tile_byte_counts = ifd['TileByteCounts']
-            if isinstance(tile_offsets, list):
-                for idx in range(len(tile_offsets)):
-                    offset = tile_offsets[idx]
-                    byte_count = tile_byte_counts[idx]
-                    raw_pixel_data_for_ifd.append(image_data[offset:offset + byte_count])
-            else:
-                offset = tile_offsets
-                byte_count = tile_byte_counts
-                raw_pixel_data_for_ifd.append(image_data[offset:offset + byte_count])
-            self.__raw_pixel_data.append(raw_pixel_data_for_ifd)
 
-    def get_pixel_data(self):
-        return self.__raw_pixel_data[0]
+        tile_width = image_ifd['TileWidth']
+        tile_length = image_ifd['TileLength']
+        tile_offsets = image_ifd['TileOffsets']
+        tile_byte_counts = image_ifd['TileByteCounts']
+
+        self._raw_pixel_data = []
+        if isinstance(tile_offsets, list):
+
+            for idx in range(len(tile_offsets)):
+                tile_offset = tile_offsets[idx]
+                tile_byte_count = tile_byte_counts[idx]
+                self._raw_pixel_data.append(
+                    image_data[tile_offset:tile_offset + tile_byte_count])
+        else:
+            self._raw_pixel_data.append(
+                image_data[tile_offsets:tile_offsets+tile_byte_counts])
+
+    def raw_pixel_data(self):
+        return self._raw_pixel_data
 
 
-def is_tiled_tiff(image_tags: dict) -> bool:
-    return all(tag in image_tags for tag in tags)
+def is_tiled_tiff(image_ifd: dict) -> bool:
+    return all(tag in image_ifd for tag in tiled_tiff_tags)

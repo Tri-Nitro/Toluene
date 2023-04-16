@@ -14,7 +14,9 @@ class Image:
 
         logger.debug(f'Initializing Image({file})')
 
-        self._image_data = None
+        self._image_file = None
+        self._pixel_data = None
+
         if file is not None:
             self.open(file)
 
@@ -25,7 +27,7 @@ class Image:
         logger.debug(f'Entering Image.open({file})')
 
         with open(file, mode='rb') as image_file:
-            self._image_data = image_file.read()
+            self._image_file = image_file.read()
         self._parse()
 
     def _parse(self):
