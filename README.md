@@ -25,4 +25,4 @@ your systems search path `PATH` in Windows or `LD_LIBRARY_PATH` on UNIX systems.
 
 ## Documentation
 
-Documentation can be found on our read-the-docs page at [nitro-toluene.org](nitro-toluene.org)
+Documentation can be found on our read-the-docs page at [https://nitro-toluene.org](https://nitro-toluene.org)
