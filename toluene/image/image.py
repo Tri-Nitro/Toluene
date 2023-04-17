@@ -23,6 +23,12 @@ class Image:
         logger.debug(f'Finished Initializing Image')
 
     def open(self, file: str):
+        """
+        Opens an image file and parses it using the subclass parser.
+
+        Args:
+            file (str): The input file.
+        """
 
         logger.debug(f'Entering Image.open({file})')
 

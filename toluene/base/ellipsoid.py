@@ -1,6 +1,6 @@
 import logging
 import math
-from math import radians, sin, sqrt
+from math import sin, sqrt
 
 from toluene.util.exception import LatitudeOutOfRange
 

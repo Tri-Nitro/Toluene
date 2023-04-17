@@ -22,7 +22,6 @@ class ECEF:
     """
 
     def __init__(self, x: float = 0.0, y: float = 0.0, z: float = 0.0, ellipsoid: Ellipsoid = wgs_84_ellipsoid):
-
         logger.debug(f'Initializing ECEF({x}, {y}, {z}, {ellipsoid})')
 
         self.x = x
@@ -79,7 +78,6 @@ class LLA:
 
     def __init__(self, latitude: float = None, longitude: float = None, altitude: float = 0.0,
                  ellipsoid: Ellipsoid = wgs_84_ellipsoid):
-
         logger.debug(f'Initializing LLA({latitude}, {longitude}, {altitude}, {ellipsoid})')
 
         self.latitude = latitude
@@ -122,6 +120,19 @@ class LLA:
 
 def ecef_from_lla(latitude: float, longitude: float, altitude: float = 0.0,
                   ellipsoid: Ellipsoid = wgs_84_ellipsoid) -> ECEF:
+    """
+    Static version of ECEF to geodetic coordinates.
+
+    Args:
+        latitude (float): The input latitude.
+        longitude (float): The input longitude.
+        altitude (float): The input altitude (Defaults to 0 meters).
+        ellipsoid (toluene.base.ellipsoid.Ellipsoid): The input ellipsoid
+            (Defaults to wgs84).
+
+    Returns:
+        ECEF object of equivalent input.
+    """
     semi_major_axis = ellipsoid.semi_major_axis()
     semi_minor_axis = ellipsoid.semi_minor_axis()
 
@@ -135,10 +146,24 @@ def ecef_from_lla(latitude: float, longitude: float, altitude: float = 0.0,
     return ECEF(x, y, z, ellipsoid)
 
 
-def lla_from_ecef(x: float, y: float, z: float, ellipsoid: Ellipsoid = wgs_84_ellipsoid) -> LLA:
+def lla_from_ecef(x: float, y: float, z: float,
+                  ellipsoid: Ellipsoid = wgs_84_ellipsoid) -> LLA:
+    """
+
+    Args:
+        x (float): The input displacement in the x-axis.
+        y (float): The input displacement in the y-axis.
+        z (float): The input displacement in the z-axis.
+        ellipsoid (toluene.base.ellipsoid.Ellipsoid): The input ellipsoid
+            (Defaults to wgs84).
+
+    Returns:
+         LLA object of equivalent input.
+    """
     if x == 0 and y == 0:
         x = 0.000000001
-    e_numerator = ellipsoid.semi_major_axis() ** 2 - ellipsoid.semi_minor_axis() ** 2
+    e_numerator = ellipsoid.semi_major_axis() ** 2 - \
+                  ellipsoid.semi_minor_axis() ** 2
     e_2 = e_numerator / ellipsoid.semi_major_axis() ** 2
     e_r2 = e_numerator / ellipsoid.semi_minor_axis() ** 2
     p = sqrt(x * x + y * y)
@@ -151,14 +176,17 @@ def lla_from_ecef(x: float, y: float, z: float, ellipsoid: Ellipsoid = wgs_84_el
     big_q = sqrt(1 + 2 * e_2 * e_2 * big_p)
     r_0 = ((-1 * big_p * e_2 * p) / (1 + big_q)) + \
           sqrt((ellipsoid.semi_major_axis() ** 2 / 2) * (1 + 1 / big_q) - (
-                  (big_p * (1 - e_2) * z * z) / (big_q * (1 + big_q))) - (big_p * p * p) / 2)
+                  (big_p * (1 - e_2) * z * z) / (big_q * (1 + big_q))) -
+               (big_p * p * p) / 2)
     p_e_2_r_0 = p - e_2 * r_0
     big_u = sqrt(p_e_2_r_0 * p_e_2_r_0 + z * z)
     big_v = sqrt(p_e_2_r_0 * p_e_2_r_0 + (1 - e_2) * z * z)
-    z_0 = (ellipsoid.semi_minor_axis() ** 2 * z) / (ellipsoid.semi_major_axis() * big_v)
+    z_0 = (ellipsoid.semi_minor_axis() ** 2 * z) / \
+          (ellipsoid.semi_major_axis() * big_v)
 
     latitude = degrees(atan((z + (e_r2 * z_0)) / p))
     longitude = degrees(atan2(y, x))
-    altitude = big_u * (1 - (ellipsoid.semi_minor_axis() ** 2) / (ellipsoid.semi_major_axis() * big_v))
+    altitude = big_u * (1 - (ellipsoid.semi_minor_axis() ** 2) /
+                        (ellipsoid.semi_major_axis() * big_v))
 
     return LLA(latitude, longitude, altitude, ellipsoid)

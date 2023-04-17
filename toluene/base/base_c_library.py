@@ -118,6 +118,9 @@ class BaseCLibrary(CLibrary):
 
 
 try:
+    """
+    Singleton instance of BaseCLibrary
+    """
     base_c_library = BaseCLibrary()
 except CLibraryNotFound:
     pass
