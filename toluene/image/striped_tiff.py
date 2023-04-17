@@ -1,10 +1,11 @@
+import logging
 from typing import Literal
 
 import numpy as np
 
-from toluene.compression.deflate import deflate_compression
-from toluene.image.image_c_library import image_c_library
 from toluene.image.tiff_pixel_data import TIFFPixelData
+
+logger = logging.getLogger('toluene.image.striped_tiff')
 
 striped_tiff_tags = ['RowsPerStripe', 'StripByteCount']
 

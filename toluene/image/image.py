@@ -41,6 +41,6 @@ class Image:
         Pure Virtual method for parsing an image stream or file.
 
         Raises:
-            :raise: ``NotImplementedError``
+            ``NotImplementedError``
         """
         raise NotImplementedError()
