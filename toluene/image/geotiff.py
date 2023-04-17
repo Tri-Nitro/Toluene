@@ -28,7 +28,7 @@ class GeoTIFF(TIFF):
     Defines a GeoTIFF image object.
 
     Args:
-        file (str): file of the GeoTIFF.
+        :param file: file of the GeoTIFF.
     """
     def __init__(self, file: str = None):
         logger.debug(f'Initializing GeoTIFF({file})')
@@ -40,7 +40,7 @@ class GeoTIFF(TIFF):
         Parses the GeoTIFF tags
 
         Args:
-            tags (Dict[int,str]): Optional additional tags not in GeoTIFF v1.0
+            :param tags: Optional additional tags not in GeoTIFF v1.0
         """
 
         logger.debug(f'Entering GeoTIFF._parse({tags})')

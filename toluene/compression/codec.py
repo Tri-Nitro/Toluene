@@ -1,7 +1,5 @@
 import logging
 
-import numpy as np
-
 from toluene.util.exception import ImplementationError
 
 logger = logging.getLogger('toluene.compression.codec')
@@ -15,18 +13,18 @@ class Codec:
         logger.debug(f'Initializing Codec()')
         logger.debug(f'Finished Initializing Codec')
 
-    def decode(self, data: bytes) -> np.array:
+    def decode(self, data: bytes) -> bytes:
         """
         Pure virtual method for decoding bytes
 
         Args:
-            data (bytes): The data being decoded
+            :param data: The data being decoded
 
         Raises:
-            toluene.util.exception.ImplementationError
+            ``toluene.util.exception.ImplementationError``
 
         Returns:
-            numpy.array of the decoded data
+            :return: ``bytes`` of the decoded data
         """
 
         logger.debug(f'Entering Codec.decode(bytes of length - {len(bytes)})')

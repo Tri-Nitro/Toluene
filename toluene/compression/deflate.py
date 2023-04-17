@@ -21,13 +21,14 @@ class Deflate(Codec):
         Inflates an Adobe Deflated stream.
 
         Args:
-            data (bytes): The deflated input data.
+            :param data: The deflated input data.
 
         Returns:
-            bytes of the inflated data.
+            :return: ``bytes`` of the inflated data.
         """
 
-        logger.debug(f'Entering Deflate.decode(bytes of length - {len(bytes)})')
+        logger.debug(f'Entering Deflate.decode('
+                     f'bytes of length - {len(bytes)})')
 
         decompress = zlib.decompressobj(
             zlib.MAX_WBITS

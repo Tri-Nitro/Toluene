@@ -8,7 +8,7 @@ class Image:
     Defines pixel data formats from files
 
     Args:
-        file (str): The file being read in.
+        :param file: The file being read in.
     """
     def __init__(self, file: str = None):
 
@@ -27,7 +27,7 @@ class Image:
         Opens an image file and parses it using the subclass parser.
 
         Args:
-            file (str): The input file.
+            :param file: The input file.
         """
 
         logger.debug(f'Entering Image.open({file})')
@@ -37,4 +37,10 @@ class Image:
         self._parse()
 
     def _parse(self):
+        """
+        Pure Virtual method for parsing an image stream or file.
+
+        Raises:
+            :raise: ``NotImplementedError``
+        """
         raise NotImplementedError()
