@@ -53,7 +53,7 @@ class ImageCLibrary(CLibrary):
             :return: a numpy array with the dimensions of [image_length,
                 image_height,color_depth]
         """
-        logger.debug(f'Entering ImageCLibrary(bytesSize{len(bytes)}, '
+        logger.debug(f'Entering ImageCLibrary(bytes, '
                      f'{image_length}, {image_width}, {tile_length}, '
                      f'{tile_width}, {bytes_per_channel}, {color_depth})')
 

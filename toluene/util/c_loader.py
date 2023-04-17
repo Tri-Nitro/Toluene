@@ -19,7 +19,10 @@ class CLibrary:
         elif os.name == 'posix':
             self.__dynamic_library_extension = '.so'
             self.__static_library_extension = '.a'
-            self.__install_path = os.environ['LD_LIBRARY_PATH']
+            try:
+                self.__install_path = os.environ['LD_LIBRARY_PATH']
+            except KeyError:
+                self.__install_path = ''
             self.__file_separator = ':'
 
         if library_name is not None:

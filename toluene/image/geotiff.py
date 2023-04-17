@@ -5,23 +5,21 @@ from toluene.image.tiff import TIFF
 
 logger = logging.getLogger('toluene.image.geotiff')
 
-
-"""
-tags for GeoTIFFs v1.0
-"""
 geotiff_1_0_tags = {
     33550: 'ModelPixelScaleTag', 33922: 'ModelTiepointTag',
     34264: 'ModelTransformationTag', 34735: 'GeoKeyDirectoryTag',
     34736: 'GeoDoubleParamsTag', 34737: 'GeoAsciiParamsTag'
 }
+"""
+tags for GeoTIFFs v1.0
+"""
 
-"""
-Tags for GDAL methods
-"""
 gdal_tags = {
     42112: 'GDAL_METADATA', 42113: 'GDAL_NODATA'
 }
-
+"""
+Tags for GDAL methods
+"""
 
 class GeoTIFF(TIFF):
     """

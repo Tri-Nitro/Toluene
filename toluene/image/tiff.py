@@ -4,43 +4,90 @@ import numpy as np
 from numpy import float32, float64, frombuffer
 from typing import Literal
 
-from toluene.compression.deflate import deflate_compression
 from toluene.image.image import Image
-from toluene.image.striped_tiff import StripedTiff, is_striped_tiff
+from toluene.image.striped_tiff import StripedTIFF, is_striped_tiff
 from toluene.image.tiff_pixel_data import TIFFPixelData
-from toluene.image.tiled_tiff import TiledTiff, is_tiled_tiff
+from toluene.image.tiled_tiff import TiledTIFF, is_tiled_tiff
 from toluene.util.exception import MagicNumberError, UndefinedTagError
 
 logger = logging.getLogger('toluene.image.tiff')
 
 
 def rationalize(value: bytes, byte_order: Literal['little', 'big']) -> float:
+    """
+    Converts bytes into a TIFF rational.
+
+    Args:
+        :param value: bytes of the tiff stream.
+        :param byte_order: byte order of the tiff stream.
+
+    Returns:
+        :return: The float value of the rational.
+    """
     ret = int.from_bytes(value[:4], byte_order) \
           / int.from_bytes(value[4:], byte_order)
     return ret
 
 
 def unpack_float(value: bytes, byte_order: Literal['little', 'big']) -> float:
+    """
+    Converts bytes into a TIFF float.
+
+    Args:
+        :param value: bytes of the tiff stream.
+        :param byte_order: byte order of the tiff stream.
+
+    Returns:
+        :return: The float value of the float.
+    """
     return frombuffer(value, dtype=float32)
 
 
 def unpack_double(value: bytes, byte_order: Literal['little', 'big']) -> float:
+    """
+    Converts bytes into a TIFF double.
+
+    Args:
+        :param value: bytes of the tiff stream.
+        :param byte_order: byte order of the tiff stream.
+
+    Returns:
+        :return: The float value of the double.
+    """
     return frombuffer(value, dtype=float64)
 
 
 def create_string(value: bytes, byte_order: Literal['little', 'big']) -> str:
+    """
+    Converts bytes into a TIFF string.
+
+    Args:
+        :param value: bytes of the tiff stream.
+        :param byte_order: byte order of the tiff stream.
+
+    Returns:
+        :return: The str value of the string
+    """
     return str(value)
 
 
 tiff_ifd_entry_type_length = {
     1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8
 }
+"""
+Conversion between the TIFF IFD entry type number and the size in bytes of the
+    value.
+"""
 
 tiff_ifd_entry_value_convert_function = {
     1: int.from_bytes, 2: create_string, 3: int.from_bytes, 4: int.from_bytes,
     5: rationalize, 6: create_string, 7: create_string, 8: int.from_bytes,
     9: int.from_bytes, 10: rationalize, 11: unpack_float, 12: unpack_double
 }
+"""
+Conversion between the TIFF IFD entry type and the function to read in the
+    type.
+"""
 
 baseline_tags = {
     254: 'NewSubfileType', 255: 'SubfileType', 256: 'ImageWidth',
@@ -56,6 +103,9 @@ baseline_tags = {
     316: 'HostComputer', 320: 'ColorMap', 338: 'ExtraSamples',
     33432: 'Copyright'
 }
+"""
+Conversion between the TIFF tag number and the name of the Tag for baseline.
+"""
 
 extended_tags = {
     269: 'DocumentName', 285: 'PageName', 286: 'XPosition', 287: 'YPosition',
@@ -70,9 +120,14 @@ extended_tags = {
     343: 'ClipPath', 344: 'XClipPathUnits', 345: 'YClipPathUnits',
     346: 'Indexed'
 }
+"""
+Conversion between the TIFF tag number and the name of the Tag for extended.
+"""
 
 basic_tags = {}
-
+"""
+Tags for TIFF v6.0
+"""
 basic_tags.update(baseline_tags)
 basic_tags.update(extended_tags)
 
@@ -82,15 +137,12 @@ class TIFF(Image):
     Defines a TIFF image.
 
     Args:
-        file (str): The tiff file path.
+        :param file: The tiff file path.
     """
 
     def __init__(self, file: str = None):
-
         logger.debug(f'Initializing TIFF({file})')
-
         super().__init__(file)
-
         logger.debug(f'Finished Initializing TIFF')
 
     def _parse(self, tags=None):
@@ -98,7 +150,8 @@ class TIFF(Image):
         Overwritten Image._parse() loads the image header into memory.
 
         Raises:
-            UndefinedTagError
+            ``toluene.util.exception.MagicNumberError``
+            ``toluene.util.exception.UndefinedTagError``
         """
 
         logger.debug(f'Entering TIFF._parse({tags})')
@@ -175,19 +228,59 @@ class TIFF(Image):
                             for ifd in self._ifd_directories]
 
     def ifd_directories(self):
+
+        logger.debug(f'Entering TIFF.ifd_directories()')
+
         return self._ifd_directories
 
-    def image(self, idx: int = 0):
+    def image(self, idx: int = 0) -> np.array:
+        """
+        Decompresses and gets the image of the given index.
+
+        Args:
+            :param idx: The ifd directory index of the image. 0 being the
+                first.
+
+        Returns:
+            :return: A numpy array containing the image.
+        """
+
+        logger.debug(f'Entering TIFF.image({idx})')
+
         if idx > len(self._pixel_data):
             raise IndexError
         return self._pixel_data[idx].image()
 
-    def __getitem__(self, item: int = 0):
+    def __getitem__(self, item: int = 0) -> np.array:
+        """
+        Gets the image at the given IFD index.
+
+        Args:
+            :param item: The IFD index.
+
+        Returns:
+            :return: The numpy array of the image.
+        """
+
+        logger.debug(f'Entering TIFF.__getitem__({item})')
+
         return self.image(item)
 
 
 def get_tiff_image_type(image_ifd: dict) -> type(TIFFPixelData):
+    """
+    Gets the type of pixel data contained in the tiff
+
+    Args:
+        :param image_ifd: The images IFD.
+
+    Returns:
+        :return: The type of TIFF pixel data.
+    """
+
+    logger.debug(f'Entering get_tiff_image_type({image_ifd})')
+
     if is_tiled_tiff(image_ifd):
-        return TiledTiff
+        return TiledTIFF
     elif is_striped_tiff(image_ifd):
-        return StripedTiff
+        return StripedTIFF

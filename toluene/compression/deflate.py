@@ -27,8 +27,7 @@ class Deflate(Codec):
             :return: ``bytes`` of the inflated data.
         """
 
-        logger.debug(f'Entering Deflate.decode('
-                     f'bytes of length - {len(bytes)})')
+        logger.debug(f'Entering Deflate.decode()')
 
         decompress = zlib.decompressobj(
             zlib.MAX_WBITS
