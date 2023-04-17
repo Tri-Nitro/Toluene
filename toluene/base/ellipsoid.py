@@ -9,13 +9,14 @@ logger = logging.getLogger('toluene.base.ellipsoid')
 
 class Ellipsoid:
     """
-    Defines an Ellipsoid using the semi-major axis and the inverse flattening factor.
-    There is also a definition for the epsg number.
+    Defines an Ellipsoid using the semi-major axis and the inverse flattening
+    factor. There is also a definition for the epsg number.
 
     Args:
-        semi_major_axis (float): the semi-major axis of the ellipsoid.
-        inverse_flattening (float): the inverse flattening factor of the ellipsoid.
-        epsg (int): The EPSG number that defines the ellipsoid.
+        :param semi_major_axis: the semi-major axis of the ellipsoid.
+        :param inverse_flattening: the inverse flattening factor of the
+            ellipsoid.
+        :param epsg: The EPSG number that defines the ellipsoid.
     """
 
     def __init__(self, semi_major_axis: float, inverse_flattening: float, epsg: int = None):
@@ -44,13 +45,13 @@ class Ellipsoid:
         Using the defined ellipsoid calculates the radius of the ellipsoid.
 
         Args:
-            latitude (float): The latitude in which the desired radius is to be given.
+            :param latitude: The latitude in which the desired radius is to be given.
 
         Raises:
-            toluene.util.exception.LatitudeOutOfRange
+            ``toluene.util.exception.LatitudeOutOfRange``
 
         Returns:
-            The radius at the given latitude.
+            :return: The radius at the given latitude.
         """
 
         logger.debug(f'Entering Ellipsoid.ellipsoid_radius({latitude})')
@@ -67,7 +68,7 @@ class Ellipsoid:
     def semi_major_axis(self) -> float:
         """
         Returns:
-            The semi-major axis of the ellipsoid.
+            :return: The semi-major axis of the ellipsoid.
         """
 
         logger.debug(f'Entering Ellipsoid.semi_major_axis()')
@@ -77,7 +78,7 @@ class Ellipsoid:
     def semi_minor_axis(self) -> float:
         """
         Returns:
-            The semi-minor axis of the ellipsoid.
+            :return: The semi-minor axis of the ellipsoid.
         """
 
         logger.debug(f'Entering Ellipsoid.semi_minor_axis()')
@@ -87,7 +88,7 @@ class Ellipsoid:
     def flattening(self) -> float:
         """
         Returns:
-            The flattening factor of the ellipsoid.
+            :return: The flattening factor of the ellipsoid.
         """
 
         logger.debug(f'Entering Ellipsoid.flattening()')
@@ -97,7 +98,7 @@ class Ellipsoid:
     def epsg(self) -> int:
         """
         Returns:
-            The EPSG number of the ellipsoid.
+            :return: The EPSG number of the ellipsoid.
         """
 
         logger.debug(f'Entering Ellipsoid.epsg()')
@@ -108,13 +109,13 @@ class Ellipsoid:
 # Defined ellipsoids
 
 wgs_66_ellipsoid = Ellipsoid(semi_major_axis=6378145.0, inverse_flattening=298.25, epsg=4890)
-""" WGS66/EPSG:4890 ellipsoid https://epsg.io/4890 """
+""" WGS66/EPSG:4890 ellipsoid `<https://epsg.io/4890>`_ """
 
 wgs_72_ellipsoid = Ellipsoid(semi_major_axis=6378135.0, inverse_flattening=298.26, epsg=4322)
-""" WGS72/EPSG:4322 ellipsoid https://epsg.io/4322 """
+""" WGS72/EPSG:4322 ellipsoid `<https://epsg.io/4322>`_ """
 
 wgs_84_ellipsoid = Ellipsoid(semi_major_axis=6378137.0, inverse_flattening=298.257223563, epsg=4326)
-""" WGS84/EPSG:4326 ellipsoid https://epsg.io/4326 """
+""" WGS84/EPSG:4326 ellipsoid `<https://epsg.io/4326>`_ """
 
 grs_80_ellipsoid = Ellipsoid(semi_major_axis=6378137.0, inverse_flattening=298.257222101, epsg=7019)
-""" GRS80/EPSG:7019 ellipsoid https://epsg.io/7019-ellipsoid """
+""" GRS80/EPSG:7019 ellipsoid `<https://epsg.io/7019-ellipsoid>`_ """

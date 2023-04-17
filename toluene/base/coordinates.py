@@ -15,10 +15,10 @@ class ECEF:
     Defines an ECEF vector to give geocentric coordinates
 
     Args:
-        x (float): The displacement on the X axis.
-        y (float): The displacement on the Y axis.
-        z (float): The displacement on the Z axis.
-        ellipsoid (toluene.base.ellipsoid.Ellipsoid): The ellipsoid the coordinates are in.
+        :param x: The displacement on the X-axis. (Defaults to ``0.0``)
+        :param y: The displacement on the Y-axis. (Defaults to ``0.0``)
+        :param z: The displacement on the Z-axis. (Defaults to ``0.0``)
+        :param ellipsoid: The ellipsoid the coordinates are in.
     """
 
     def __init__(self, x: float = 0.0, y: float = 0.0, z: float = 0.0, ellipsoid: Ellipsoid = wgs_84_ellipsoid):
@@ -42,7 +42,7 @@ class ECEF:
         The ellipsoid the ECEF coordinates are in.
 
         Returns:
-            The ellipsoid object in the ECEF vector
+            :return: The ellipsoid object in the ECEF vector
         """
 
         logger.debug(f'Entering ECEF.ellipsoid()')
@@ -54,8 +54,8 @@ class ECEF:
         Converts the ECEF vector into the approximate LLA coordinates type.
 
         Returns:
-            The approximate LLA coordinates object. It's only an approximation because the height over the ellipsoid is
-            unknown.
+            :return: The approximate LLA coordinates object. It's only an
+                approximation because the height over the ellipsoid is unknown.
         """
 
         logger.debug(f'Entering ECEF.to_lla()')
@@ -70,10 +70,10 @@ class LLA:
     Defines geodetic coordinates, I.E. Latitude, Longitude, Altitude over an ellipsoid.
 
     Args:
-        latitude (float): The latitude in degrees.
-        longitude (float): The longitude in degrees.
-        altitude (float): The altitude in meters.
-        ellipsoid (toluene.base.ellipsoid.Ellipsoid): The ellipsoid the coordinates are in.
+        :param latitude: The latitude in degrees.
+        :param longitude: The longitude in degrees.
+        :param altitude: The altitude.
+        :param ellipsoid: The ellipsoid the coordinates are in.
     """
 
     def __init__(self, latitude: float = None, longitude: float = None, altitude: float = 0.0,
@@ -98,7 +98,7 @@ class LLA:
         The ellipsoid the Geodetic coordinates are in.
 
         Returns:
-            The ellipsoid object in the LLA coordinates
+            :return: The ellipsoid object in the LLA coordinates
         """
 
         logger.debug('Entering LLA.ellipsoid()')
@@ -110,7 +110,7 @@ class LLA:
         Converts the geodetic coordinates into an ECEF vector.
 
         Returns:
-            The equal ECEF vector object.
+            :return: The equal ECEF vector object.
         """
 
         logger.debug('Entering LLA.to_ecef()')
@@ -124,14 +124,13 @@ def ecef_from_lla(latitude: float, longitude: float, altitude: float = 0.0,
     Static version of ECEF to geodetic coordinates.
 
     Args:
-        latitude (float): The input latitude.
-        longitude (float): The input longitude.
-        altitude (float): The input altitude (Defaults to 0 meters).
-        ellipsoid (toluene.base.ellipsoid.Ellipsoid): The input ellipsoid
-            (Defaults to wgs84).
+        :param latitude: The input latitude.
+        :param longitude: The input longitude.
+        :param altitude: The input altitude. (Defaults to ``0.0``)
+        :param ellipsoid: The input ellipsoid. (Defaults to wgs84)
 
     Returns:
-        ECEF object of equivalent input.
+        :return: ECEF object of equivalent input.
     """
     semi_major_axis = ellipsoid.semi_major_axis()
     semi_minor_axis = ellipsoid.semi_minor_axis()
@@ -149,16 +148,16 @@ def ecef_from_lla(latitude: float, longitude: float, altitude: float = 0.0,
 def lla_from_ecef(x: float, y: float, z: float,
                   ellipsoid: Ellipsoid = wgs_84_ellipsoid) -> LLA:
     """
+    Static version geodetic to ECEF coordinates.
 
     Args:
-        x (float): The input displacement in the x-axis.
-        y (float): The input displacement in the y-axis.
-        z (float): The input displacement in the z-axis.
-        ellipsoid (toluene.base.ellipsoid.Ellipsoid): The input ellipsoid
-            (Defaults to wgs84).
+        :param x: The input displacement in the X-axis.
+        :param y: The input displacement in the Y-axis.
+        :param z: The input displacement in the Z-axis.
+        :param ellipsoid: The input ellipsoid. (Defaults to wgs84)
 
     Returns:
-         LLA object of equivalent input.
+         :return: LLA object of equivalent input.
     """
     if x == 0 and y == 0:
         x = 0.000000001
