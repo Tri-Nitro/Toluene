@@ -85,4 +85,15 @@ class TiledTIFF(TIFFPixelData):
 
 
 def is_tiled_tiff(image_ifd: dict) -> bool:
+    """
+    Asserts the image has the tags to be considered a tiled tiff.
+
+    Args:
+        :param image_ifd: IFD of TIFF tags of the image in question.
+
+    Returns:
+        :return: True if the IFD has all the tags required to extract a
+            TiledTIFF from the image data.
+
+    """
     return all(tag in image_ifd for tag in tiled_tiff_tags)
