@@ -8,12 +8,12 @@ def readme():
 
 setup(
     name='toluene',
-    version='0.0.22',
+    version='0.0.23',
     license='MIT',
     description='Python library for geospatial and image processing functions',
     long_description=readme(),
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 1 - Planning',
         'License :: OSI Approved :: MIT License',
         'Operating System :: Microsoft',
         'Operating System :: POSIX',
@@ -29,6 +29,6 @@ setup(
     ],
     test_suite='toluene.test',
     install_requires=[
-        'numpy'
+        'numpy>=1.24.2'
     ],
 )
