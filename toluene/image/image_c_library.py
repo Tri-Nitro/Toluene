@@ -67,7 +67,6 @@ class ImageCLibrary(CLibrary):
 
         retval = np.array(output).reshape((image_length, image_width,
                                            color_depth))
-
         return retval
 
 

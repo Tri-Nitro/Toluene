@@ -4,7 +4,6 @@ from typing import Literal
 
 import numpy as np
 
-from toluene.compression.deflate import deflate_compression
 from toluene.compression.multithreaded_codec_runner import MultiThreadedCodecRunner
 from toluene.image.tiff_pixel_data import TIFFPixelData
 
@@ -65,8 +64,6 @@ class TiledTIFF(TIFFPixelData):
 
         logger.debug(f'Entering TiledTIFF.image()')
 
-        start = time()
-
         self._uncompressed_pixel_data = None
         if self._uncompressed_pixel_data is not None:
             return self._uncompressed_pixel_data
@@ -89,8 +86,6 @@ class TiledTIFF(TIFFPixelData):
                                                       self._color_depth)
 
         self._uncompressed_pixel_data = raw_data
-        end = time()
-        print(f'Decompressing and assembling the image took {end-start}s')
         return self._uncompressed_pixel_data
 
 

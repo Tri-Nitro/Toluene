@@ -2,7 +2,7 @@ import logging
 from typing import Literal
 
 from toluene.compression.codec import Codec
-from toluene.compression.deflate import Deflate, deflate_compression
+from toluene.compression.deflate import deflate_compression
 from toluene.image.pixel_data import PixelData
 
 logger = logging.getLogger('toluene.image.tiff_pixel_data')
