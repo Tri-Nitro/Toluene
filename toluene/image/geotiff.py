@@ -55,6 +55,14 @@ class GeoTIFF(TIFF):
 
 geo = GeoTIFF("/home/dylancannisi/Downloads/LE07_L2SP_147045_20230318_20230413_02_T1_ST_B6.TIF")
 
+
+ifd = geo.ifd_directories()[0]
+for tag in geotiff_1_0_tags:
+    try:
+        print(geotiff_1_0_tags[tag], ifd[geotiff_1_0_tags[tag]])
+    except KeyError:
+        pass
+
 import matplotlib.pyplot as plt
 
 plt.imshow(geo.image(), cmap='gray')
