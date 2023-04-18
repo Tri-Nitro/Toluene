@@ -4,6 +4,8 @@ void tiled_tiff_decoder(int* data, int image_length, int image_width,
                         int tile_length, int tile_width, int bytes_per_channel,
                         int color_depth, int* outdata) {
 
+
+//    memcpy_tiled_tiff_decoder(data, image_length, image_width, tile_length, tile_width, bytes_per_channel, color_depth, outdata);
     int pixel_size = bytes_per_channel*color_depth;
     int flattened_tile_size = tile_length*tile_width*pixel_size;
     int extra_tile_per_row = (image_width%tile_width > 0? 1 : 0);
@@ -14,7 +16,6 @@ void tiled_tiff_decoder(int* data, int image_length, int image_width,
             int tile_idx = x/tile_width + y/tile_length * tiles_per_row;
 
             int tile_pixel_idx = (x%tile_width + (y%tile_length)*tile_width)*pixel_size;
-
             int pixel_idx = tile_idx*flattened_tile_size + tile_pixel_idx;
 
             for(int color = 0; color < color_depth; ++color) {

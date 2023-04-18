@@ -57,6 +57,5 @@ geo = GeoTIFF("/home/dylancannisi/Downloads/LE07_L2SP_147045_20230318_20230413_0
 
 import matplotlib.pyplot as plt
 
-print(geo.ifd_directories())
 plt.imshow(geo.image(), cmap='gray')
 plt.show()

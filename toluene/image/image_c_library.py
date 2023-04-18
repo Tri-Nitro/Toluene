@@ -1,5 +1,4 @@
-from ctypes import POINTER, byref, c_int
-from math import ceil
+from ctypes import POINTER, c_int
 
 import numpy as np
 from typing import List
@@ -66,19 +65,9 @@ class ImageCLibrary(CLibrary):
                                         tile_length, tile_width,
                                         bytes_per_channel, color_depth, output)
 
-        retval = []
+        retval = np.array(output).reshape((image_length, image_width, color_depth))
 
-        for y in range(image_length):
-            row = []
-            for x in range(image_width):
-                pixel_idx = (x + y * image_width) * color_depth
-                pixel = [pixel
-                         for pixel in
-                         output[pixel_idx:pixel_idx+color_depth]]
-                row.append(pixel)
-            retval.append(row)
-
-        return np.array(retval)
+        return retval
 
 
 try:
