@@ -20,9 +20,9 @@ class BaseCLibrary(CLibrary):
 
     def __init__(self):
         logger.debug("Initializing BaseCLibrary")
-        super().__init__('toluene-base')
+        super().__init__('toluene')
         if not self.found_library():
-            logger.warning("Unable to locate toluene-base library.")
+            logger.warning("Unable to locate toluene library.")
             raise CLibraryNotFound()
 
         self.library.ecef_from_lla.argtypes = [c_double, c_double, c_double,

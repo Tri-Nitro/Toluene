@@ -24,5 +24,5 @@ class TIFFPixelData(PixelData):
         self._image_length = image_ifd['ImageLength']
         self._bit_depth = image_ifd['BitsPerSample']
         self._color_depth = image_ifd['SamplesPerPixel']
-        self._compressions = image_ifd['Compression']
+        self._compression = image_ifd['Compression']
         self._endian = byte_order

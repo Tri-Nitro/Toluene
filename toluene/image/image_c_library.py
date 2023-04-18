@@ -20,9 +20,9 @@ class ImageCLibrary(CLibrary):
     """
     def __init__(self):
         logger.debug("Initializing ImageCLibrary")
-        super().__init__('toluene-image')
+        super().__init__('toluene')
         if not self.found_library():
-            logger.warning("Unable to locate toluene-image library.")
+            logger.warning("Unable to locate toluene library.")
             raise CLibraryNotFound()
 
         self.library.tiled_tiff_decoder.argtypes = [POINTER(c_int), c_int,

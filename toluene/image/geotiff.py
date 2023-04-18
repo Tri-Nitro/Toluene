@@ -21,6 +21,7 @@ gdal_tags = {
 Tags for GDAL methods
 """
 
+
 class GeoTIFF(TIFF):
     """
     Defines a GeoTIFF image object.
@@ -28,6 +29,7 @@ class GeoTIFF(TIFF):
     Args:
         :param file: file of the GeoTIFF.
     """
+
     def __init__(self, file: str = None):
         logger.debug(f'Initializing GeoTIFF({file})')
         super().__init__(file)
@@ -49,3 +51,12 @@ class GeoTIFF(TIFF):
         tags.update(gdal_tags)
 
         super()._parse(tags)
+
+
+geo = GeoTIFF("/home/dylancannisi/Downloads/LE07_L2SP_147045_20230318_20230413_02_T1_ST_B6.TIF")
+
+import matplotlib.pyplot as plt
+
+print(geo.ifd_directories())
+plt.imshow(geo.image(), cmap='gray')
+plt.show()
