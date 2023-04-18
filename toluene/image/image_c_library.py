@@ -65,7 +65,8 @@ class ImageCLibrary(CLibrary):
                                         tile_length, tile_width,
                                         bytes_per_channel, color_depth, output)
 
-        retval = np.array(output).reshape((image_length, image_width, color_depth))
+        retval = np.array(output).reshape((image_length, image_width,
+                                           color_depth))
 
         return retval
 
