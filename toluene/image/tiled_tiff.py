@@ -1,10 +1,13 @@
 import logging
+from time import time
 from typing import Literal
 
 import numpy as np
 
 from toluene.compression.deflate import deflate_compression
+from toluene.compression.multithreaded_codec_runner import MultiThreadedCodecRunner
 from toluene.image.tiff_pixel_data import TIFFPixelData
+
 try:
     from toluene.image.image_c_library import image_c_library
 except ImportError:
@@ -62,12 +65,17 @@ class TiledTIFF(TIFFPixelData):
 
         logger.debug(f'Entering TiledTIFF.image()')
 
+        start = time()
+
         self._uncompressed_pixel_data = None
         if self._uncompressed_pixel_data is not None:
             return self._uncompressed_pixel_data
 
-        tiles = [deflate_compression.decode(tile)
-                 for tile in self._raw_pixel_data]
+        threaded_codec = MultiThreadedCodecRunner(self._codec,
+                                                  self._raw_pixel_data,
+                                                  'decode')
+        tiles = threaded_codec.run()
+
         self._uncompressed_pixel_data = []
 
         bytes_per_channel = self._bit_depth // 8
@@ -81,6 +89,8 @@ class TiledTIFF(TIFFPixelData):
                                                       self._color_depth)
 
         self._uncompressed_pixel_data = raw_data
+        end = time()
+        print(f'Decompressing and assembling the image took {end-start}s')
         return self._uncompressed_pixel_data
 
 

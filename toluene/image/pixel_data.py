@@ -12,3 +12,5 @@ class PixelData:
         self._image_length = 0
         self._bit_depth = 0
         self._color_depth = 0
+
+        self._codec = None
