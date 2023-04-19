@@ -53,15 +53,8 @@ class GeoTIFF(TIFF):
         super()._parse(tags)
 
 
-geo = GeoTIFF("C:/Users/DTCan/Downloads/venus2.tif")
+geo = GeoTIFF("C:/Users/DTCan/Downloads/tjpeg.tif")
 
-
-ifd = geo.ifd_directories()[0]
-for tag in geotiff_1_0_tags:
-    try:
-        print(geotiff_1_0_tags[tag], ifd[geotiff_1_0_tags[tag]])
-    except KeyError:
-        pass
 
 import matplotlib.pyplot as plt
 

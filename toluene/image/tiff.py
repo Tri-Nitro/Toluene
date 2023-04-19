@@ -134,7 +134,7 @@ extended_tags = {
     336: 'DotRange', 337: 'TargetPrinter', 339: 'SampleFormat',
     340: 'SMinSampleValue', 341: 'SMaxSampleValue', 342: 'TransferRange',
     343: 'ClipPath', 344: 'XClipPathUnits', 345: 'YClipPathUnits',
-    346: 'Indexed'
+    346: 'Indexed', 347: 'JPEGTables'
 }
 """
 Conversion between the TIFF tag number and the name of the Tag for extended.
@@ -217,13 +217,17 @@ class TIFF(Image):
                         ifd_entry[tags[tag]] = conversion(
                             value_offset[0:value_size], self._byte_order)
                     except KeyError:
-                        raise UndefinedTagError
+                        ifd_entry[tag] = conversion(
+                            value_offset[0:value_size], self._byte_order)
                 else:
                     offset = int.from_bytes(value_offset, self._byte_order)
                     if value_size == 1:
-                        ifd_entry[tags[tag]] = str(
-                            self._image_file[offset:offset + num_of_values],
-                            'UTF-8')
+                        try:
+                            ifd_entry[tags[tag]] = str(
+                                self._image_file[offset:offset + num_of_values],
+                                'UTF-8')
+                        except UnicodeDecodeError:
+                            ifd_entry[tags[tag]] = self._image_file[offset:offset + num_of_values]
                     else:
                         value_list = []
                         for idx in range(num_of_values):
