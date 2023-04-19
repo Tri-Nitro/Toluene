@@ -17,6 +17,7 @@ class ImageCLibrary(CLibrary):
     Raises:
         ``toluene.util.exception.CLibraryNotFound``
     """
+
     def __init__(self):
         logger.debug("Initializing ImageCLibrary")
         super().__init__('toluene')
@@ -34,7 +35,6 @@ class ImageCLibrary(CLibrary):
                            image_width: int, tile_length: int, tile_width: int,
                            bytes_per_channel: int, color_depth: int) \
             -> np.array:
-
         """
         Converts the decompressed byte steam of a tiled tiff into a numpy
             array.
@@ -52,7 +52,7 @@ class ImageCLibrary(CLibrary):
             :return: a numpy array with the dimensions of [image_length,
                 image_height,color_depth]
         """
-        logger.debug(f'Entering ImageCLibrary(bytes, '
+        logger.debug(f'Entering ImageCLibrary.tiled_tiff_decoder(bytes, '
                      f'{image_length}, {image_width}, {tile_length}, '
                      f'{tile_width}, {bytes_per_channel}, {color_depth})')
 
@@ -64,6 +64,41 @@ class ImageCLibrary(CLibrary):
         self.library.tiled_tiff_decoder(data, image_length, image_width,
                                         tile_length, tile_width,
                                         bytes_per_channel, color_depth, output)
+
+        retval = np.array(output).reshape((image_length, image_width,
+                                           color_depth))
+        return retval
+
+    def striped_tiff_decoder(self, data: List[bytes], image_length: int,
+                             image_width: int, bytes_per_channel: int,
+                             color_depth: int) -> np.array:
+        """
+        Converts the decompressed byte steam of a tiled tiff into a numpy
+            array.
+
+        Args:
+            :param data: A list of decompressed tiles in the ``bytes`` format
+            :param image_length: The length of the image. TAG ``'ImageLength'``
+            :param image_width: The width of the image. TAG ``'ImageWidth'``
+            :param bytes_per_channel: The number of bytes per channel.
+            :param color_depth: The number of channels per pixel.
+
+        Returns:
+            :return: a numpy array with the dimensions of [image_length,
+                image_height,color_depth]
+        """
+        logger.debug(f'Entering ImageCLibrary.striped_tiff_decoder(bytes, '
+                     f'{image_length}, {image_width}, '
+                     f'{bytes_per_channel}, {color_depth})')
+
+        data = [byte for bytes_in_data in data for byte in bytes_in_data]
+        data = (c_int * len(data))(*data)
+        output = (c_int *
+                  (image_width * image_length * color_depth))()
+
+        self.library.striped_tiff_decoder(data, image_length, image_width,
+                                          bytes_per_channel, color_depth,
+                                          output)
 
         retval = np.array(output).reshape((image_length, image_width,
                                            color_depth))

@@ -3,6 +3,7 @@ from typing import Literal
 
 from toluene.compression.codec import Codec
 from toluene.compression.deflate import deflate_compression
+from toluene.compression.mock import no_compression
 from toluene.image.pixel_data import PixelData
 
 logger = logging.getLogger('toluene.image.tiff_pixel_data')
@@ -49,5 +50,7 @@ def get_codec(compression: int) -> Codec:
 
     logger.debug(f'Entering get_codec({compression})')
 
-    if compression == 8:
+    if compression == 1:
+        return no_compression
+    elif compression == 8:
         return deflate_compression

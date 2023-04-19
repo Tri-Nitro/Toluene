@@ -57,7 +57,6 @@ geo = GeoTIFF("C:/Users/DTCan/Downloads/venus2.tif")
 
 
 ifd = geo.ifd_directories()[0]
-print(ifd)
 for tag in geotiff_1_0_tags:
     try:
         print(geotiff_1_0_tags[tag], ifd[geotiff_1_0_tags[tag]])

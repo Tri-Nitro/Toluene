@@ -28,3 +28,21 @@ void tiled_tiff_decoder(int* data, int image_length, int image_width,
     }
 
 }
+
+void striped_tiff_decoder(int* data, int image_length, int image_width,
+                          int bytes_per_channel, int color_depth,
+                          int* outdata) {
+
+    int pixel_size = bytes_per_channel*color_depth;
+    int num_pixels = image_length*image_width;
+
+    for(int i = 0; i < num_pixels*color_depth; ++i) {
+        int value = 0;
+        for(int byte = 0; byte < bytes_per_channel; ++byte){
+            value <<= 8;
+            value += data[i*pixel_size+byte];
+        }
+        outdata[i] = value;
+    }
+
+}

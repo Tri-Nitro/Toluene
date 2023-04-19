@@ -9,7 +9,7 @@ from toluene.image.tiff_pixel_data import TIFFPixelData
 
 logger = logging.getLogger('toluene.image.striped_tiff')
 
-striped_tiff_tags = ['RowsPerStripe', 'StripByteCount']
+striped_tiff_tags = ['RowsPerStripe', 'StripOffsets', 'StripByteCount']
 
 
 class StripedTIFF(TIFFPixelData):
@@ -24,10 +24,29 @@ class StripedTIFF(TIFFPixelData):
 
     def __init__(self, image_ifd: dict, image_data: bytes,
                  byte_order: Literal["little", "big"]):
-        logger.debug(f'Initializing StripedTIFF({image_ifd}, '
-                     f'bytesSize{len(image_data)}, {byte_order})')
+
+        logger.debug(f'Initializing StripedTIFF')
+
         super().__init__(image_ifd, image_data, byte_order)
-        logger.debug(f'Finished Initializing StripedTIFF')
+
+        self.__rows_per_stripe = image_ifd['RowsPerStripe']
+
+        self._uncompressed_pixel_data = None
+
+        strip_offsets = image_ifd['StripOffsets']
+        strip_byte_counts = image_ifd['StripByteCount']
+
+        self._raw_pixel_data = []
+        if isinstance(strip_offsets, list):
+
+            for idx in range(len(strip_offsets)):
+                strip_offset = strip_offsets[idx]
+                strip_byte_count = strip_byte_counts[idx]
+                self._raw_pixel_data.append(
+                    image_data[strip_offset:strip_offset + strip_byte_count])
+        else:
+            self._raw_pixel_data.append(
+                image_data[strip_offsets:strip_offsets + strip_byte_counts])
 
     def image(self) -> np.array:
         """
@@ -37,33 +56,29 @@ class StripedTIFF(TIFFPixelData):
             :return: numpy array of the pixel data.
         """
 
-
         logger.debug(f'Entering StripedTIFF.image()')
 
         self._uncompressed_pixel_data = None
         if self._uncompressed_pixel_data is not None:
             return self._uncompressed_pixel_data
 
-        # threaded_codec = MultiThreadedCodecRunner(self._codec,
-        #                                           self._raw_pixel_data,
-        # #                                           'decode')
-        # tiles = threaded_codec.run()
+        threaded_codec = MultiThreadedCodecRunner(self._codec,
+                                                  self._raw_pixel_data,
+                                                  'decode')
+        strips = threaded_codec.run()
 
         self._uncompressed_pixel_data = []
 
         bytes_per_channel = self._bit_depth // 8
-        #
-        # raw_data = image_c_library.tiled_tiff_decoder(tiles,
-        #                                               self._image_length,
-        #                                               self._image_width,
-        #                                               self._tile_length,
-        #                                               self._tile_width,
-        #                                               bytes_per_channel,
-        #                                               self._color_depth)
+
+        raw_data = image_c_library.striped_tiff_decoder(strips,
+                                                        self._image_length,
+                                                        self._image_width,
+                                                        bytes_per_channel,
+                                                        self._color_depth)
 
         self._uncompressed_pixel_data = raw_data
         return self._uncompressed_pixel_data
-        return np.array([])
 
 
 def is_striped_tiff(image_ifd: dict) -> bool:
