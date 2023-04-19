@@ -71,6 +71,22 @@ def create_string(value: bytes, byte_order: Literal['little', 'big']) -> str:
     return str(value)
 
 
+# def signed_short(value: bytes, byte_order: Literal['little', 'big']) -> int:
+#     """
+#     Converts bytes into a TIFF rational.
+#
+#     Args:
+#         :param value: bytes of the tiff stream.
+#         :param byte_order: byte order of the tiff stream.
+#
+#     Returns:
+#         :return: The int value of the short signed int.
+#     """
+#     ret = int.from_bytes(value, byte_order)
+#     ret -= 0b1000000000000000
+#     return ret
+
+
 tiff_ifd_entry_type_length = {
     1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8
 }
@@ -189,6 +205,7 @@ class TIFF(Image):
                     self._image_file[ifd_offset + 4:ifd_offset + 8],
                     self._byte_order)
                 value_offset = self._image_file[ifd_offset + 8:ifd_offset + 12]
+
                 conversion = tiff_ifd_entry_value_convert_function[field_type]
                 value_size = tiff_ifd_entry_type_length[field_type]
                 if num_of_values == 1:
@@ -198,7 +215,7 @@ class TIFF(Image):
                             self._image_file[offset:offset + value_size]
                     try:
                         ifd_entry[tags[tag]] = conversion(
-                            value_offset, self._byte_order)
+                            value_offset[0:value_size], self._byte_order)
                     except KeyError:
                         raise UndefinedTagError
                 else:

@@ -1,6 +1,7 @@
 #ifndef TOLUENE_BASE_H
 #define TOLUENE_BASE_H
 
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 

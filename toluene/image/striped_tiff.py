@@ -3,6 +3,8 @@ from typing import Literal
 
 import numpy as np
 
+from toluene.compression.multithreaded_codec_runner import MultiThreadedCodecRunner
+from toluene.image.image_c_library import image_c_library
 from toluene.image.tiff_pixel_data import TIFFPixelData
 
 logger = logging.getLogger('toluene.image.striped_tiff')
@@ -34,6 +36,33 @@ class StripedTIFF(TIFFPixelData):
         Returns:
             :return: numpy array of the pixel data.
         """
+
+
+        logger.debug(f'Entering StripedTIFF.image()')
+
+        self._uncompressed_pixel_data = None
+        if self._uncompressed_pixel_data is not None:
+            return self._uncompressed_pixel_data
+
+        # threaded_codec = MultiThreadedCodecRunner(self._codec,
+        #                                           self._raw_pixel_data,
+        # #                                           'decode')
+        # tiles = threaded_codec.run()
+
+        self._uncompressed_pixel_data = []
+
+        bytes_per_channel = self._bit_depth // 8
+        #
+        # raw_data = image_c_library.tiled_tiff_decoder(tiles,
+        #                                               self._image_length,
+        #                                               self._image_width,
+        #                                               self._tile_length,
+        #                                               self._tile_width,
+        #                                               bytes_per_channel,
+        #                                               self._color_depth)
+
+        self._uncompressed_pixel_data = raw_data
+        return self._uncompressed_pixel_data
         return np.array([])
 
 

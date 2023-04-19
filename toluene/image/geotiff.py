@@ -53,10 +53,11 @@ class GeoTIFF(TIFF):
         super()._parse(tags)
 
 
-geo = GeoTIFF("/home/dylancannisi/Downloads/LE07_L2SP_147045_20230318_20230413_02_T1_ST_B6.TIF")
+geo = GeoTIFF("C:/Users/DTCan/Downloads/venus2.tif")
 
 
 ifd = geo.ifd_directories()[0]
+print(ifd)
 for tag in geotiff_1_0_tags:
     try:
         print(geotiff_1_0_tags[tag], ifd[geotiff_1_0_tags[tag]])
