@@ -42,8 +42,18 @@ class JPEG(Codec):
         pointer = 0
         while pointer < len(jpeg_table):
             marker = jpeg_table[pointer:pointer + 2]
+            # Huffman Table.
+            if marker == b'\xff\xc4':
+                pointer += 2
+                length = int.from_bytes(jpeg_table[pointer:pointer + 2],
+                                        byteorder='big')
+                assert (pointer + length < len(jpeg_table))
+                pointer += 2
+                self.quantization_table.append(HuffmanTable(
+                    jpeg_table[pointer:pointer + length - 2]))
+                pointer += length - 2
             # Start of jpeg. Useless flag.
-            if marker == b'\xff\xd8':
+            elif marker == b'\xff\xd8':
                 pointer += 2
                 continue
             # End of jpeg. Exit if at end.
@@ -52,14 +62,16 @@ class JPEG(Codec):
                 if pointer != len(jpeg_table):
                     raise JPEGDecodingError()
                 continue
+            # Quantization Table.
             elif marker == b'\xff\xdb':
                 pointer += 2
-                length = int.from_bytes(jpeg_table[pointer:pointer+2],
-                                        byteorder='little')
+                length = int.from_bytes(jpeg_table[pointer:pointer + 2],
+                                        byteorder='big')
+                assert (pointer + length < len(jpeg_table))
                 pointer += 2
                 self.quantization_table.append(QuantizationTable(
-                    jpeg_table[pointer:pointer+length-2]))
-                pointer += length-2
+                    jpeg_table[pointer:pointer + length - 2]))
+                pointer += length - 2
             else:
                 print(marker)
                 raise JPEGDecodingError()
@@ -79,7 +91,8 @@ class JPEG(Codec):
 
         print(data)
 
-        return data
+
+jpeg_compression = JPEG()
 
 
 class QuantizationTable:
@@ -100,5 +113,32 @@ class QuantizationTable:
         Args:
             :param table: The bytes of the table.
         """
-        print(table)
         pass
+
+
+class HuffmanTable:
+    """
+    Defines a JPEG Huffman Table.
+
+    Args:
+        :param table: The bytes of the table.
+    """
+
+    def __init__(self, table: bytes):
+        self.type = None
+
+        self.__read(table)
+
+    def __read(self, table: bytes):
+        """
+        Reads in the huffman table from bytes.
+
+        Args:
+            :param table: The bytes of the table.
+        """
+
+        header = table[0]
+        assert (header & 0xe0 == 0)
+        self.type = header & 0x10
+        self.symbol_lengths = table[1:17]
+        self.symbols = table[17:]

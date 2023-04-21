@@ -53,7 +53,7 @@ class GeoTIFF(TIFF):
         super()._parse(tags)
 
 
-geo = GeoTIFF("/home/dylancannisi/Downloads/tjpeg.tif")
+geo = GeoTIFF("C:/Users/DTCan/Downloads/tjpeg.tif")
 
 # import matplotlib.pyplot as plt
 #
