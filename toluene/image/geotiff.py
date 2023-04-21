@@ -53,10 +53,9 @@ class GeoTIFF(TIFF):
         super()._parse(tags)
 
 
-geo = GeoTIFF("C:/Users/DTCan/Downloads/tjpeg.tif")
+geo = GeoTIFF("/home/dylancannisi/Downloads/tjpeg.tif")
 
-
-import matplotlib.pyplot as plt
-
-plt.imshow(geo.image(), cmap='gray')
-plt.show()
+# import matplotlib.pyplot as plt
+#
+# plt.imshow(geo.image(), cmap='gray')
+# plt.show()

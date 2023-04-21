@@ -30,7 +30,7 @@ class Deflate(Codec):
         logger.debug(f'Entering Deflate.decode()')
 
         decompress = zlib.decompressobj(
-            zlib.MAX_WBITS
+            15
         )
         inflated = decompress.decompress(data)
         inflated += decompress.flush()

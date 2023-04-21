@@ -3,6 +3,7 @@ from typing import Literal
 
 from toluene.compression.codec import Codec
 from toluene.compression.deflate import deflate_compression
+from toluene.compression.jpeg import JPEG
 from toluene.compression.mock import no_compression
 from toluene.image.pixel_data import PixelData
 
@@ -32,25 +33,27 @@ class TIFFPixelData(PixelData):
         self._color_depth = image_ifd['SamplesPerPixel']
         self._compression = image_ifd['Compression']
         self._endian = byte_order
-        self._codec = get_codec(self._compression)
+        self._codec = self._get_codec(image_ifd)
 
         logger.debug(f'Finished Initializing TIFFPixelData()')
 
+    def _get_codec(self, image_ifd: dict) -> Codec:
+        """
+        Determines the codec to use for the compression in the tiff.
 
-def get_codec(compression: int) -> Codec:
-    """
-    Determines the codec to use for the compression in the tiff.
+        Args:
+            :param compression: The compression of the tiff as an int.
 
-    Args:
-        :param compression: The compression of the tiff as an int.
+        Returns:
+            :return: The codec to use on the tiff pixel data.
+        """
 
-    Returns:
-        :return: The codec to use on the tiff pixel data.
-    """
+        logger.debug(f'Entering TIFFPixelData.get_codec({image_ifd})')
 
-    logger.debug(f'Entering get_codec({compression})')
-
-    if compression == 1:
-        return no_compression
-    elif compression == 8:
-        return deflate_compression
+        compression = image_ifd['Compression']
+        if compression == 1:
+            return no_compression
+        elif compression == 7:
+            return JPEG(image_ifd['JPEGTables'])
+        elif compression == 8:
+            return deflate_compression

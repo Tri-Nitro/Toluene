@@ -5,9 +5,23 @@ class CLibraryNotFound(Exception):
     pass
 
 
+class ImplementationError(Exception):
+    """
+    Used when a pure virtual function was not implemented.
+    """
+    pass
+
+
+class JPEGDecodingError(Exception):
+    """
+    Used when an error occurs decoding a JPEG.
+    """
+    pass
+
+
 class LatitudeOutOfRange(Exception):
     """
-    Used when Latitude is out of range, I.E. -90 <= latitude <= 90
+    Used when Latitude is out of range, I.E. -90 <= latitude <= 90.
     """
     pass
 
@@ -15,13 +29,6 @@ class LatitudeOutOfRange(Exception):
 class MagicNumberError(Exception):
     """
     Used when magic number in file doesn't match the specification.
-    """
-    pass
-
-
-class ImplementationError(Exception):
-    """
-    Used when a pure virtual function was not implemented
     """
     pass
 

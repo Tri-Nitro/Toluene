@@ -17,9 +17,9 @@ class StripedTIFF(TIFFPixelData):
     Defines pixel data for Tiled TIFFs
 
     Args:
-        image_ifd (dict): The TIFF IFDs containing the tags
-        image_data (bytes): The TIFF file data or stream data
-        byte_order (Literal["little", "big"]): The byte order of the data
+        :param image_ifd: The TIFF IFDs containing the tags
+        :param image_data: The TIFF file data or stream data
+        :param byte_order: The byte order of the data
     """
 
     def __init__(self, image_ifd: dict, image_data: bytes,

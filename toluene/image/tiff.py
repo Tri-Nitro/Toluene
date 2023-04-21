@@ -71,22 +71,6 @@ def create_string(value: bytes, byte_order: Literal['little', 'big']) -> str:
     return str(value)
 
 
-# def signed_short(value: bytes, byte_order: Literal['little', 'big']) -> int:
-#     """
-#     Converts bytes into a TIFF rational.
-#
-#     Args:
-#         :param value: bytes of the tiff stream.
-#         :param byte_order: byte order of the tiff stream.
-#
-#     Returns:
-#         :return: The int value of the short signed int.
-#     """
-#     ret = int.from_bytes(value, byte_order)
-#     ret -= 0b1000000000000000
-#     return ret
-
-
 tiff_ifd_entry_type_length = {
     1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8
 }

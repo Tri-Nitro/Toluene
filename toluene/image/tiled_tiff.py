@@ -1,5 +1,4 @@
 import logging
-from time import time
 from typing import Literal
 
 import numpy as np
@@ -75,7 +74,10 @@ class TiledTIFF(TIFFPixelData):
 
         self._uncompressed_pixel_data = []
 
-        bytes_per_channel = self._bit_depth // 8
+        try:
+            bytes_per_channel = self._bit_depth // 8
+        except TypeError:
+            bytes_per_channel = self._bit_depth[0] // 8
 
         raw_data = image_c_library.tiled_tiff_decoder(tiles,
                                                       self._image_length,
