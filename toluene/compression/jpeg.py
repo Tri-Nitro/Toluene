@@ -30,6 +30,7 @@ class JPEG(Codec):
         logger.debug(f'Initializing JPEG()')
         super().__init__()
 
+        self.huffman_table = []
         self.quantization_table = []
 
         if jpeg_tables is not None:
@@ -49,7 +50,7 @@ class JPEG(Codec):
                                         byteorder='big')
                 assert (pointer + length < len(jpeg_table))
                 pointer += 2
-                self.quantization_table.append(HuffmanTable(
+                self.huffman_table.append(HuffmanTable(
                     jpeg_table[pointer:pointer + length - 2]))
                 pointer += length - 2
             # Start of jpeg. Useless flag.
@@ -75,6 +76,8 @@ class JPEG(Codec):
             else:
                 print(marker)
                 raise JPEGDecodingError()
+
+        self.huffman_table[0].decode(b'\xbe\xef')
 
     def decode(self, data: bytes) -> bytes:
         """
@@ -142,3 +145,10 @@ class HuffmanTable:
         self.type = header & 0x10
         self.symbol_lengths = table[1:17]
         self.symbols = table[17:]
+
+    def decode(self, data: bytes) -> bytes:
+        pointer = 0
+        current_word = ''
+        while pointer < len(data) * 8:
+            current_word += str((data[pointer // 8] >> (7 - pointer % 8)) & 0b00000001)
+            pointer += 1
