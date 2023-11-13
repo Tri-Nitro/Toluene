@@ -1,0 +1,30 @@
+[build-system]
+requires = [
+    "setuptools>=61.0"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "toluene"
+version = "0.0.0"
+description = "Python library for geospatial and image processing functions"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+classifiers=[
+    'Development Status :: 1 - Planning',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: POSIX',
+    'Programming Language :: C',
+    'Programming Language :: Python :: 3.8',
+    'Topic :: Scientific/Engineering :: GIS',
+    'Topic :: Scientific/Engineering :: Image Processing',
+    'Typing :: Typed'
+]
+dependencies = [
+]
+
+[project.urls]
+homepage = "https://github.com/Tri-Nitro/Toluene"
+documentation = "https://nitro-toluene.org/"
+repository = "https://github.com/Tri-Nitro/Toluene"
