@@ -4,8 +4,8 @@ import logging
 from math import atan, atan2, cos, degrees, radians, sin, sqrt
 from numpy import cbrt
 
-import toluene.base.base_c_library as base_c_library
 from toluene.base.ellipsoid import Ellipsoid, wgs_84_ellipsoid
+from toluene_extensions.base_extensions import lla_from_ecef
 
 logger = logging.getLogger('toluene.base.coordinates')
 
@@ -76,11 +76,9 @@ class ECEF:
 
         logger.debug(f'Entering ECEF.to_lla()')
 
-        if not base_c_library.loaded:
-            return lla_from_ecef(self.x, self.y, self.z, self.__ellipsoid)
-
+        print(self.x, self.y, self.z, self.__ellipsoid)
         # Faster in C than Python
-        latitude, longitude, altitude = base_c_library.BaseCLibrary.lla_from_ecef(self.x, self.y, self.z, self.__ellipsoid)
+        latitude, longitude, altitude = lla_from_ecef(self.x, self.y, self.z, self.__ellipsoid)
         return LLA(latitude, longitude, altitude, self.__ellipsoid)
 
 
@@ -181,7 +179,7 @@ def ecef_from_lla(latitude: float, longitude: float, altitude: float = 0.0,
     return ECEF(x, y, z, ellipsoid)
 
 
-def lla_from_ecef(x: float, y: float, z: float,
+def python_lla_from_ecef(x: float, y: float, z: float,
                   ellipsoid: Ellipsoid = wgs_84_ellipsoid) -> LLA:
     """
     Static version geodetic to ECEF coordinates.
