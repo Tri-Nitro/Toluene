@@ -7,6 +7,28 @@ extern "C"
 #endif
 
 static PyObject *
+ecef_from_lla(PyObject *self, PyObject *args) {
+
+    double semi_major_axis, semi_minor_axis, latitude, longitude, altitude;
+
+    if(!PyArg_ParseTuple(args, "ddddd", &semi_major_axis, &semi_minor_axis, &latitude, &longitude, &altitude)) {
+        return -1;
+    }
+
+    double e_2 = 1 - ((semi_minor_axis*semi_minor_axis)/(semi_major_axis*semi_major_axis));
+    double sin_of_latitude = sin((latitude * M_PI/180));
+    double n_phi = semi_major_axis/(sqrt(1-(e_2 * (sin_of_latitude*sin_of_latitude))));
+
+    double x = (n_phi + altitude) * cos(latitude * M_PI/180) * cos(longitude * M_PI/180);
+    double y = (n_phi + altitude) * cos(latitude * M_PI/180) * sin(longitude * M_PI/180);
+    double z = ((1 - e_2) * n_phi + altitude) * sin(latitude * M_PI/180);
+
+
+    return Py_BuildValue("(ddd)", x, y, z);
+}
+
+
+static PyObject *
 lla_from_ecef(PyObject *self, PyObject *args) {
 
     double semi_major_axis, semi_minor_axis;
@@ -49,7 +71,8 @@ lla_from_ecef(PyObject *self, PyObject *args) {
 
 
 static PyMethodDef tolueneBaseMethods[] = {
-    {"lla_from_ecef", lla_from_ecef, METH_VARARGS, "Convert lla coordinates to ecef using the none recursive method"},
+    {"lla_from_ecef", lla_from_ecef, METH_VARARGS, "Convert ecef coordinates to lla using the none recursive method."},
+    {"ecef_from_lla", ecef_from_lla, METH_VARARGS, "Convert lla coordinates to ecef."},
     {NULL, NULL, 0, NULL}
 };
 

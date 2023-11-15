@@ -13,6 +13,5 @@ class TestCoordinates:
             new = coordinates.to_ecef().to_lla()
             # Just testing to get close enough because pinpoint accuracy isn't really possible
             # It's +/- 10 nanometers off which is super close.
-            print(old-new)
             assert old - new < 0.00000001
 
