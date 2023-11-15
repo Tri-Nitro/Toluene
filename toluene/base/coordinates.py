@@ -76,9 +76,8 @@ class ECEF:
 
         logger.debug(f'Entering ECEF.to_lla()')
 
-        print(self.x, self.y, self.z, self.__ellipsoid)
         # Faster in C than Python
-        latitude, longitude, altitude = lla_from_ecef(self.x, self.y, self.z, self.__ellipsoid)
+        latitude, longitude, altitude = lla_from_ecef(self.__ellipsoid.semi_major_axis(), self.__ellipsoid.semi_minor_axis(), self.x, self.y, self.z)
         return LLA(latitude, longitude, altitude, self.__ellipsoid)
 
 

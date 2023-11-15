@@ -11,10 +11,10 @@ lla_from_ecef(PyObject *self, PyObject *args) {
 
     double semi_major_axis, semi_minor_axis;
     double x, y, z;
+
     if(!PyArg_ParseTuple(args, "ddddd", &semi_major_axis, &semi_minor_axis, &x, &y, &z)) {
         return -1;
     }
-
 
     // Causes a divide by 0 bug because of p if x and y are 0. Just put a little offset so longitude can be set if
     // directly above the pole.
