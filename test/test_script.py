@@ -1,3 +1,5 @@
+import datetime
+
 from toluene_extensions.base_extensions import ecef_from_lla
 from toluene.base.coordinates import LLA
 from toluene.base.ellipsoid import wgs_84_ellipsoid
@@ -27,7 +29,18 @@ from math import sqrt
 # print(gravity(wgs_84_ellipsoid.semi_major_axis()))
 # print(gravity(wgs_84_ellipsoid.semi_minor_axis()))
 
-def precession(t):
-    return 5028.796195*t + 1.1054348*t**2 + 0.00007964*t**3 - 0.000023857*t**4 - 0.0000000383*t**5
 
-print(precession(260))
+from math import sin, cos
+e_0 = 0.409092600601
+
+def precession(t):
+    psi = 5038.481507*t - 1.0790069*t**2 - 0.00114045*t**3 + 0.000132851*t**4
+    chi = 10.556403*t - 2.3814292*t**2 - 0.00121197*t**3 + 0.000170663*t**4
+    return psi*cos(e_0)**2 - chi*cos(e_0) + psi*sin(e_0)**2
+
+print(precession(266)/3600)
+
+from toluene.base.datetime import JulianDateTime
+
+date = JulianDateTime(datetime.datetime(2100, 1, 1, 12,0,0))
+print(date.century())
