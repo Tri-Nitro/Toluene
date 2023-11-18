@@ -1,5 +1,13 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include "nutation_series.h"
+
+#if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -70,9 +78,44 @@ lla_from_ecef(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *
+greenwich_mean_sidereal_time(PyObject *self, PyObject *args) {
+
+    double Dut, H, T;
+
+    if(!PyArg_ParseTuple(args, "ddd", &Dut, &H, &T)) {
+        return -1;
+    }
+
+    Dut = Dut / 86400;
+    H = H / 3600;
+
+    return Py_BuildValue("d", fmod((6.697375 + 0.065707485828 * Dut + 1.0027379 * H + 0.0854103 * T + 0.0000258 * T * T), 24));
+}
+
+
+static PyObject *
+ellipsoid_radius(PyObject *self, PyObject *args) {
+
+    double semi_major_axis, inverse_flattening, latitude;
+
+    if(!PyArg_ParseTuple(args, "ddd", &semi_major_axis, &inverse_flattening, &latitude)) {
+        return -1;
+    }
+
+    double sin_of_latitude = sin(latitude * M_PI/180);
+    double difference_of_flattening = 1 - 1 / inverse_flattening;
+
+    return Py_BuildValue("d", sqrt((semi_major_axis * semi_major_axis) /
+                    (1 + (1 / (difference_of_flattening*difference_of_flattening) - 1) * (sin_of_latitude * sin_of_latitude))));
+}
+
+
 static PyMethodDef tolueneBaseMethods[] = {
     {"lla_from_ecef", lla_from_ecef, METH_VARARGS, "Convert ecef coordinates to lla using the none recursive method."},
     {"ecef_from_lla", ecef_from_lla, METH_VARARGS, "Convert lla coordinates to ecef."},
+    {"greenwich_mean_sidereal_time", greenwich_mean_sidereal_time, METH_VARARGS, "Calculate the greenwich mean sidereal time."},
+    {"ellipsoid_radius", ellipsoid_radius, METH_VARARGS, "Calculate the radius of the ellipsoid at a given latitude."},
     {NULL, NULL, 0, NULL}
 };
 

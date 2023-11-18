@@ -1,8 +1,7 @@
 import logging
-import math
-from math import sin, sqrt
 
 from toluene.util.exception import LatitudeOutOfRange
+from toluene_extensions.base_extensions import ellipsoid_radius
 
 logger = logging.getLogger('toluene.base.ellipsoid')
 
@@ -60,10 +59,7 @@ class Ellipsoid:
             logger.warning(f'Unable to handle Latitudes < -90 or > 90, {latitude} was given')
             raise LatitudeOutOfRange
 
-        latitude = math.radians(latitude)
-
-        return sqrt((self.__semi_major_axis ** 2) /
-                    (1 + (1 / (1 - 1 / self.__inverse_flattening) ** 2 - 1) * (sin(latitude) ** 2)))
+        return ellipsoid_radius(self.__semi_major_axis, self.__inverse_flattening, latitude)
 
     def semi_major_axis(self) -> float:
         """

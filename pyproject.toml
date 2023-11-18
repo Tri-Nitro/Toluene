@@ -22,6 +22,7 @@ classifiers=[
     'Typing :: Typed'
 ]
 dependencies = [
+    'numpy'
 ]
 
 [project.urls]
