@@ -102,12 +102,12 @@ static void compute_iau_coefficients(double tt_seconds, double iau_coefficients[
 
 static void compute_precession_matrix(double iau_coefficients[], double precession_matrix[]) {
 
-    double sin_zeta_a = sin(iau_coefficients[0]/3600.0 * M_PI/180);
-    double cos_zeta_a = cos(iau_coefficients[0]/3600.0 * M_PI/180);
-    double sin_z_a = sin(iau_coefficients[1]/3600.0 * M_PI/180);
-    double cos_z_a = cos(iau_coefficients[1]/3600.0 * M_PI/180);
-    double sin_theta_a = sin(iau_coefficients[2]/3600.0 * M_PI/180);
-    double cos_theta_a = cos(iau_coefficients[2]/3600.0 * M_PI/180);
+    double sin_zeta_a = sin(iau_coefficients[0] * M_PI/648000);
+    double cos_zeta_a = cos(iau_coefficients[0] * M_PI/648000);
+    double sin_z_a = sin(iau_coefficients[1] * M_PI/648000);
+    double cos_z_a = cos(iau_coefficients[1] * M_PI/648000);
+    double sin_theta_a = sin(iau_coefficients[2] * M_PI/648000);
+    double cos_theta_a = cos(iau_coefficients[2] * M_PI/648000);
 
     /* Precession matrix for converting from ECI to ECEF.
      * [cos(z_a)cos(theta_a)cos(zeta_a)-sin(z_a)sin(zeta_a), -cos(z_a)cos(theta_a)sin(zeta_a)-sin(z_a)cos(zeta_a), -cos(z_a)sin(theta_a)]
@@ -136,20 +136,20 @@ static void compute_nutation_arguments(double tt_seconds, double nutation_argume
     double t = tt_seconds / 3155760000.0;
     double nutation_critical_arguments[14];
 
-    nutation_critical_arguments[0] = ((((l_[4])*t+l_[3])*t+l_[2])*t+l_[1])*t+l_[0];
-    nutation_critical_arguments[1] = ((((l_prime[4])*t+l_prime[3])*t+l_prime[2])*t+l_prime[1])*t+l_prime[0];
-    nutation_critical_arguments[2] = ((((f_[4])*t+f_[3])*t+f_[2])*t+f_[1])*t+f_[0];
-    nutation_critical_arguments[3] = ((((d_[4])*t+d_[3])*t+d_[2])*t+d_[1])*t+d_[0];
-    nutation_critical_arguments[4] = ((((omega[4])*t+omega[3])*t+omega[2])*t+omega[1])*t+omega[0];
-    nutation_critical_arguments[5] = l_me[0] + l_me[1]*t;
-    nutation_critical_arguments[6] = l_v[0] + l_v[1]*t;
-    nutation_critical_arguments[7] = l_e[0] + l_e[1]*t;
-    nutation_critical_arguments[8] = l_ma[0] + l_ma[1]*t;
-    nutation_critical_arguments[9] = l_j[0] + l_j[1]*t;
-    nutation_critical_arguments[10] = l_s[0] + l_s[1]*t;
-    nutation_critical_arguments[11] = l_u[0] + l_u[1]*t;
-    nutation_critical_arguments[12] = l_n[0] + l_n[1]*t;
-    nutation_critical_arguments[13] = gen_p[0] + gen_p[1]*t;
+    nutation_critical_arguments[0] = l_me[0] + l_me[1]*t;
+    nutation_critical_arguments[1] = l_v[0] + l_v[1]*t;
+    nutation_critical_arguments[2] = l_e[0] + l_e[1]*t;
+    nutation_critical_arguments[3] = l_ma[0] + l_ma[1]*t;
+    nutation_critical_arguments[4] = l_j[0] + l_j[1]*t;
+    nutation_critical_arguments[5] = l_s[0] + l_s[1]*t;
+    nutation_critical_arguments[6] = l_u[0] + l_u[1]*t;
+    nutation_critical_arguments[7] = l_n[0] + l_n[1]*t;
+    nutation_critical_arguments[8] = gen_p[0] + gen_p[1]*t;
+    nutation_critical_arguments[9] = ((((l_[4])*t+l_[3])*t+l_[2])*t+l_[1])*t+l_[0];
+    nutation_critical_arguments[10] = ((((l_prime[4])*t+l_prime[3])*t+l_prime[2])*t+l_prime[1])*t+l_prime[0];
+    nutation_critical_arguments[11] = ((((f_[4])*t+f_[3])*t+f_[2])*t+f_[1])*t+f_[0];
+    nutation_critical_arguments[12] = ((((d_[4])*t+d_[3])*t+d_[2])*t+d_[1])*t+d_[0];
+    nutation_critical_arguments[13] = ((((omega[4])*t+omega[3])*t+omega[2])*t+omega[1])*t+omega[0];
 
     double ai;
     double sin_ai;
@@ -182,8 +182,8 @@ static void compute_nutation_arguments(double tt_seconds, double nutation_argume
     nutation_arguments[2] = (((((EPSILON_a[5]*t)+EPSILON_a[4])*t+EPSILON_a[3])*t+EPSILON_a[2])*t+EPSILON_a[1])*t+EPSILON_a[0];
     nutation_arguments[1] += nutation_arguments[2];
 
-    nutation_arguments[3] += nutation_arguments[0] * cos(nutation_arguments[2]/3600.0 * M_PI/180) +
-                             0.00000087 * t * sin(nutation_critical_arguments[4]/3600.0 * M_PI/180);
+    nutation_arguments[3] += nutation_arguments[0] * cos(nutation_arguments[2] * M_PI/648000) +
+                             0.00000087 * t * sin(nutation_critical_arguments[13] * M_PI/648000);
 
     return;
 }
@@ -191,12 +191,12 @@ static void compute_nutation_arguments(double tt_seconds, double nutation_argume
 
 static void compute_nutation_matrix(double nutation_arguments[], double nutation_matrix[]) {
 
-    double sin_delta_psi = sin(nutation_arguments[0]/3600.0 * M_PI/180);
-    double cos_delta_psi = cos(nutation_arguments[0]/3600.0 * M_PI/180);
-    double sin_epsilon = sin(nutation_arguments[1]/3600.0 * M_PI/180);
-    double cos_epsilon = cos(nutation_arguments[1]/3600.0 * M_PI/180);
-    double sin_epsilon_a = sin(nutation_arguments[2]/3600.0 * M_PI/180);
-    double cos_epsilon_a = cos(nutation_arguments[2]/3600.0 * M_PI/180);
+    double sin_delta_psi = sin(nutation_arguments[0] * M_PI/648000);
+    double cos_delta_psi = cos(nutation_arguments[0] * M_PI/648000);
+    double sin_epsilon = sin(nutation_arguments[1] * M_PI/648000);
+    double cos_epsilon = cos(nutation_arguments[1] * M_PI/648000);
+    double sin_epsilon_a = sin(nutation_arguments[2] * M_PI/648000);
+    double cos_epsilon_a = cos(nutation_arguments[2] * M_PI/648000);
 
     /* Nutation matrix for converting from ECI to ECEF.
      * [cos(delta_psi), -sin(delta_psi)cos(epsilon), -sin(delta_psi)sin(epsilon)]
@@ -224,8 +224,8 @@ static double lookup_closest_delta_t(double tt_seconds) {
     double best_delta_t = delta_t_list[(delta_t_length-1)*2];
 
     /* Because you're more likely to use coordinates closer to current day than J2000.0 start with end of list
-    /* Technically doesn't matter if more random but can drastically decrease looking through the list if this
-    /* assumption proves right.
+     * Technically doesn't matter if more random but can drastically decrease looking through the list if this
+     * assumption proves right.
     */
     for(int i = delta_t_length-1; i >= 0; --i) {
         if(tt_seconds >= delta_t_list[i*2+1]) {
@@ -238,20 +238,27 @@ static double lookup_closest_delta_t(double tt_seconds) {
 }
 
 
-static void compute_terrestrial_matrix(double tt_seconds, double equation_of_the_equinoxes, double terrestrial_matrix_matrix[]) {
+static void compute_terrestrial_matrix(double tt_seconds, double equation_of_the_equinoxes, double terrestrial_matrix[]) {
 
     double delta_t = lookup_closest_delta_t(tt_seconds);
     double Dut = (tt_seconds-delta_t)/86400.0;
     double delta_t_days = delta_t/86400.0;
 
-    double gmst = fmod((((((gmst_coefficients[5] * Dut) + gmst_coefficients[4]) * Dut + gmst_coefficients[3]) * Dut
+    double gast = fmod((((((gmst_coefficients[5] * Dut) + gmst_coefficients[4]) * Dut + gmst_coefficients[3]) * Dut
                     + gmst_coefficients[2]) * Dut + gmst_coefficients[1]) * Dut + gmst_coefficients[0]
-                    + gmst_coefficients[6] * delta_t, 86400.0);
+                    + gmst_coefficients[6] * delta_t + equation_of_the_equinoxes/15.0, 86400.0);
 
-    double gast = gmst + equation_of_the_equinoxes/15.0;
+    double gast_angle = gast * M_PI/43200.0;
 
-    printf("Equation of the equinoxes: %f\n", equation_of_the_equinoxes);
-    printf("%02d:%02d:%f\n", (int)gast/3600, (int)(gast/60)%60, fmod(gast, 60));
+    terrestrial_matrix[0] = cos(gast_angle);
+    terrestrial_matrix[1] = sin(gast_angle);
+    terrestrial_matrix[2] = 0.0;
+    terrestrial_matrix[3] = -1 * sin(gast_angle);
+    terrestrial_matrix[4] = cos(gast_angle);
+    terrestrial_matrix[5] = 0.0;
+    terrestrial_matrix[6] = 0.0;
+    terrestrial_matrix[7] = 0.0;
+    terrestrial_matrix[8] = 1.0;
 
     return;
 }
@@ -287,6 +294,27 @@ ecef_from_eci(PyObject *self, PyObject *args) {
 
     printf("precession_matrix: %f, %f, %f, %f, %f, %f, %f, %f, %f\n", precession_matrix[0], precession_matrix[1], precession_matrix[2], precession_matrix[3], precession_matrix[4], precession_matrix[5], precession_matrix[6], precession_matrix[7], precession_matrix[8]);
     printf("nutation_matrix: %f, %f, %f, %f, %f, %f, %f, %f, %f\n", nutation_matrix[0], nutation_matrix[1], nutation_matrix[2], nutation_matrix[3], nutation_matrix[4], nutation_matrix[5], nutation_matrix[6], nutation_matrix[7], nutation_matrix[8]);
+    printf("terrestrial_matrix: %f, %f, %f, %f, %f, %f, %f, %f, %f\n", terrestrial_matrix[0], terrestrial_matrix[1], terrestrial_matrix[2], terrestrial_matrix[3], terrestrial_matrix[4], terrestrial_matrix[5], terrestrial_matrix[6], terrestrial_matrix[7], terrestrial_matrix[8]);
+
+    /* Terrestrial rotation of earth from GAST */
+    x = x*terrestrial_matrix[0] + y*terrestrial_matrix[1] + z*terrestrial_matrix[2];
+    y = x*terrestrial_matrix[3] + y*terrestrial_matrix[4] + z*terrestrial_matrix[5];
+    z = x*terrestrial_matrix[6] + y*terrestrial_matrix[7] + z*terrestrial_matrix[8];
+
+    /* Nutation rotation of earth from J2000.0 */
+    x = x*nutation_matrix[0] + y*nutation_matrix[1] + z*nutation_matrix[2];
+    y = x*nutation_matrix[3] + y*nutation_matrix[4] + z*nutation_matrix[5];
+    z = x*nutation_matrix[6] + y*nutation_matrix[7] + z*nutation_matrix[8];
+
+    /* Precession rotation of earth from J2000.0 */
+    x = x*precession_matrix[0] + y*precession_matrix[1] + z*precession_matrix[2];
+    y = x*precession_matrix[3] + y*precession_matrix[4] + z*precession_matrix[5];
+    z = x*precession_matrix[6] + y*precession_matrix[7] + z*precession_matrix[8];
+
+    /* Bias rotation of earth from J2000.0 */
+    x = x*FRAME_BIAS_ROTATION_MATRIX[0] + y*FRAME_BIAS_ROTATION_MATRIX[1] + z*FRAME_BIAS_ROTATION_MATRIX[2];
+    y = x*FRAME_BIAS_ROTATION_MATRIX[3] + y*FRAME_BIAS_ROTATION_MATRIX[4] + z*FRAME_BIAS_ROTATION_MATRIX[5];
+    z = x*FRAME_BIAS_ROTATION_MATRIX[6] + y*FRAME_BIAS_ROTATION_MATRIX[7] + z*FRAME_BIAS_ROTATION_MATRIX[8];
 
     return Py_BuildValue("(ddd)", x, y, z);
 }
