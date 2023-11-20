@@ -297,24 +297,24 @@ ecef_from_eci(PyObject *self, PyObject *args) {
     printf("terrestrial_matrix: %f, %f, %f, %f, %f, %f, %f, %f, %f\n", terrestrial_matrix[0], terrestrial_matrix[1], terrestrial_matrix[2], terrestrial_matrix[3], terrestrial_matrix[4], terrestrial_matrix[5], terrestrial_matrix[6], terrestrial_matrix[7], terrestrial_matrix[8]);
 
     /* Terrestrial rotation of earth from GAST */
-    x = x*terrestrial_matrix[0] + y*terrestrial_matrix[1] + z*terrestrial_matrix[2];
-    y = x*terrestrial_matrix[3] + y*terrestrial_matrix[4] + z*terrestrial_matrix[5];
-    z = x*terrestrial_matrix[6] + y*terrestrial_matrix[7] + z*terrestrial_matrix[8];
+    double x_prime = x*terrestrial_matrix[0] + y*terrestrial_matrix[1] + z*terrestrial_matrix[2];
+    double y_prime = x*terrestrial_matrix[3] + y*terrestrial_matrix[4] + z*terrestrial_matrix[5];
+    double z_prime = x*terrestrial_matrix[6] + y*terrestrial_matrix[7] + z*terrestrial_matrix[8];
 
     /* Nutation rotation of earth from J2000.0 */
-    x = x*nutation_matrix[0] + y*nutation_matrix[1] + z*nutation_matrix[2];
-    y = x*nutation_matrix[3] + y*nutation_matrix[4] + z*nutation_matrix[5];
-    z = x*nutation_matrix[6] + y*nutation_matrix[7] + z*nutation_matrix[8];
+    x = x_prime*nutation_matrix[0] + y_prime*nutation_matrix[1] + z_prime*nutation_matrix[2];
+    y = x_prime*nutation_matrix[3] + y_prime*nutation_matrix[4] + z_prime*nutation_matrix[5];
+    z = x_prime*nutation_matrix[6] + y_prime*nutation_matrix[7] + z_prime*nutation_matrix[8];
 
     /* Precession rotation of earth from J2000.0 */
-    x = x*precession_matrix[0] + y*precession_matrix[1] + z*precession_matrix[2];
-    y = x*precession_matrix[3] + y*precession_matrix[4] + z*precession_matrix[5];
-    z = x*precession_matrix[6] + y*precession_matrix[7] + z*precession_matrix[8];
+    x_prime = x*precession_matrix[0] + y*precession_matrix[1] + z*precession_matrix[2];
+    y_prime = x*precession_matrix[3] + y*precession_matrix[4] + z*precession_matrix[5];
+    z_prime = x*precession_matrix[6] + y*precession_matrix[7] + z*precession_matrix[8];
 
     /* Bias rotation of earth from J2000.0 */
-    x = x*FRAME_BIAS_ROTATION_MATRIX[0] + y*FRAME_BIAS_ROTATION_MATRIX[1] + z*FRAME_BIAS_ROTATION_MATRIX[2];
-    y = x*FRAME_BIAS_ROTATION_MATRIX[3] + y*FRAME_BIAS_ROTATION_MATRIX[4] + z*FRAME_BIAS_ROTATION_MATRIX[5];
-    z = x*FRAME_BIAS_ROTATION_MATRIX[6] + y*FRAME_BIAS_ROTATION_MATRIX[7] + z*FRAME_BIAS_ROTATION_MATRIX[8];
+    x = x_prime*FRAME_BIAS_ROTATION_MATRIX[0] + y_prime*FRAME_BIAS_ROTATION_MATRIX[1] + z_prime*FRAME_BIAS_ROTATION_MATRIX[2];
+    y = x_prime*FRAME_BIAS_ROTATION_MATRIX[3] + y_prime*FRAME_BIAS_ROTATION_MATRIX[4] + z_prime*FRAME_BIAS_ROTATION_MATRIX[5];
+    z = x_prime*FRAME_BIAS_ROTATION_MATRIX[6] + y_prime*FRAME_BIAS_ROTATION_MATRIX[7] + z_prime*FRAME_BIAS_ROTATION_MATRIX[8];
 
     return Py_BuildValue("(ddd)", x, y, z);
 }
