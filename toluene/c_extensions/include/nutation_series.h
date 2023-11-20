@@ -7,9 +7,11 @@
 extern "C" {
 #endif
 
+
 static const int nutation_series_columns = 21;
 static const int nutation_series_rows = 1365;
 
+/* TODO: Make this configurable at runtime */
 // Nutation series rows are in the form:
 // i, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, Si S˙i Ci' Ci C˙i Si'
 static const double nutation_series[] = {
@@ -1381,7 +1383,7 @@ static const double nutation_series[] = {
 };
 
 #ifdef __cplusplus
-}
+}   /* extern "C" */
 #endif
 
-#endif // __NUTATION_SERIES_H__
+#endif /* __NUTATION_SERIES_H__ */
