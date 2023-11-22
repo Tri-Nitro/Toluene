@@ -41,8 +41,8 @@ class Ellipsoid:
         axis, :math:`f` is the flattening factor and :math:`\\phi` is the latitude.
 
         :param latitude: The latitude of the point on the ellipsoid in degrees. Must be between -90 and 90 degrees.
-            -90 is the south pole and 90 is the north pole and is just equal to the semi-minor axis. 0 is the equator and is
-            equal to the semi-major axis.
+            -90 is the south pole and 90 is the north pole and is just equal to the semi-minor axis. 0 is the equator
+            and is equal to the semi-major axis.
         :type latitude: float
         :return: The radius of the ellipsoid at the given latitude in meters.
         :rtype: float
