@@ -16,6 +16,7 @@ release = '0.0.0'
 
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.mathjax",
     "sphinx_c_autodoc",
     "sphinx_rtd_theme",
 ]
