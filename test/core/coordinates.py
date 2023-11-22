@@ -1,4 +1,4 @@
-from toluene.base.coordinates import LLA
+from toluene.core.coordinates import LLA
 import numpy as np
 
 test_lla_coordinates = [LLA(latitude, longitude, altitude) for latitude in np.arange(-90, 90, 6.533242) for longitude in

@@ -1,2 +1,2 @@
-from base.coordinates import TestCoordinates
-from base.ellipsoid import TestEllipsoids
+from core.coordinates import TestCoordinates
+from core.ellipsoid import TestEllipsoids

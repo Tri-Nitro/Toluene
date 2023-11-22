@@ -16,6 +16,18 @@ extern "C"
 {
 #endif
 
+/**
+ * Converts latitude, longitude, and altitude to an ECEF vector.
+ *
+ * @param semi_major_axis: The semi major axis of the ellipsoid.
+ * @param semi_minor_axis: The semi minor axis of the ellipsoid.
+ * @param latitude: The latitude in degrees.
+ * @param longitude: The longitude in degrees.
+ * @param altitude: The altitude in meters.
+ *
+ * @returns The tuple (x, y, z) in meters for the ellipsoid.
+ *
+ */
 static PyObject *
 ecef_from_lla(PyObject *self, PyObject *args) {
 

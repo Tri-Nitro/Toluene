@@ -1,9 +1,9 @@
-base
-====
+modules
+===============
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
-   base
    c_extensions
+   core
    util

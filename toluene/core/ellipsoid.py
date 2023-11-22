@@ -3,7 +3,7 @@ import logging
 from toluene.util.exception import LatitudeOutOfRange
 from toluene_extensions.base_extensions import ellipsoid_radius
 
-logger = logging.getLogger('toluene.base.ellipsoid')
+logger = logging.getLogger('toluene.core.ellipsoid')
 
 
 class Ellipsoid:

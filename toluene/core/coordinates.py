@@ -3,10 +3,10 @@ from __future__ import annotations
 import logging
 from math import cos, radians, sin, sqrt, tan
 
-from toluene.base.ellipsoid import Ellipsoid, wgs_84_ellipsoid
+from toluene.core.ellipsoid import Ellipsoid, wgs_84_ellipsoid
 from toluene_extensions.base_extensions import ecef_from_lla, lla_from_ecef
 
-logger = logging.getLogger('toluene.base.coordinates')
+logger = logging.getLogger('toluene.core.coordinates')
 
 
 class ECEF:

@@ -1,4 +1,4 @@
-from toluene.base import ellipsoid
+from toluene.core import ellipsoid
 
 import numpy as np
 

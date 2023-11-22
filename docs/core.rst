@@ -1,37 +1,37 @@
-base package
+core package
 ============
 
 Submodules
 ----------
 
-base.coordinates module
+core.coordinates module
 -----------------------
 
-.. automodule:: base.coordinates
+.. automodule:: core.coordinates
    :members:
    :undoc-members:
    :show-inheritance:
 
-base.earth module
+core.earth module
 -----------------
 
-.. automodule:: base.earth
+.. automodule:: core.earth
    :members:
    :undoc-members:
    :show-inheritance:
 
-base.ellipsoid module
+core.ellipsoid module
 ---------------------
 
-.. automodule:: base.ellipsoid
+.. automodule:: core.ellipsoid
    :members:
    :undoc-members:
    :show-inheritance:
 
-base.terrestrial\_time module
+core.terrestrial\_time module
 -----------------------------
 
-.. automodule:: base.terrestrial_time
+.. automodule:: core.terrestrial_time
    :members:
    :undoc-members:
    :show-inheritance:
@@ -39,7 +39,7 @@ base.terrestrial\_time module
 Module contents
 ---------------
 
-.. automodule:: base
+.. automodule:: core
    :members:
    :undoc-members:
    :show-inheritance:
