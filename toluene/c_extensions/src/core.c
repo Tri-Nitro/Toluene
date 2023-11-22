@@ -113,7 +113,7 @@ static void compute_precession_matrix(double iau_coefficients[], double precessi
      * [cos(z_a)cos(theta_a)cos(zeta_a)-sin(z_a)sin(zeta_a), -cos(z_a)cos(theta_a)sin(zeta_a)-sin(z_a)cos(zeta_a), -cos(z_a)sin(theta_a)]
      * [sin(z_a)cos(theta_a)cos(zeta_a)+cos(z_a)sin(zeta_a), -sin(z_a)cos(theta_a)sin(zeta_a)+cos(z_a)cos(zeta_a), -sin(z_a)sin(theta_a)]
      * [sin(theta_a)cos(zeta_a), -sin(theta_a)sin(zeta_a), cos(theta_a)]
-     * Look in Explantory Supplement to the Astronomical Almanac 3rd Edition pg 217 for more information.
+     * Look in Explanatory Supplement to the Astronomical Almanac 3rd Edition pg 217 for more information.
      */
 
     precession_matrix[0] = cos_z_a * cos_theta_a * cos_zeta_a -  sin_z_a * sin_zeta_a;
@@ -202,7 +202,7 @@ static void compute_nutation_matrix(double nutation_arguments[], double nutation
      * [cos(delta_psi), -sin(delta_psi)cos(epsilon), -sin(delta_psi)sin(epsilon)]
      * [sin(delta_psi)cos(epsilon)cos(epsilon_a)+cos(delta_psi)sin(epsilon_a), cos(delta_psi)cos(epsilon)cos(epsilon_a)-sin(delta_psi)sin(epsilon_a), -sin(epsilon)cos(epsilon_a)]
      * [sin(delta_psi)cos(epsilon)sin(epsilon_a)-cos(delta_psi)cos(epsilon_a), cos(delta_psi)cos(epsilon)sin(epsilon_a)+sin(delta_psi)cos(epsilon_a), cos(epsilon)cos(epsilon_a)]
-     * Look in Explantory Supplement to the Astronomical Almanac 3rd Edition pg 225 for more information.
+     * Look in Explanatory Supplement to the Astronomical Almanac 3rd Edition pg 225 for more information.
      */
 
     nutation_matrix[0] = cos_delta_psi;
@@ -267,7 +267,7 @@ static void compute_terrestrial_matrix(double tt_seconds, double equation_of_the
 
 
 static PyObject *
-ecef_from_eci(PyObject *self, PyObject *args) {
+eci_from_ecef(PyObject *self, PyObject *args) {
 
     double x, y, z, tt_seconds;
 
@@ -312,9 +312,12 @@ ecef_from_eci(PyObject *self, PyObject *args) {
     z_prime = x*precession_matrix[6] + y*precession_matrix[7] + z*precession_matrix[8];
 
     /* Bias rotation of earth from J2000.0 */
-    x = x_prime*FRAME_BIAS_ROTATION_MATRIX[0] + y_prime*FRAME_BIAS_ROTATION_MATRIX[1] + z_prime*FRAME_BIAS_ROTATION_MATRIX[2];
-    y = x_prime*FRAME_BIAS_ROTATION_MATRIX[3] + y_prime*FRAME_BIAS_ROTATION_MATRIX[4] + z_prime*FRAME_BIAS_ROTATION_MATRIX[5];
-    z = x_prime*FRAME_BIAS_ROTATION_MATRIX[6] + y_prime*FRAME_BIAS_ROTATION_MATRIX[7] + z_prime*FRAME_BIAS_ROTATION_MATRIX[8];
+    x = x_prime*FRAME_BIAS_ROTATION_MATRIX[0] + y_prime*FRAME_BIAS_ROTATION_MATRIX[1]
+        + z_prime*FRAME_BIAS_ROTATION_MATRIX[2];
+    y = x_prime*FRAME_BIAS_ROTATION_MATRIX[3] + y_prime*FRAME_BIAS_ROTATION_MATRIX[4]
+        + z_prime*FRAME_BIAS_ROTATION_MATRIX[5];
+    z = x_prime*FRAME_BIAS_ROTATION_MATRIX[6] + y_prime*FRAME_BIAS_ROTATION_MATRIX[7]
+        + z_prime*FRAME_BIAS_ROTATION_MATRIX[8];
 
     return Py_BuildValue("(ddd)", x, y, z);
 }
@@ -338,25 +341,25 @@ ellipsoid_radius(PyObject *self, PyObject *args) {
 }
 
 
-static PyMethodDef tolueneBaseMethods[] = {
+static PyMethodDef tolueneCoreMethods[] = {
     {"ecef_from_lla", ecef_from_lla, METH_VARARGS, "Convert lla coordinates to ecef."},
     {"lla_from_ecef", lla_from_ecef, METH_VARARGS, "Convert ecef coordinates to lla using the none recursive method."},
-    {"ecef_from_eci", ecef_from_eci, METH_VARARGS, "Convert eci coordinates to ecef."},
+    {"eci_from_ecef", eci_from_ecef, METH_VARARGS, "Convert ecef coordinates to eci."},
     {"ellipsoid_radius", ellipsoid_radius, METH_VARARGS, "Calculate the radius of the ellipsoid at a given latitude."},
     {NULL, NULL, 0, NULL}
 };
 
 
-static struct PyModuleDef base_extensions = {
+static struct PyModuleDef core_extensions = {
     PyModuleDef_HEAD_INIT,
-    "base_extensions",
-    "C Extensions to toluene base class functions",
+    "core_extensions",
+    "C Extensions to toluene core class functions",
     -1,
-    tolueneBaseMethods
+    tolueneCoreMethods
 };
 
-PyMODINIT_FUNC PyInit_base_extensions(void) {
-    return PyModule_Create(&base_extensions);
+PyMODINIT_FUNC PyInit_core_extensions(void) {
+    return PyModule_Create(&core_extensions);
 }
 
 

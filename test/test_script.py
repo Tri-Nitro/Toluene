@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 from toluene.core.coordinates import ECEF
-from toluene.core.terrestrial_time import TerrestrialTimeJ2000
+from toluene.core.time import TerrestrialTimeJ2000
 
 from toluene_extensions.base_extensions import ecef_from_eci
 

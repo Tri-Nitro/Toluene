@@ -28,10 +28,10 @@ core.ellipsoid module
    :undoc-members:
    :show-inheritance:
 
-core.terrestrial\_time module
+core.time module
 -----------------------------
 
-.. automodule:: core.terrestrial_time
+.. automodule:: core.time
    :members:
    :undoc-members:
    :show-inheritance:
