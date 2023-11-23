@@ -58,6 +58,17 @@ class ECEF:
         logger.debug(f'Entering ECEF.time()')
         return self.__time
 
+    def magnitude(self) -> float:
+        """
+        The magnitude of the :class:`ECEF` vector. Simple Pythagorean theorem measurement of the displacement from the
+        origin.
+
+        :return: The magnitude of the :class:`ECEF` vector.
+        :rtype: float
+        """
+        logger.debug(f'Entering ECEF.magnitude()')
+        return (self.x**2 + self.y**2 + self.z**2)**0.5
+
     def to_eci(self) -> ECI:
         """
         :class:`ECI` is incredibly useful when talking about orbiting bodies. Geostationary orbits defined in
@@ -77,11 +88,8 @@ class ECEF:
         :math:`B` being the rotation matrix from the bias of the Earth's axis. This is caused by the Earth's axis
         swaying from J2000.0 in an observalbe way.\n
 
-        More information and where the formula was taken from can be found in Chapter 6 "Precession, Nutation, Polar
-        Motion, and Earth Rotation" ...\n\n
-
-        Urban, S., & Seidelmann, P. K. (2013). Explanatory Supplement to the Astronomical Almanac (3rd ed.).
-        University Science Books.
+        More information and where the formulas were taken from can be found in Chapter 6 "Precession, Nutation, Polar
+        Motion, and Earth Rotation" Explanatory Supplement to the Astronomical Almanac.
 
 
         :return: The equivalent :class:`ECI` vector with relation to x, y, z, and time displacement from J2000.0.
@@ -181,6 +189,17 @@ class ECI:
         logger.debug(f'Entering ECI.time()')
         return self.__time
 
+    def magnitude(self) -> float:
+        """
+        The magnitude of the :class:`ECI` vector. Simple Pythagorean theorem measurement of the displacement from the
+        origin.
+
+        :return: The magnitude of the :class:`ECI` vector.
+        :rtype: float
+        """
+        logger.debug(f'Entering ECI.magnitude()')
+        return (self.x**2 + self.y**2 + self.z**2)**0.5
+
     def to_ecef(self) -> ECEF:
         return ECEF()
 
@@ -240,6 +259,18 @@ class LLA:
         """
         logger.debug('Entering LLA.time()')
         return self.__time
+
+    def to_eci(self) -> ECI:
+        """
+        Converts the :class:`LLA` coordinates to the equivalent :class:`ECI` coordinates. The conversion is done using
+        :class:`ECEF` as an intermediate step. Ensure that both time and ellipsoid are set appropriately to get the
+        correct coordinates.
+
+        :return: The equivalent :class:`ECI` vector with relation to x, y, z, and time displacement from J2000.0.
+        :rtype: :class:`ECI`
+        """
+        logger.debug('Entering LLA.to_eci()')
+        return self.to_ecef().to_eci()
 
     def to_ecef(self) -> ECEF:
         """

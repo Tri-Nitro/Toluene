@@ -1,8 +1,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
-#include "nutation_series.h"
-#include "iau_coefficients.h"
+#include "toluene_core_config.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
 
@@ -82,19 +81,31 @@ lla_from_ecef(PyObject *self, PyObject *args) {
 }
 
 
+static double compute_polynomial(const double coefficients[], double x, int highest_order) {
+
+    double result = 0.0;
+
+    for(int i = highest_order; i >= 0; --i) {
+        result += result * x + coefficients[i];
+    }
+
+    return result;
+}
+
+
 static void compute_iau_coefficients(double tt_seconds, double iau_coefficients[]) {
 
     // 3155760000.0 is the number of seconds in a century. t is the number of centuries since J2000.0.
     double t = tt_seconds / 3155760000.0;
 
     // zeta_a(t) = zeta_0 + zeta_1 * t + zeta_2 * t^2 + zeta_3 * t^3 + zeta_4 * t^4 + zeta_5 * t^5.
-    iau_coefficients[0] = (((((ZETA_a[5]*t)+ZETA_a[4])*t+ZETA_a[3])*t+ZETA_a[2])*t+ZETA_a[1])*t+ZETA_a[0];
+    iau_coefficients[0] = compute_polynomial(ZETA_a, t, 5);
 
     // z_a(t) = z_0 + z_1 * t + z_2 * t^2 + z_3 * t^3 + z_4 * t^4 + z_5 * t^5.
-    iau_coefficients[1] = (((((Z_a[5]*t)+Z_a[4])*t+Z_a[3])*t+Z_a[2])*t+Z_a[1])*t+Z_a[0];
+    iau_coefficients[1] = compute_polynomial(Z_a, t, 5);
 
     // theta_a(t) = theta_0 + theta_1 * t + theta_2 * t^2 + theta_3 * t^3 + theta_4 * t^4 + theta_5 * t^5.
-    iau_coefficients[2] = (((((THETA_a[5]*t)+THETA_a[4])*t+THETA_a[3])*t+THETA_a[2])*t+THETA_a[1])*t+THETA_a[0];
+    iau_coefficients[2] = compute_polynomial(THETA_a, t, 5);
 
     return;
 }
@@ -144,12 +155,12 @@ static void compute_nutation_arguments(double tt_seconds, double nutation_argume
     nutation_critical_arguments[5] = l_s[0] + l_s[1]*t;
     nutation_critical_arguments[6] = l_u[0] + l_u[1]*t;
     nutation_critical_arguments[7] = l_n[0] + l_n[1]*t;
-    nutation_critical_arguments[8] = gen_p[0] + gen_p[1]*t;
-    nutation_critical_arguments[9] = ((((l_[4])*t+l_[3])*t+l_[2])*t+l_[1])*t+l_[0];
-    nutation_critical_arguments[10] = ((((l_prime[4])*t+l_prime[3])*t+l_prime[2])*t+l_prime[1])*t+l_prime[0];
-    nutation_critical_arguments[11] = ((((f_[4])*t+f_[3])*t+f_[2])*t+f_[1])*t+f_[0];
-    nutation_critical_arguments[12] = ((((d_[4])*t+d_[3])*t+d_[2])*t+d_[1])*t+d_[0];
-    nutation_critical_arguments[13] = ((((omega[4])*t+omega[3])*t+omega[2])*t+omega[1])*t+omega[0];
+    nutation_critical_arguments[8] = compute_polynomial(gen_p, t, 5);
+    nutation_critical_arguments[9] = compute_polynomial(l_, t, 4);
+    nutation_critical_arguments[10] = compute_polynomial(l_prime, t, 4);
+    nutation_critical_arguments[11] = compute_polynomial(f_, t, 4);
+    nutation_critical_arguments[12] = compute_polynomial(d_, t, 4);
+    nutation_critical_arguments[13] = compute_polynomial(omega, t, 4);
 
     double ai;
     double sin_ai;
@@ -179,7 +190,7 @@ static void compute_nutation_arguments(double tt_seconds, double nutation_argume
         nutation_arguments[3] += nutation_series[i+17] * sin_ai + nutation_series[i+20] * cos_ai;
     }
 
-    nutation_arguments[2] = (((((EPSILON_a[5]*t)+EPSILON_a[4])*t+EPSILON_a[3])*t+EPSILON_a[2])*t+EPSILON_a[1])*t+EPSILON_a[0];
+    nutation_arguments[2] = compute_polynomial(EPSILON_a, t, 5);
     nutation_arguments[1] += nutation_arguments[2];
 
     nutation_arguments[3] += nutation_arguments[0] * cos(nutation_arguments[2] * M_PI/648000) +
@@ -221,17 +232,17 @@ static void compute_nutation_matrix(double nutation_arguments[], double nutation
 
 static double lookup_closest_delta_t(double tt_seconds) {
 
-    double best_delta_t = delta_t_list[(delta_t_length-1)*2];
+    double best_delta_t = delta_t_list[(delta_t_length-1)*2+1];
 
     /* Because you're more likely to use coordinates closer to current day than J2000.0 start with end of list
      * Technically doesn't matter if more random but can drastically decrease looking through the list if this
      * assumption proves right.
     */
     for(int i = delta_t_length-1; i >= 0; --i) {
-        if(tt_seconds >= delta_t_list[i*2+1]) {
+        if(tt_seconds >= delta_t_list[i*2]) {
            return best_delta_t;
         }
-        best_delta_t = delta_t_list[i*2];
+        best_delta_t = delta_t_list[i*2+1];
     }
 
     return best_delta_t;
@@ -292,10 +303,6 @@ eci_from_ecef(PyObject *self, PyObject *args) {
 
     compute_terrestrial_matrix(tt_seconds, nutation_arguments[3], terrestrial_matrix);
 
-    printf("precession_matrix: %f, %f, %f, %f, %f, %f, %f, %f, %f\n", precession_matrix[0], precession_matrix[1], precession_matrix[2], precession_matrix[3], precession_matrix[4], precession_matrix[5], precession_matrix[6], precession_matrix[7], precession_matrix[8]);
-    printf("nutation_matrix: %f, %f, %f, %f, %f, %f, %f, %f, %f\n", nutation_matrix[0], nutation_matrix[1], nutation_matrix[2], nutation_matrix[3], nutation_matrix[4], nutation_matrix[5], nutation_matrix[6], nutation_matrix[7], nutation_matrix[8]);
-    printf("terrestrial_matrix: %f, %f, %f, %f, %f, %f, %f, %f, %f\n", terrestrial_matrix[0], terrestrial_matrix[1], terrestrial_matrix[2], terrestrial_matrix[3], terrestrial_matrix[4], terrestrial_matrix[5], terrestrial_matrix[6], terrestrial_matrix[7], terrestrial_matrix[8]);
-
     /* Terrestrial rotation of earth from GAST */
     double x_prime = x*terrestrial_matrix[0] + y*terrestrial_matrix[1] + z*terrestrial_matrix[2];
     double y_prime = x*terrestrial_matrix[3] + y*terrestrial_matrix[4] + z*terrestrial_matrix[5];
@@ -312,12 +319,9 @@ eci_from_ecef(PyObject *self, PyObject *args) {
     z_prime = x*precession_matrix[6] + y*precession_matrix[7] + z*precession_matrix[8];
 
     /* Bias rotation of earth from J2000.0 */
-    x = x_prime*FRAME_BIAS_ROTATION_MATRIX[0] + y_prime*FRAME_BIAS_ROTATION_MATRIX[1]
-        + z_prime*FRAME_BIAS_ROTATION_MATRIX[2];
-    y = x_prime*FRAME_BIAS_ROTATION_MATRIX[3] + y_prime*FRAME_BIAS_ROTATION_MATRIX[4]
-        + z_prime*FRAME_BIAS_ROTATION_MATRIX[5];
-    z = x_prime*FRAME_BIAS_ROTATION_MATRIX[6] + y_prime*FRAME_BIAS_ROTATION_MATRIX[7]
-        + z_prime*FRAME_BIAS_ROTATION_MATRIX[8];
+    x = x_prime*bias_rotation_matrix[0] + y_prime*bias_rotation_matrix[1] + z_prime*bias_rotation_matrix[2];
+    y = x_prime*bias_rotation_matrix[3] + y_prime*bias_rotation_matrix[4] + z_prime*bias_rotation_matrix[5];
+    z = x_prime*bias_rotation_matrix[6] + y_prime*bias_rotation_matrix[7] + z_prime*bias_rotation_matrix[8];
 
     return Py_BuildValue("(ddd)", x, y, z);
 }
