@@ -2,6 +2,7 @@
 
 import argparse
 from datetime import datetime
+import json
 import re
 import requests
 import yaml
@@ -23,7 +24,7 @@ empty_core_header = \
     "}}   /* extern \"C\" */\n" \
     "#endif\n" \
     "\n" \
-    "#endif /* __TOLUENE_CORE_CONFIG_H__ */\n" \
+    "#endif /* __TOLUENE_CORE_CONFIG_H__ */\n"
 
 nutation_series_string = \
     "/* Nutation series coefficients */\n" \
@@ -31,13 +32,13 @@ nutation_series_string = \
     "static const int nutation_series_rows = {};\n" \
     "static const double nutation_series[] = {{\n" \
     "{}\n" \
-    "}};\n" \
+    "}};\n"
 
 bias_matrix_string = \
     "/* Bias matrix coefficients */\n" \
     "static const double bias_rotation_matrix[] = {{" \
     "{}" \
-    "}};\n" \
+    "}};\n"
 
 precession_coefficients_string = \
     "/* Precession coefficients */\n" \
@@ -69,6 +70,12 @@ earth_rotation_string = \
     "}};\n" \
     "static const double gmst_coefficients[] = {{ {} }};\n"
 
+polar_motion_string = \
+    "/* Polar Motion */\n" \
+    "static const int polar_motion_length = {};\n" \
+    "static const double polar_motion_list[] = {{\n" \
+    "{}\n" \
+    "}};\n"
 
 
 def main():
@@ -146,7 +153,7 @@ def build_core_header(config: yaml) -> str:
 
     # Build the nutation config
     nutation_series = config['nutation']['series']
-    format_string += nutation_series_string.format(str(len(nutation_series)//21),
+    format_string += nutation_series_string.format(str(len(nutation_series) // 21),
                                                    ','.join([str(i) for i in nutation_series]))
     format_string += "\n"
 
@@ -162,15 +169,49 @@ def build_core_header(config: yaml) -> str:
             month = int(row[2])
             day = int(row[3])
             delta_t = float(row[4])
-            delta_t_list.append(TerrestrialTimeJ2000(datetime(year, month, day)).seconds_since())
-            delta_t_list.append(delta_t)
+            if year >= 2000:
+                delta_t_list.append(TerrestrialTimeJ2000(datetime(year, month, day)).seconds_since())
+                delta_t_list.append(delta_t)
         except:
             pass
 
     gmst_coefficients = config['earth_rotation']['gmst']
 
-    format_string += earth_rotation_string.format(len(delta_t_list)//2, ','.join([str(i) for i in delta_t_list]),
+    format_string += earth_rotation_string.format(len(delta_t_list) // 2, ','.join([str(i) for i in delta_t_list]),
                                                   ','.join([str(i) for i in gmst_coefficients]))
+
+    # Get polar motion coefficients
+    # This uses the internet so hopefully they never remove/move the polar_motion.data file
+    polar_motion_variables = []
+
+    response = requests.get("https://datacenter.iers.org/data/json/finals2000A.all.json")
+    data = json.loads(response.text)
+
+    polar_motion_format_string = ""
+
+    for row in data['EOP']['data']['timeSeries']:
+        datetime_record = row['time']
+        year = int(datetime_record['dateYear'])
+        month = int(datetime_record['dateMonth'])
+        day = int(datetime_record['dateDay'])
+        if year >= 2000:
+            polar_motion_data = row['dataEOP']['pole'][0]
+            try:
+                polar_motion_x = float(polar_motion_data['X'])
+                polar_motion_y = float(polar_motion_data['Y'])
+
+                polar_motion_format_string += "    {},{},{},\n".format(
+                    TerrestrialTimeJ2000(datetime(year, month, day)).seconds_since(),
+                    polar_motion_x,
+                    polar_motion_y
+                )
+
+            except:
+                pass
+
+    polar_motion_format_string = polar_motion_format_string[:-2]
+
+    format_string += polar_motion_string.format(len(polar_motion_format_string.split('\n')), polar_motion_format_string)
 
     return empty_core_header.format(format_string)
 
