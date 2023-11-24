@@ -21,7 +21,7 @@ static double compute_polynomial(const double coefficients[], double x, int high
     double result = 0.0;
 
     for(int i = highest_order; i >= 0; --i) {
-        result += result * x + coefficients[i];
+        result = result * x + coefficients[i];
     }
 
     return result;
@@ -137,11 +137,11 @@ static void compute_nutation_arguments(double tt_seconds, double nutation_argume
 
 static void compute_nutation_matrix(double nutation_arguments[], double nutation_matrix[]) {
 
-    double sin_delta_psi = -1.0 * sin(nutation_arguments[0] * M_PI/648000);
+    double sin_delta_psi = sin(nutation_arguments[0] * M_PI/648000);
     double cos_delta_psi = cos(nutation_arguments[0] * M_PI/648000);
-    double sin_epsilon = -1.0 * sin(nutation_arguments[1] * M_PI/648000);
+    double sin_epsilon = sin(nutation_arguments[1] * M_PI/648000);
     double cos_epsilon = cos(nutation_arguments[1] * M_PI/648000);
-    double sin_epsilon_a = -1.0 * sin(nutation_arguments[2] * M_PI/648000);
+    double sin_epsilon_a = sin(nutation_arguments[2] * M_PI/648000);
     double cos_epsilon_a = cos(nutation_arguments[2] * M_PI/648000);
 
     /* Nutation matrix for converting from ECI to ECEF.
@@ -197,9 +197,9 @@ static void compute_terrestrial_matrix(double tt_seconds, double equation_of_the
     double gast_angle = gast * M_PI/43200.0;
 
     terrestrial_matrix[0] = cos(gast_angle);
-    terrestrial_matrix[1] = sin(gast_angle);
+    terrestrial_matrix[1] = -1 * sin(gast_angle);
     terrestrial_matrix[2] = 0.0;
-    terrestrial_matrix[3] = -1 * sin(gast_angle);
+    terrestrial_matrix[3] = sin(gast_angle);
     terrestrial_matrix[4] = cos(gast_angle);
     terrestrial_matrix[5] = 0.0;
     terrestrial_matrix[6] = 0.0;
@@ -349,29 +349,40 @@ eci_from_ecef(PyObject *self, PyObject *args) {
 
     compute_polar_motion_matrix(tt_seconds, polar_motion_matrix);
 
+    printf("x: %f, y: %f, z: %f\n", x, y, z);
     /* Terrestrial rotation of earth from GAST */
     double x_prime = x*polar_motion_matrix[0] + y*polar_motion_matrix[1] + z*polar_motion_matrix[2];
     double y_prime = x*polar_motion_matrix[3] + y*polar_motion_matrix[4] + z*polar_motion_matrix[5];
     double z_prime = x*polar_motion_matrix[6] + y*polar_motion_matrix[7] + z*polar_motion_matrix[8];
 
+    printf("x: %f, y: %f, z: %f\n", x_prime, y_prime, z_prime);
+
     x = x_prime*terrestrial_matrix[0] + y_prime*terrestrial_matrix[1] + z_prime*terrestrial_matrix[2];
     y = x_prime*terrestrial_matrix[3] + y_prime*terrestrial_matrix[4] + z_prime*terrestrial_matrix[5];
     z = x_prime*terrestrial_matrix[6] + y_prime*terrestrial_matrix[7] + z_prime*terrestrial_matrix[8];
+
+    printf("x: %f, y: %f, z: %f\n", x, y, z);
 
     /* Nutation rotation of earth from J2000.0 */
     x_prime = x*nutation_matrix[0] + y*nutation_matrix[1] + z*nutation_matrix[2];
     y_prime = x*nutation_matrix[3] + y*nutation_matrix[4] + z*nutation_matrix[5];
     z_prime = x*nutation_matrix[6] + y*nutation_matrix[7] + z*nutation_matrix[8];
 
+    printf("x: %f, y: %f, z: %f\n", x_prime, y_prime, z_prime);
+
     /* Precession rotation of earth from J2000.0 */
     x = x_prime*precession_matrix[0] + y_prime*precession_matrix[1] + z_prime*precession_matrix[2];
     y = x_prime*precession_matrix[3] + y_prime*precession_matrix[4] + z_prime*precession_matrix[5];
     z = x_prime*precession_matrix[6] + y_prime*precession_matrix[7] + z_prime*precession_matrix[8];
 
+    printf("x: %f, y: %f, z: %f\n", x, y, z);
+
     /* Bias rotation of earth from J2000.0 */
     x_prime = x*bias_rotation_matrix[0] + y*bias_rotation_matrix[1] + z*bias_rotation_matrix[2];
     y_prime = x*bias_rotation_matrix[3] + y*bias_rotation_matrix[4] + z*bias_rotation_matrix[5];
     z_prime = x*bias_rotation_matrix[6] + y*bias_rotation_matrix[7] + z*bias_rotation_matrix[8];
+
+   printf("x: %f, y: %f, z: %f\n", x_prime, y_prime, z_prime);
 
     x = x_prime;
     y = y_prime;
