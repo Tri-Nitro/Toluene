@@ -21,7 +21,7 @@ static double compute_polynomial(const double coefficients[], double x, int high
     double result = 0.0;
 
     for(int i = highest_order; i >= 0; --i) {
-        result += result * x + coefficients[i];
+        result = result * x + coefficients[i];
     }
 
     return result;
@@ -48,11 +48,11 @@ static void compute_iau_coefficients(double tt_seconds, double iau_coefficients[
 
 static void compute_precession_matrix(double iau_coefficients[], double precession_matrix[]) {
 
-    double sin_zeta_a = sin(iau_coefficients[0] * M_PI/648000);
+    double sin_zeta_a = -1.0 * sin(iau_coefficients[0] * M_PI/648000);
     double cos_zeta_a = cos(iau_coefficients[0] * M_PI/648000);
-    double sin_z_a = sin(iau_coefficients[1] * M_PI/648000);
+    double sin_z_a = -1.0 * sin(iau_coefficients[1] * M_PI/648000);
     double cos_z_a = cos(iau_coefficients[1] * M_PI/648000);
-    double sin_theta_a = sin(iau_coefficients[2] * M_PI/648000);
+    double sin_theta_a = -1.0 * sin(iau_coefficients[2] * M_PI/648000);
     double cos_theta_a = cos(iau_coefficients[2] * M_PI/648000);
 
     /* Precession matrix for converting from ECI to ECEF.
@@ -197,14 +197,57 @@ static void compute_terrestrial_matrix(double tt_seconds, double equation_of_the
     double gast_angle = gast * M_PI/43200.0;
 
     terrestrial_matrix[0] = cos(gast_angle);
-    terrestrial_matrix[1] = sin(gast_angle);
+    terrestrial_matrix[1] = -1 * sin(gast_angle);
     terrestrial_matrix[2] = 0.0;
-    terrestrial_matrix[3] = -1 * sin(gast_angle);
+    terrestrial_matrix[3] = sin(gast_angle);
     terrestrial_matrix[4] = cos(gast_angle);
     terrestrial_matrix[5] = 0.0;
     terrestrial_matrix[6] = 0.0;
     terrestrial_matrix[7] = 0.0;
     terrestrial_matrix[8] = 1.0;
+
+    return;
+}
+
+
+static void compute_polar_motion_matrix(double tt_seconds, double polar_motion_matrix[]) {
+
+    double delta_t = lookup_closest_delta_t(tt_seconds);
+    tt_seconds = tt_seconds-delta_t;
+
+    double best_x = polar_motion_list[(polar_motion_length-1)*3+1];
+    double best_y = polar_motion_list[(polar_motion_length-1)*3+2];
+
+    /* Because you're more likely to use coordinates closer to current day than J2000.0 start with end of list
+     * Technically doesn't matter if more random but can drastically decrease looking through the list if this
+     * assumption proves right.
+    */
+    for(int i = polar_motion_length-1; i >= 0; --i) {
+        if(tt_seconds >= polar_motion_list[i*3]) {
+           break;
+        }
+        best_x = polar_motion_list[i*3+1];
+        best_y = polar_motion_list[i*3+2];
+    }
+
+    double s_prime = tio_locator_per_century * (tt_seconds)/3155760000.0;
+
+    double sin_x = sin(best_x * M_PI/648000);
+    double cos_x = cos(best_x * M_PI/648000);
+    double sin_y = sin(best_y * M_PI/648000);
+    double cos_y = cos(best_y * M_PI/648000);
+    double sin_s_prime = sin(s_prime * M_PI/648000);
+    double cos_s_prime = cos(s_prime * M_PI/648000);
+
+    polar_motion_matrix[0] = cos_x;
+    polar_motion_matrix[1] = -1 * sin_x * sin_y;
+    polar_motion_matrix[2] = sin_x * cos_y;
+    polar_motion_matrix[3] = -1*sin_x*sin_s_prime;
+    polar_motion_matrix[4] = cos_x*cos_s_prime - cos_x*sin_y*sin_s_prime;
+    polar_motion_matrix[5] = sin_y*cos_s_prime + sin_s_prime*cos_y*cos_x;
+    polar_motion_matrix[6] = -1*sin_x*cos_s_prime;
+    polar_motion_matrix[7] = -1*cos_y*sin_s_prime - sin_y*cos_x*cos_s_prime;
+    polar_motion_matrix[8] = cos_y*cos_x*cos_s_prime - sin_s_prime*sin_y;
 
     return;
 }
@@ -289,6 +332,8 @@ eci_from_ecef(PyObject *self, PyObject *args) {
 
     double terrestrial_matrix[9];
 
+    double polar_motion_matrix[9];
+
     if(!PyArg_ParseTuple(args, "dddd", &x, &y, &z, &tt_seconds)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ecef_from_eci(double x, double y, double z, double tt_seconds)");
         return PyErr_Occurred();
@@ -302,25 +347,35 @@ eci_from_ecef(PyObject *self, PyObject *args) {
 
     compute_terrestrial_matrix(tt_seconds, nutation_arguments[3], terrestrial_matrix);
 
+    compute_polar_motion_matrix(tt_seconds, polar_motion_matrix);
+
     /* Terrestrial rotation of earth from GAST */
-    double x_prime = x*terrestrial_matrix[0] + y*terrestrial_matrix[1] + z*terrestrial_matrix[2];
-    double y_prime = x*terrestrial_matrix[3] + y*terrestrial_matrix[4] + z*terrestrial_matrix[5];
-    double z_prime = x*terrestrial_matrix[6] + y*terrestrial_matrix[7] + z*terrestrial_matrix[8];
+    double x_prime = x*polar_motion_matrix[0] + y*polar_motion_matrix[1] + z*polar_motion_matrix[2];
+    double y_prime = x*polar_motion_matrix[3] + y*polar_motion_matrix[4] + z*polar_motion_matrix[5];
+    double z_prime = x*polar_motion_matrix[6] + y*polar_motion_matrix[7] + z*polar_motion_matrix[8];
+
+    x = x_prime*terrestrial_matrix[0] + y_prime*terrestrial_matrix[1] + z_prime*terrestrial_matrix[2];
+    y = x_prime*terrestrial_matrix[3] + y_prime*terrestrial_matrix[4] + z_prime*terrestrial_matrix[5];
+    z = x_prime*terrestrial_matrix[6] + y_prime*terrestrial_matrix[7] + z_prime*terrestrial_matrix[8];
 
     /* Nutation rotation of earth from J2000.0 */
-    x = x_prime*nutation_matrix[0] + y_prime*nutation_matrix[1] + z_prime*nutation_matrix[2];
-    y = x_prime*nutation_matrix[3] + y_prime*nutation_matrix[4] + z_prime*nutation_matrix[5];
-    z = x_prime*nutation_matrix[6] + y_prime*nutation_matrix[7] + z_prime*nutation_matrix[8];
+    x_prime = x*nutation_matrix[0] + y*nutation_matrix[1] + z*nutation_matrix[2];
+    y_prime = x*nutation_matrix[3] + y*nutation_matrix[4] + z*nutation_matrix[5];
+    z_prime = x*nutation_matrix[6] + y*nutation_matrix[7] + z*nutation_matrix[8];
 
     /* Precession rotation of earth from J2000.0 */
-    x_prime = x*precession_matrix[0] + y*precession_matrix[1] + z*precession_matrix[2];
-    y_prime = x*precession_matrix[3] + y*precession_matrix[4] + z*precession_matrix[5];
-    z_prime = x*precession_matrix[6] + y*precession_matrix[7] + z*precession_matrix[8];
+    x = x_prime*precession_matrix[0] + y_prime*precession_matrix[1] + z_prime*precession_matrix[2];
+    y = x_prime*precession_matrix[3] + y_prime*precession_matrix[4] + z_prime*precession_matrix[5];
+    z = x_prime*precession_matrix[6] + y_prime*precession_matrix[7] + z_prime*precession_matrix[8];
 
     /* Bias rotation of earth from J2000.0 */
-    x = x_prime*bias_rotation_matrix[0] + y_prime*bias_rotation_matrix[1] + z_prime*bias_rotation_matrix[2];
-    y = x_prime*bias_rotation_matrix[3] + y_prime*bias_rotation_matrix[4] + z_prime*bias_rotation_matrix[5];
-    z = x_prime*bias_rotation_matrix[6] + y_prime*bias_rotation_matrix[7] + z_prime*bias_rotation_matrix[8];
+    x_prime = x*bias_rotation_matrix[0] + y*bias_rotation_matrix[1] + z*bias_rotation_matrix[2];
+    y_prime = x*bias_rotation_matrix[3] + y*bias_rotation_matrix[4] + z*bias_rotation_matrix[5];
+    z_prime = x*bias_rotation_matrix[6] + y*bias_rotation_matrix[7] + z*bias_rotation_matrix[8];
+
+    x = x_prime;
+    y = y_prime;
+    z = z_prime;
 
     return Py_BuildValue("(ddd)", x, y, z);
 }

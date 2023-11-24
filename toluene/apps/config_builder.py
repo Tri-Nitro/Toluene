@@ -72,6 +72,7 @@ earth_rotation_string = \
 
 polar_motion_string = \
     "/* Polar Motion */\n" \
+    "static const double tio_locator_per_century = {};\n" \
     "static const int polar_motion_length = {};\n" \
     "static const double polar_motion_list[] = {{\n" \
     "{}\n" \
@@ -177,14 +178,16 @@ def build_core_header(config: yaml) -> str:
 
     gmst_coefficients = config['earth_rotation']['gmst']
 
-    format_string += earth_rotation_string.format(len(delta_t_list) // 2, ','.join([str(i) for i in delta_t_list]),
+    format_string += earth_rotation_string.format(len(delta_t_list) // 2,
+                                                  ','.join([str(i) for i in delta_t_list]),
                                                   ','.join([str(i) for i in gmst_coefficients]))
+    format_string += "\n"
 
     # Get polar motion coefficients
     # This uses the internet so hopefully they never remove/move the polar_motion.data file
     polar_motion_variables = []
 
-    response = requests.get("https://datacenter.iers.org/data/json/finals2000A.all.json")
+    response = requests.get(config['polar_motion']['EOP_json_url'])
     data = json.loads(response.text)
 
     polar_motion_format_string = ""
@@ -195,7 +198,7 @@ def build_core_header(config: yaml) -> str:
         month = int(datetime_record['dateMonth'])
         day = int(datetime_record['dateDay'])
         if year >= 2000:
-            polar_motion_data = row['dataEOP']['pole'][0]
+            polar_motion_data = row['dataEOP']['pole']
             try:
                 polar_motion_x = float(polar_motion_data['X'])
                 polar_motion_y = float(polar_motion_data['Y'])
@@ -211,7 +214,9 @@ def build_core_header(config: yaml) -> str:
 
     polar_motion_format_string = polar_motion_format_string[:-2]
 
-    format_string += polar_motion_string.format(len(polar_motion_format_string.split('\n')), polar_motion_format_string)
+    format_string += polar_motion_string.format(config['polar_motion']['s_prime'],
+                                                len(polar_motion_format_string.split('\n')),
+                                                polar_motion_format_string)
 
     return empty_core_header.format(format_string)
 
