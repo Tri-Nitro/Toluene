@@ -4,7 +4,7 @@ import logging
 
 from toluene.core.ellipsoid import Ellipsoid, wgs_84_ellipsoid
 from toluene.core.time import TerrestrialTimeJ2000
-from toluene_extensions.core_extensions import eci_from_ecef, ecef_from_lla, lla_from_ecef
+from toluene_extensions.core_extensions import eci_from_ecef, ecef_from_eci, ecef_from_lla, lla_from_ecef
 
 logger = logging.getLogger('toluene.core.coordinates')
 
@@ -201,8 +201,29 @@ class ECI:
         return (self.x**2 + self.y**2 + self.z**2)**0.5
 
     def to_ecef(self) -> ECEF:
-        return ECEF()
+        """
+        Converts the :class:`ECI` vector into the equivalent :class:`ECEF` coordinates. The conversion is done using
+        the inverse of the rotation matricies used to convert from :class:`ECEF` to :class:`ECI`. The conversion is
+        done in 5 separate rotations just the same however we use the transpose as they're orthaogonal matricies.
+        Introduces some rounding error but is in the scale of micrometers so is negligible.
 
+        :return: The equivalent :class:`ECEF` vector with relation to x, y, z, and time displacement from J2000.0.
+        :rtype: :class:`ECEF`
+        """
+        x, y, z = ecef_from_eci(self.x, self.y, self.z, self.__time.seconds_since())
+        return ECEF(x, y, z, self.__ellipsoid, self.__time)
+
+    def to_lla(self) -> LLA:
+        """
+        Converts the :class:`ECI` vector into the equivalent :class:`LLA` coordinates. The conversion is done using
+        the :class:`ECEF` as an intermediate step. Ensure that both time and ellipsoid are set appropriately to get the
+        correct coordinates.
+
+        :return: The equivalent :class:`LLA` vector with relation to latitude, longitude, altitude, and time
+            displacement from J2000.0.
+        :rtype: :class:`LLA`
+        """
+        return self.to_ecef().to_lla()
 
 class LLA:
     """
