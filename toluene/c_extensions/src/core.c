@@ -137,11 +137,11 @@ static void compute_nutation_arguments(double tt_seconds, double nutation_argume
 
 static void compute_nutation_matrix(double nutation_arguments[], double nutation_matrix[]) {
 
-    double sin_delta_psi = sin(nutation_arguments[0] * M_PI/648000);
+    double sin_delta_psi = -1.0 * sin(nutation_arguments[0] * M_PI/648000);
     double cos_delta_psi = cos(nutation_arguments[0] * M_PI/648000);
-    double sin_epsilon = sin(nutation_arguments[1] * M_PI/648000);
+    double sin_epsilon = -1.0 * sin(nutation_arguments[1] * M_PI/648000);
     double cos_epsilon = cos(nutation_arguments[1] * M_PI/648000);
-    double sin_epsilon_a = sin(nutation_arguments[2] * M_PI/648000);
+    double sin_epsilon_a = -1.0 * sin(nutation_arguments[2] * M_PI/648000);
     double cos_epsilon_a = cos(nutation_arguments[2] * M_PI/648000);
 
     /* Nutation matrix for converting from ECI to ECEF.
@@ -232,11 +232,11 @@ static void compute_polar_motion_matrix(double tt_seconds, double polar_motion_m
 
     double s_prime = tio_locator_per_century * (tt_seconds)/3155760000.0;
 
-    double sin_x = sin(best_x * M_PI/648000);
+    double sin_x = -1.0 * sin(best_x * M_PI/648000);
     double cos_x = cos(best_x * M_PI/648000);
-    double sin_y = sin(best_y * M_PI/648000);
+    double sin_y = -1.0 * sin(best_y * M_PI/648000);
     double cos_y = cos(best_y * M_PI/648000);
-    double sin_s_prime = sin(s_prime * M_PI/648000);
+    double sin_s_prime = -1.0 * sin(s_prime * M_PI/648000);
     double cos_s_prime = cos(s_prime * M_PI/648000);
 
     polar_motion_matrix[0] = cos_x;
