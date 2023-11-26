@@ -4,6 +4,9 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.package-data]
+"*" = ["*.yml"]
+
 [project]
 name = "toluene"
 version = "0.0.0"
@@ -22,7 +25,11 @@ classifiers=[
     'Typing :: Typed'
 ]
 dependencies = [
+    'numpy'
 ]
+
+[project.scripts]
+toluene-build-config = "toluene.apps.config_builder:main"
 
 [project.urls]
 homepage = "https://github.com/Tri-Nitro/Toluene"
