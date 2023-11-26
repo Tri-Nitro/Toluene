@@ -53,7 +53,7 @@ class Ellipsoid:
             logger.warning(f'Unable to handle Latitudes < -90 or > 90, {latitude} was given')
             raise LatitudeOutOfRange
 
-        return ellipsoid_radius(self.__semi_major_axis, self.__inverse_flattening, latitude)
+        return ellipsoid_radius(self.__semi_major_axis, self.__semi_minor_axis, latitude)
 
     def semi_major_axis(self) -> float:
         """

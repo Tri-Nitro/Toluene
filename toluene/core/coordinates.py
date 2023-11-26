@@ -37,6 +37,30 @@ class ECEF:
         self.__ellipsoid = ellipsoid
         self.__time = time
 
+    def __sub__(self, other) -> float:
+        """
+        This documentation won't show up, but, it is used to get the distance between two :class:`ECEF` vectors. Always
+        will be a positive number. The distance is calculated using the Pythagorean theorem. The distance is in meters.
+
+        :param other: The other coordinate, can be ECEF, ECI, or LLA.
+        :return: The distance between the two coordinates in meters.
+        :rtype: float
+        """
+        if isinstance(other, ECEF):
+            return ((self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.z - other.z) ** 2) ** 0.5
+        elif isinstance(other, (ECI, LLA)):
+            other = other.to_ecef()
+            return ((self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.z - other.z) ** 2) ** 0.5
+        else:
+            raise TypeError(f'Cannot subtract {other} from {self}')
+
+    def __str__(self) -> str:
+        """
+        :return: A string representation of the :class:`ECEF` coordinates.
+        :rtype: str
+        """
+        return f'({self.x}, {self.y}, {self.z})'
+
     def ellipsoid(self) -> core.ellipsoid.Ellipsoid:
         """
         Getter for the ellipsoid in the :class:`ECEF` class. The ellipsoid is used for conversion to :class:`LLA` AKA
@@ -97,6 +121,14 @@ class ECEF:
         """
         x, y, z = eci_from_ecef(self.x, self.y, self.z, self.__time.seconds_since())
         return ECI(x, y, z, self.__ellipsoid, self.__time)
+
+    def to_ecef(self) -> LLA:
+        """
+        This just returns self so you don't have a bug if you try to get ECEF from ECEF. It's not a bug, it's a feature.
+        :return: self
+        :rtype: ECEF
+        """
+        return self
 
     def to_lla(self) -> LLA:
         """
@@ -165,6 +197,25 @@ class ECI:
         self.__ellipsoid = ellipsoid
         self.__time = time
 
+    def __sub__(self, other) -> float:
+        """
+        This documentation won't show up, but, it is used to get the distance between two :class:`ECI` vectors. Always
+        will be a positive number. The distance is calculated by first computing the ECEF vector and then using the
+        Pythagorean theorem. The distance is in meters.
+
+        :param other: The other coordinate, can be ECEF, ECI, or LLA.
+        :return: The distance between the two coordinates in meters.
+        :rtype: float
+        """
+        return self.to_ecef().__sub__(other)
+
+    def __str__(self) -> str:
+        """
+        :return: A string representation of the :class:`ECI` coordinates.
+        :rtype: str
+        """
+        return f'({self.x}, {self.y}, {self.z})'
+
     def ellipsoid(self) -> core.ellipsoid.Ellipsoid:
         """
         The ellipsoid the coordinates are in. Not used directly with ECI but is important if converting to :class:`LLA`
@@ -199,6 +250,14 @@ class ECI:
         """
         logger.debug(f'Entering ECI.magnitude()')
         return (self.x**2 + self.y**2 + self.z**2)**0.5
+
+    def to_eci(self) -> LLA:
+        """
+        This just returns self so you don't have a bug if you try to get ECI from ECI. It's not a bug, it's a feature.
+        :return: self
+        :rtype: ECI
+        """
+        return self
 
     def to_ecef(self) -> ECEF:
         """
@@ -258,6 +317,25 @@ class LLA:
         self.__ellipsoid = ellipsoid
         self.__time = time
 
+    def __sub__(self, other) -> float:
+        """
+        This documentation won't show up, but, it is used to get the distance between two :class:`LLA` vectors. Always
+        will be a positive number. The distance is calculated by first computing the ECEF vector and then using the
+        Pythagorean theorem. The distance is in meters.
+
+        :param other: The other coordinate, can be ECEF, ECI, or LLA.
+        :return: The distance between the two coordinates in meters.
+        :rtype: float
+        """
+        return self.to_ecef().__sub__(other)
+
+    def __str__(self) -> str:
+        """
+        :return: A string representation of the :class:`LLA` coordinates.
+        :rtype: str
+        """
+        return f'({self.latitude}, {self.longitude}, {self.altitude})'
+
     def ellipsoid(self) -> core.ellipsoid.Ellipsoid:
         """
         Getter for the ellipsoid in the :class:`LLA` class. The ellipsoid is used for conversion to :class:`ECEF` AKA
@@ -280,6 +358,18 @@ class LLA:
         """
         logger.debug('Entering LLA.time()')
         return self.__time
+
+    def magnitude(self) -> float:
+        """
+        The magnitude of the :class:`LLA` vector. Measurement of the displacement from the center of the Earth. This
+        is the same as the altitude over the ellipsoid plus the radius of the ellipsoid at the latitude of the point.
+        Should be equal to the Pythagorean theorem of the corresponding :class:`ECEF` vector.
+
+        :return: The magnitude of the :class:`LLA` vector.
+        :rtype: float
+        """
+        logger.debug('Entering LLA.magnitude()')
+        return self.altitude + self.__ellipsoid.ellipsoid_radius(self.latitude)
 
     def to_eci(self) -> ECI:
         """
@@ -313,3 +403,11 @@ class LLA:
         x, y, z = ecef_from_lla(self.__ellipsoid.semi_major_axis(), self.__ellipsoid.semi_minor_axis(),
                                 self.latitude, self.longitude, self.altitude)
         return ECEF(x, y, z, self.__ellipsoid, self.__time)
+
+    def to_lla(self) -> LLA:
+        """
+        This just returns self so you don't have a bug if you try to get LLA from LLA. It's not a bug, it's a feature.
+        :return: self
+        :rtype: LLA
+        """
+        return self
