@@ -48,11 +48,11 @@ static void compute_iau_coefficients(double tt_seconds, double iau_coefficients[
 
 static void compute_precession_matrix(double iau_coefficients[], double precession_matrix[]) {
 
-    double sin_zeta_a = -1.0 * sin(iau_coefficients[0] * M_PI/648000);
+    double sin_zeta_a = sin(iau_coefficients[0] * M_PI/648000);
     double cos_zeta_a = cos(iau_coefficients[0] * M_PI/648000);
-    double sin_z_a = -1.0 * sin(iau_coefficients[1] * M_PI/648000);
+    double sin_z_a = sin(iau_coefficients[1] * M_PI/648000);
     double cos_z_a = cos(iau_coefficients[1] * M_PI/648000);
-    double sin_theta_a = -1.0 * sin(iau_coefficients[2] * M_PI/648000);
+    double sin_theta_a = sin(iau_coefficients[2] * M_PI/648000);
     double cos_theta_a = cos(iau_coefficients[2] * M_PI/648000);
 
     /* Precession matrix for converting from ECI to ECEF.
@@ -63,12 +63,12 @@ static void compute_precession_matrix(double iau_coefficients[], double precessi
      */
 
     precession_matrix[0] = cos_z_a * cos_theta_a * cos_zeta_a -  sin_z_a * sin_zeta_a;
-    precession_matrix[1] = -1 * cos_z_a * cos_theta_a * sin_zeta_a - sin_z_a * cos_zeta_a;
-    precession_matrix[2] = -1 * cos_z_a * sin_theta_a;
-    precession_matrix[3] = sin_z_a * cos_theta_a * cos_zeta_a + cos_z_a * sin_zeta_a;
+    precession_matrix[1] = cos_z_a * cos_theta_a * sin_zeta_a + sin_z_a * cos_zeta_a;
+    precession_matrix[2] = cos_z_a * sin_theta_a;
+    precession_matrix[3] = -1 * sin_z_a * cos_theta_a * cos_zeta_a - cos_z_a * sin_zeta_a;
     precession_matrix[4] = -1 * sin_z_a * cos_theta_a * sin_zeta_a + cos_z_a * cos_zeta_a;
     precession_matrix[5] = -1 * sin_z_a * sin_theta_a;
-    precession_matrix[6] = sin_theta_a * cos_zeta_a;
+    precession_matrix[6] = -1 * sin_theta_a * cos_zeta_a;
     precession_matrix[7] = -1 * sin_theta_a * sin_zeta_a;
     precession_matrix[8] = cos_theta_a;
 
@@ -152,13 +152,13 @@ static void compute_nutation_matrix(double nutation_arguments[], double nutation
      */
 
     nutation_matrix[0] = cos_delta_psi;
-    nutation_matrix[1] = -1 * sin_delta_psi * cos_epsilon_a;
+    nutation_matrix[1] = sin_delta_psi * cos_epsilon_a;
     nutation_matrix[2] = -1 * sin_delta_psi * sin_epsilon_a;
-    nutation_matrix[3] = sin_delta_psi * cos_epsilon;
+    nutation_matrix[3] = -1 * sin_delta_psi * cos_epsilon;
     nutation_matrix[4] = cos_delta_psi * cos_epsilon * cos_epsilon_a + sin_epsilon * sin_epsilon_a;
-    nutation_matrix[5] = cos_delta_psi * cos_epsilon * sin_epsilon_a - sin_epsilon * cos_epsilon_a;
+    nutation_matrix[5] = -1 * cos_delta_psi * cos_epsilon * sin_epsilon_a + sin_epsilon * cos_epsilon_a;
     nutation_matrix[6] = sin_delta_psi * sin_epsilon;
-    nutation_matrix[7] = cos_delta_psi * sin_epsilon * cos_epsilon_a - cos_epsilon * sin_epsilon_a;
+    nutation_matrix[7] = -1 * cos_delta_psi * sin_epsilon * cos_epsilon_a + cos_epsilon * sin_epsilon_a;
     nutation_matrix[8] = cos_delta_psi * sin_epsilon * sin_epsilon_a + cos_epsilon * cos_epsilon_a;
 
     return;
@@ -242,12 +242,12 @@ static void compute_polar_motion_matrix(double tt_seconds, double polar_motion_m
     polar_motion_matrix[0] = cos_x;
     polar_motion_matrix[1] = -1 * sin_x * sin_y;
     polar_motion_matrix[2] = sin_x * cos_y;
-    polar_motion_matrix[3] = -1*sin_x*sin_s_prime;
-    polar_motion_matrix[4] = cos_x*cos_s_prime - cos_x*sin_y*sin_s_prime;
-    polar_motion_matrix[5] = sin_y*cos_s_prime + sin_s_prime*cos_y*cos_x;
-    polar_motion_matrix[6] = -1*sin_x*cos_s_prime;
-    polar_motion_matrix[7] = -1*cos_y*sin_s_prime - sin_y*cos_x*cos_s_prime;
-    polar_motion_matrix[8] = cos_y*cos_x*cos_s_prime - sin_s_prime*sin_y;
+    polar_motion_matrix[3] = -1 * sin_x * sin_s_prime;
+    polar_motion_matrix[4] = cos_x * cos_s_prime - cos_x * sin_y * sin_s_prime;
+    polar_motion_matrix[5] = sin_y * cos_s_prime + sin_s_prime * cos_y * cos_x;
+    polar_motion_matrix[6] = -1 * sin_x * cos_s_prime;
+    polar_motion_matrix[7] = -1 * cos_y * sin_s_prime - sin_y * cos_x * cos_s_prime;
+    polar_motion_matrix[8] = cos_y * cos_x * cos_s_prime - sin_s_prime * sin_y;
 
     return;
 }
