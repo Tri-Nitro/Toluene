@@ -137,11 +137,11 @@ static void compute_nutation_arguments(double tt_seconds, double nutation_argume
 
 static void compute_nutation_matrix(double nutation_arguments[], double nutation_matrix[]) {
 
-    double sin_delta_psi = sin(nutation_arguments[0] * M_PI/648000);
+    double sin_delta_psi = -1.0 * sin(nutation_arguments[0] * M_PI/648000);
     double cos_delta_psi = cos(nutation_arguments[0] * M_PI/648000);
-    double sin_epsilon = sin(nutation_arguments[1] * M_PI/648000);
+    double sin_epsilon = -1.0 * sin(nutation_arguments[1] * M_PI/648000);
     double cos_epsilon = cos(nutation_arguments[1] * M_PI/648000);
-    double sin_epsilon_a = sin(nutation_arguments[2] * M_PI/648000);
+    double sin_epsilon_a = -1.0 * sin(nutation_arguments[2] * M_PI/648000);
     double cos_epsilon_a = cos(nutation_arguments[2] * M_PI/648000);
 
     /* Nutation matrix for converting from ECI to ECEF.
@@ -232,11 +232,11 @@ static void compute_polar_motion_matrix(double tt_seconds, double polar_motion_m
 
     double s_prime = tio_locator_per_century * (tt_seconds)/3155760000.0;
 
-    double sin_x = sin(best_x * M_PI/648000);
+    double sin_x = -1.0 * sin(best_x * M_PI/648000);
     double cos_x = cos(best_x * M_PI/648000);
-    double sin_y = sin(best_y * M_PI/648000);
+    double sin_y = -1.0 * sin(best_y * M_PI/648000);
     double cos_y = cos(best_y * M_PI/648000);
-    double sin_s_prime = sin(s_prime * M_PI/648000);
+    double sin_s_prime = -1.0 * sin(s_prime * M_PI/648000);
     double cos_s_prime = cos(s_prime * M_PI/648000);
 
     polar_motion_matrix[0] = cos_x;
@@ -382,6 +382,64 @@ eci_from_ecef(PyObject *self, PyObject *args) {
 
 
 static PyObject *
+ecef_from_eci(PyObject *self, PyObject *args) {
+
+    double x, y, z, tt_seconds;
+
+    double precession_matrix[9];
+    double iau_coefficients[3];
+
+    double nutation_matrix[9];
+    double nutation_arguments[4];
+
+    double terrestrial_matrix[9];
+
+    double polar_motion_matrix[9];
+
+    if(!PyArg_ParseTuple(args, "dddd", &x, &y, &z, &tt_seconds)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ecef_from_eci(double x, double y, double z, double tt_seconds)");
+        return PyErr_Occurred();
+    }
+
+    compute_iau_coefficients(tt_seconds, iau_coefficients);
+    compute_precession_matrix(iau_coefficients, precession_matrix);
+
+    compute_nutation_arguments(tt_seconds, nutation_arguments);
+    compute_nutation_matrix(nutation_arguments, nutation_matrix);
+
+    compute_terrestrial_matrix(tt_seconds, nutation_arguments[3], terrestrial_matrix);
+
+    compute_polar_motion_matrix(tt_seconds, polar_motion_matrix);
+
+    double x_prime = x*bias_rotation_matrix[0] + y*bias_rotation_matrix[3] + z*bias_rotation_matrix[6];
+    double y_prime = x*bias_rotation_matrix[1] + y*bias_rotation_matrix[4] + z*bias_rotation_matrix[7];
+    double z_prime = x*bias_rotation_matrix[2] + y*bias_rotation_matrix[5] + z*bias_rotation_matrix[8];
+
+    x = x_prime*precession_matrix[0] + y_prime*precession_matrix[3] + z_prime*precession_matrix[6];
+    y = x_prime*precession_matrix[1] + y_prime*precession_matrix[4] + z_prime*precession_matrix[7];
+    z = x_prime*precession_matrix[2] + y_prime*precession_matrix[5] + z_prime*precession_matrix[8];
+
+    x_prime = x*nutation_matrix[0] + y*nutation_matrix[3] + z*nutation_matrix[6];
+    y_prime = x*nutation_matrix[1] + y*nutation_matrix[4] + z*nutation_matrix[7];
+    z_prime = x*nutation_matrix[2] + y*nutation_matrix[5] + z*nutation_matrix[8];
+
+    x = x_prime*terrestrial_matrix[0] + y_prime*terrestrial_matrix[3] + z_prime*terrestrial_matrix[6];
+    y = x_prime*terrestrial_matrix[1] + y_prime*terrestrial_matrix[4] + z_prime*terrestrial_matrix[7];
+    z = x_prime*terrestrial_matrix[2] + y_prime*terrestrial_matrix[5] + z_prime*terrestrial_matrix[8];
+
+    x_prime = x*polar_motion_matrix[0] + y*polar_motion_matrix[3] + z*polar_motion_matrix[6];
+    y_prime = x*polar_motion_matrix[1] + y*polar_motion_matrix[4] + z*polar_motion_matrix[7];
+     z_prime = x*polar_motion_matrix[2] + y*polar_motion_matrix[5] + z*polar_motion_matrix[8];
+
+    x = x_prime;
+    y = y_prime;
+    z = z_prime;
+
+    return Py_BuildValue("(ddd)", x, y, z);
+}
+
+
+static PyObject *
 ellipsoid_radius(PyObject *self, PyObject *args) {
 
     double semi_major_axis, inverse_flattening, latitude;
@@ -403,6 +461,7 @@ static PyMethodDef tolueneCoreMethods[] = {
     {"ecef_from_lla", ecef_from_lla, METH_VARARGS, "Convert lla coordinates to ecef."},
     {"lla_from_ecef", lla_from_ecef, METH_VARARGS, "Convert ecef coordinates to lla using the none recursive method."},
     {"eci_from_ecef", eci_from_ecef, METH_VARARGS, "Convert ecef coordinates to eci."},
+    {"ecef_from_eci", ecef_from_eci, METH_VARARGS, "Convert eci coordinates to ecef."},
     {"ellipsoid_radius", ellipsoid_radius, METH_VARARGS, "Calculate the radius of the ellipsoid at a given latitude."},
     {NULL, NULL, 0, NULL}
 };
