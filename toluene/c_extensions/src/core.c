@@ -442,18 +442,26 @@ ecef_from_eci(PyObject *self, PyObject *args) {
 static PyObject *
 ellipsoid_radius(PyObject *self, PyObject *args) {
 
-    double semi_major_axis, inverse_flattening, latitude;
+    double semi_major_axis, semi_minor_axis, latitude;
 
-    if(!PyArg_ParseTuple(args, "ddd", &semi_major_axis, &inverse_flattening, &latitude)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ellipsoid_radius(double semi_major_axis, double inverse_flattening, double latitude)");
+    if(!PyArg_ParseTuple(args, "ddd", &semi_major_axis, &semi_minor_axis, &latitude)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ellipsoid_radius(double semi_major_axis, double semi_minor_axis, double latitude)");
         return PyErr_Occurred();
     }
 
-    double sin_of_latitude = sin(latitude * M_PI/180);
-    double difference_of_flattening = 1 - 1 / inverse_flattening;
 
-    return Py_BuildValue("d", sqrt((semi_major_axis * semi_major_axis) /
-                    (1 + (1 / (difference_of_flattening*difference_of_flattening) - 1) * (sin_of_latitude * sin_of_latitude))));
+
+
+    double f3 = semi_major_axis * cos(latitude * M_PI/180);
+    double f4 = semi_minor_axis * sin(latitude * M_PI/180);
+    double f1 = semi_major_axis * f3;
+    f1 = f1 * f1;
+    f3 = f3 * f3;
+    double f2 = semi_minor_axis * f4;
+    f2 = f2 * f2;
+    f4 = f4 * f4;
+
+    return Py_BuildValue("d", sqrt((f1 + f2) / (f3 + f4)));
 }
 
 
