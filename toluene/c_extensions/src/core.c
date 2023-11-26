@@ -137,11 +137,11 @@ static void compute_nutation_arguments(double tt_seconds, double nutation_argume
 
 static void compute_nutation_matrix(double nutation_arguments[], double nutation_matrix[]) {
 
-    double sin_delta_psi = -1.0 * sin(nutation_arguments[0] * M_PI/648000);
+    double sin_delta_psi = sin(nutation_arguments[0] * M_PI/648000);
     double cos_delta_psi = cos(nutation_arguments[0] * M_PI/648000);
-    double sin_epsilon = -1.0 * sin(nutation_arguments[1] * M_PI/648000);
+    double sin_epsilon = sin(nutation_arguments[1] * M_PI/648000);
     double cos_epsilon = cos(nutation_arguments[1] * M_PI/648000);
-    double sin_epsilon_a = -1.0 * sin(nutation_arguments[2] * M_PI/648000);
+    double sin_epsilon_a = sin(nutation_arguments[2] * M_PI/648000);
     double cos_epsilon_a = cos(nutation_arguments[2] * M_PI/648000);
 
     /* Nutation matrix for converting from ECI to ECEF.
