@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 include = ["toluene*"]
-exclude = ["docs*", "scratch*", "tests*"]
+exclude = ["docs*", "scratch*", "tests*", "wheelhouse*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.yml"]

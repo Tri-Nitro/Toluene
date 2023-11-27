@@ -1,6 +1,8 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#include "earth_gravitational_model.h"
+#include "interpolation.h"
 #include "toluene_core_config.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
