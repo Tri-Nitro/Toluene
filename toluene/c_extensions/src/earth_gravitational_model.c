@@ -10,6 +10,12 @@
 
 #endif /* _WIN32 */
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+
 void find_egm84_four_corners(double latitude, double longitude, char* egm84_interpolation_grid_file_path,
     double grid_spacing, double four_corners[]) {
 

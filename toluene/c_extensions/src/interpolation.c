@@ -10,8 +10,16 @@
 
 #endif /* _WIN32 */
 
-double bilinear_interpolation(double x, double y, double corners[]) {
-    return 0.0;
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+
+void bilinear_interpolation(double x, double y, double corners[], double* value) {
+    double f1 = (corners[6]-x)/(corners[6]-corners[0])*(corners[2]) + (x-corners[0])/(corners[6]-corners[0])*(corners[8]);
+    double f2 = (corners[6]-x)/(corners[6]-corners[0])*(corners[5]) + (x-corners[0])/(corners[6]-corners[0])*(corners[11]);
+    *value = ((corners[4]-y)/(corners[4]-corners[1]))*f1 + ((y-corners[1])/(corners[4]-corners[1]))*f2;
 }
 
 #ifdef __cplusplus

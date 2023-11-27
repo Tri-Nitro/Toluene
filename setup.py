@@ -6,9 +6,8 @@ setup_args = dict(
             'toluene_extensions.core_extensions',
             ['toluene/c_extensions/src/core.c',
              'toluene/c_extensions/src/earth_gravitational_model.c',
-             'toluene/c_extensions/src/interpolation.c',
-             'toluene/c_extensions/src/matrix_rotations.c'
-            ],
+             'toluene/c_extensions/src/interpolation.c'
+             ],
             include_dirs=['toluene/c_extensions/include'],
             py_limited_api=True
         )

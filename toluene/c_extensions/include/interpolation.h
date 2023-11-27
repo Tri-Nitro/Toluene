@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-double bilinear_interpolation(double x, double y, double corners[]);
+void bilinear_interpolation(double x, double y, double corners[], double* value);
 
 #ifdef __cplusplus
 }   /* extern "C" */
