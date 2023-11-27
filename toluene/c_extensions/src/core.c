@@ -190,9 +190,8 @@ static void compute_terrestrial_matrix(double tt_seconds, double equation_of_the
     double Dut = (tt_seconds-delta_t)/86400.0;
     double delta_t_days = delta_t/86400.0;
 
-    double gast = fmod((((((gmst_coefficients[5] * Dut) + gmst_coefficients[4]) * Dut + gmst_coefficients[3]) * Dut
-                    + gmst_coefficients[2]) * Dut + gmst_coefficients[1]) * Dut + gmst_coefficients[0]
-                    + gmst_coefficients[6] * delta_t + equation_of_the_equinoxes/15.0, 86400.0);
+    double gast = fmod(compute_polynomial(gmst_coefficients, Dut, 5)
+                    + gmst_coefficients[6] * delta_t_days + equation_of_the_equinoxes/15.0, 86400.0);
 
     double gast_angle = gast * M_PI/43200.0;
 
@@ -232,11 +231,11 @@ static void compute_polar_motion_matrix(double tt_seconds, double polar_motion_m
 
     double s_prime = tio_locator_per_century * (tt_seconds)/3155760000.0;
 
-    double sin_x = -1.0 * sin(best_x * M_PI/648000);
+    double sin_x = sin(best_x * M_PI/648000);
     double cos_x = cos(best_x * M_PI/648000);
-    double sin_y = -1.0 * sin(best_y * M_PI/648000);
+    double sin_y = sin(best_y * M_PI/648000);
     double cos_y = cos(best_y * M_PI/648000);
-    double sin_s_prime = -1.0 * sin(s_prime * M_PI/648000);
+    double sin_s_prime = sin(s_prime * M_PI/648000);
     double cos_s_prime = cos(s_prime * M_PI/648000);
 
     polar_motion_matrix[0] = cos_x;
@@ -429,13 +428,38 @@ ecef_from_eci(PyObject *self, PyObject *args) {
 
     x_prime = x*polar_motion_matrix[0] + y*polar_motion_matrix[3] + z*polar_motion_matrix[6];
     y_prime = x*polar_motion_matrix[1] + y*polar_motion_matrix[4] + z*polar_motion_matrix[7];
-     z_prime = x*polar_motion_matrix[2] + y*polar_motion_matrix[5] + z*polar_motion_matrix[8];
+    z_prime = x*polar_motion_matrix[2] + y*polar_motion_matrix[5] + z*polar_motion_matrix[8];
 
     x = x_prime;
     y = y_prime;
     z = z_prime;
 
     return Py_BuildValue("(ddd)", x, y, z);
+}
+
+
+static PyObject *
+egm84_height(PyObject *self, PyObject *args) {
+
+    double latitude, longitude, grid_spacing, h = 0;
+    char *egm84_interpolation_grid_file_path, *interpolation_method;
+
+    if(!PyArg_ParseTuple(args, "ddsds", &latitude, &longitude,
+        &egm84_interpolation_grid_file_path, &grid_spacing, &interpolation_method)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. egm84_height(double latitude, double longitude, char* egm84_interpolation_grid_file_path, double grid_spacing, char* interpolation_method)");
+        return PyErr_Occurred();
+    }
+
+    if (strcmp(interpolation_method, "bilinear") == 0) {
+        double four_corners[12]; // latitude, longitude, height X4
+        find_egm84_four_corners(latitude, longitude, egm84_interpolation_grid_file_path, grid_spacing, four_corners);
+        bilinear_interpolation(latitude, longitude, four_corners, &h);
+    } else {
+        PyErr_SetString(PyExc_TypeError, "Invalid interpolation method. Valid methods are 'bilinear'.");
+        return PyErr_Occurred();
+    }
+
+    return Py_BuildValue("d", h);
 }
 
 
@@ -448,9 +472,6 @@ ellipsoid_radius(PyObject *self, PyObject *args) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ellipsoid_radius(double semi_major_axis, double semi_minor_axis, double latitude)");
         return PyErr_Occurred();
     }
-
-
-
 
     double f3 = semi_major_axis * cos(latitude * M_PI/180);
     double f4 = semi_minor_axis * sin(latitude * M_PI/180);
@@ -470,10 +491,10 @@ static PyMethodDef tolueneCoreMethods[] = {
     {"lla_from_ecef", lla_from_ecef, METH_VARARGS, "Convert ecef coordinates to lla using the none recursive method."},
     {"eci_from_ecef", eci_from_ecef, METH_VARARGS, "Convert ecef coordinates to eci."},
     {"ecef_from_eci", ecef_from_eci, METH_VARARGS, "Convert eci coordinates to ecef."},
+    {"egm84_height", egm84_height, METH_VARARGS, "Calculate the height of a point on the earth using the EGM84 geoid model."},
     {"ellipsoid_radius", ellipsoid_radius, METH_VARARGS, "Calculate the radius of the ellipsoid at a given latitude."},
     {NULL, NULL, 0, NULL}
 };
-
 
 static struct PyModuleDef core_extensions = {
     PyModuleDef_HEAD_INIT,

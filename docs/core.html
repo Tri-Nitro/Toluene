@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>core package &mdash; Toluene 0.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7026087e"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="util package" href="util.html" />
+    <link rel="prev" title="c_extensions package" href="c_extensions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Toluene
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="c_extensions.html">c_extensions package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">core package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-core.coordinates">core.coordinates module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#core.coordinates.Coordinates"><code class="docutils literal notranslate"><span class="pre">Coordinates</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#core.coordinates.ECEF"><code class="docutils literal notranslate"><span class="pre">ECEF</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#core.coordinates.ECI"><code class="docutils literal notranslate"><span class="pre">ECI</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#core.coordinates.LLA"><code class="docutils literal notranslate"><span class="pre">LLA</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-core.earth">core.earth module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#core.earth.EarthModel"><code class="docutils literal notranslate"><span class="pre">EarthModel</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-core.egm84">core.egm84 module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#core.egm84.EGM84"><code class="docutils literal notranslate"><span class="pre">EGM84</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-core.ellipsoid">core.ellipsoid module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#core.ellipsoid.Ellipsoid"><code class="docutils literal notranslate"><span class="pre">Ellipsoid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#core.ellipsoid.grs_80_ellipsoid"><code class="docutils literal notranslate"><span class="pre">grs_80_ellipsoid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#core.ellipsoid.wgs_66_ellipsoid"><code class="docutils literal notranslate"><span class="pre">wgs_66_ellipsoid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#core.ellipsoid.wgs_72_ellipsoid"><code class="docutils literal notranslate"><span class="pre">wgs_72_ellipsoid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#core.ellipsoid.wgs_84_ellipsoid"><code class="docutils literal notranslate"><span class="pre">wgs_84_ellipsoid</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-core.geoid">core.geoid module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#core.geoid.Geoid"><code class="docutils literal notranslate"><span class="pre">Geoid</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-core.time">core.time module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#core.time.TerrestrialTimeJ2000"><code class="docutils literal notranslate"><span class="pre">TerrestrialTimeJ2000</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-core">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="util.html">util package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Toluene</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">modules</a></li>
+      <li class="breadcrumb-item active">core package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/core.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="core-package">
+<h1>core package<a class="headerlink" href="#core-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-core.coordinates">
+<span id="core-coordinates-module"></span><h2>core.coordinates module<a class="headerlink" href="#module-core.coordinates" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="core.coordinates.Coordinates">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.coordinates.</span></span><span class="sig-name descname"><span class="pre">Coordinates</span></span><a class="headerlink" href="#core.coordinates.Coordinates" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.coordinates.ECEF">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.coordinates.</span></span><span class="sig-name descname"><span class="pre">ECEF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ellipsoid:</span> <span class="pre">~toluene.core.ellipsoid.Ellipsoid</span> <span class="pre">=</span> <span class="pre">&lt;toluene.core.ellipsoid.Ellipsoid</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time:</span> <span class="pre">~toluene.core.time.TerrestrialTimeJ2000</span> <span class="pre">=</span> <span class="pre">&lt;toluene.core.time.TerrestrialTimeJ2000</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#core.coordinates.ECEF" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#core.coordinates.Coordinates" title="core.coordinates.Coordinates"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coordinates</span></code></a></p>
+<p>Defines a ECEF (Earth Centered Earth Fixed) vector. The ECEF vector is defined by the x, y, z coordinates in meters.
+Along with the ellipsoid if applicable which is used for conversion to <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> coordinates and time which is
+used for conversion to <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – The x coordinate in meters.</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – The y coordinate in meters.</p></li>
+<li><p><strong>z</strong> (<em>float</em>) – The z coordinate in meters.</p></li>
+<li><p><strong>ellipsoid</strong> (<a class="reference internal" href="#core.ellipsoid.Ellipsoid" title="core.ellipsoid.Ellipsoid"><em>Ellipsoid</em></a><em>, </em><em>optional</em>) – The ellipsoid the coordinates are in. Defaults to the WGS84 ellipsoid.</p></li>
+<li><p><strong>time</strong> (<a class="reference internal" href="#core.time.TerrestrialTimeJ2000" title="core.time.TerrestrialTimeJ2000"><em>TerrestrialTimeJ2000</em></a><em>, </em><em>optional</em>) – The time the coordinates are in. Defaults to time of ECEF vector initialization.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.ECEF.ellipsoid">
+<span class="sig-name descname"><span class="pre">ellipsoid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.ellipsoid.Ellipsoid" title="core.ellipsoid.Ellipsoid"><span class="pre">core.ellipsoid.Ellipsoid</span></a></span></span><a class="headerlink" href="#core.coordinates.ECEF.ellipsoid" title="Link to this definition"></a></dt>
+<dd><p>Getter for the ellipsoid in the <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> class. The ellipsoid is used for conversion to <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> AKA
+geodetic coordinates. Otherwise, it is not used by ECEF directly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The ellipsoid object in the <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> class.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#core.ellipsoid.Ellipsoid" title="core.ellipsoid.Ellipsoid"><code class="xref py py-class docutils literal notranslate"><span class="pre">core.ellipsoid.Ellipsoid</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.ECEF.magnitude">
+<span class="sig-name descname"><span class="pre">magnitude</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#core.coordinates.ECEF.magnitude" title="Link to this definition"></a></dt>
+<dd><p>The magnitude of the <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> vector. Simple Pythagorean theorem measurement of the displacement from the
+origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The magnitude of the <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> vector.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.ECEF.time">
+<span class="sig-name descname"><span class="pre">time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.time.TerrestrialTimeJ2000" title="core.time.TerrestrialTimeJ2000"><span class="pre">core.time.TerrestrialTimeJ2000</span></a></span></span><a class="headerlink" href="#core.coordinates.ECEF.time" title="Link to this definition"></a></dt>
+<dd><p>Getter for the time in the <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> class. The time is used for conversion to <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> AKA Earth</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The <a class="reference internal" href="#core.time.TerrestrialTimeJ2000" title="core.time.TerrestrialTimeJ2000"><code class="xref py py-class docutils literal notranslate"><span class="pre">core.time.TerrestrialTimeJ2000</span></code></a> object in the <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> class.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#core.time.TerrestrialTimeJ2000" title="core.time.TerrestrialTimeJ2000"><code class="xref py py-class docutils literal notranslate"><span class="pre">core.time.TerrestrialTimeJ2000</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.ECEF.to_ecef">
+<span class="sig-name descname"><span class="pre">to_ecef</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><span class="pre">LLA</span></a></span></span><a class="headerlink" href="#core.coordinates.ECEF.to_ecef" title="Link to this definition"></a></dt>
+<dd><p>This just returns self so you don’t have a bug if you try to get ECEF from ECEF. It’s not a bug, it’s a feature.
+:return: self
+:rtype: ECEF</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.ECEF.to_eci">
+<span class="sig-name descname"><span class="pre">to_eci</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><span class="pre">ECI</span></a></span></span><a class="headerlink" href="#core.coordinates.ECEF.to_eci" title="Link to this definition"></a></dt>
+<dd><p><a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> is incredibly useful when talking about orbiting bodies. Geostationary orbits defined in
+<a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> coordinates have velocity and acceleration while <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> coordinates appear unmoving. This is
+because the Earth is moving in relation to the Sun, moon, other planets, and the stars. The conversion is done
+using the time since J2000.0 which is definied as exactly 11:58:55.816 UTC on January 1, 2000. Accounting for
+leap seconds the complication of time is handled in <a class="reference internal" href="#core.time.TerrestrialTimeJ2000" title="core.time.TerrestrialTimeJ2000"><code class="xref py py-class docutils literal notranslate"><span class="pre">core.time.TerrestrialTimeJ2000</span></code></a>. The conversion is
+done in 5 separate rotations. A simple quick not complete explanation of the formula.</p>
+<p><span class="math notranslate nohighlight">\(x_{crs} = BPNTWx_{trs}\)</span></p>
+<p><span class="math notranslate nohighlight">\(W\)</span> being the rotation matrix from polar motion or the force applied by the solar system’s motion through
+the space.</p>
+<p><span class="math notranslate nohighlight">\(T\)</span> being the rotation matrix from the Earth’s rotation.</p>
+<p><span class="math notranslate nohighlight">\(N\)</span> being the rotation matrix from the nutation of the Earth’s axis. This is caused by gravitational
+forces applied to the bulge of the Earth at the equator.</p>
+<p><span class="math notranslate nohighlight">\(P\)</span> being the rotation matrix from the precession of the Earth’s axis. This is caused by the Earth’s axis
+wobbling like a top.</p>
+<p><span class="math notranslate nohighlight">\(B\)</span> being the rotation matrix from the bias of the Earth’s axis. This is caused by the Earth’s axis
+swaying from J2000.0 in an observalbe way.</p>
+<p>More information and where the formulas were taken from can be found in Chapter 6 “Precession, Nutation, Polar
+Motion, and Earth Rotation” Explanatory Supplement to the Astronomical Almanac.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The equivalent <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> vector with relation to x, y, z, and time displacement from J2000.0.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.ECEF.to_lla">
+<span class="sig-name descname"><span class="pre">to_lla</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><span class="pre">LLA</span></a></span></span><a class="headerlink" href="#core.coordinates.ECEF.to_lla" title="Link to this definition"></a></dt>
+<dd><p>Converts the <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> vector into the approximate <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> coordinates. The conversion is done using
+the ellipsoid and must be set appropriately to get the correct coordinates. The conversion is done using
+Ferrari’s solution to the inverse geodetic problem
+<a class="reference external" href="https://en.wikipedia.org/wiki/Geographic_coordinate_conversion">https://en.wikipedia.org/wiki/Geographic_coordinate_conversion</a>. Being computation heavy in toluene all this
+is done in a C extension. These series of equations are used to convert the <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> vector to the
+<a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> coordinates.</p>
+<p><span class="math notranslate nohighlight">\(a=\)</span> semi-major axis</p>
+<p><span class="math notranslate nohighlight">\(b=\)</span> semi-minor axis</p>
+<p><span class="math notranslate nohighlight">\(e^2 = \frac{a^2-b^2}{a^2}\)</span></p>
+<p><span class="math notranslate nohighlight">\(e^{r2} = \frac{a^2-b^2}{b^2}\)</span></p>
+<p><span class="math notranslate nohighlight">\(p = \sqrt{x^2+y^2}\)</span></p>
+<p><span class="math notranslate nohighlight">\(F = 54b^2z^2\)</span></p>
+<p><span class="math notranslate nohighlight">\(G = p^2+(1-e^2)z^2-e^2(a^2-b^2)\)</span></p>
+<p><span class="math notranslate nohighlight">\(c = \frac{e^4Fp^2}{G^3}\)</span></p>
+<p><span class="math notranslate nohighlight">\(s = (1+c+\sqrt{c^2+2c})^\frac{1}{3}\)</span></p>
+<p><span class="math notranslate nohighlight">\(k = 1-s+\frac{1}{s}\)</span></p>
+<p><span class="math notranslate nohighlight">\(P = \frac{F}{3k^2G^2}\)</span></p>
+<p><span class="math notranslate nohighlight">\(Q = \sqrt{1+2e^4P}\)</span></p>
+<p><span class="math notranslate nohighlight">\(r_0 = -\frac{Pep}{1+Q}+\)</span>
+<span class="math notranslate nohighlight">\(\sqrt{\frac{1}{2}a^2(1+\frac{1}{Q})-\frac{P(1-e^2)Z^2}{Q(1+Q)}-\frac{1}{2}Pp^2}\)</span></p>
+<p><span class="math notranslate nohighlight">\(U = \sqrt{(p-e^2r_0)^2+z^2}\)</span></p>
+<p><span class="math notranslate nohighlight">\(V = \sqrt{(p-e^2r_0)^2+(1-e^2)z^2}\)</span></p>
+<p><span class="math notranslate nohighlight">\(z_0 = \frac{b^2z}{aV}\)</span></p>
+<p><span class="math notranslate nohighlight">\(h = U(1-\frac{b^2}{aV}) =\)</span>  altitude over the ellipsoid</p>
+<p><span class="math notranslate nohighlight">\(\phi = atan(\frac{z+e^{r2}z_0}{p}) =\)</span> Latitude</p>
+<p><span class="math notranslate nohighlight">\(\lambda = atan2[y,x] =\)</span> Longitude</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.coordinates.ECI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.coordinates.</span></span><span class="sig-name descname"><span class="pre">ECI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ellipsoid:</span> <span class="pre">~toluene.core.ellipsoid.Ellipsoid</span> <span class="pre">=</span> <span class="pre">&lt;toluene.core.ellipsoid.Ellipsoid</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time:</span> <span class="pre">~toluene.core.time.TerrestrialTimeJ2000</span> <span class="pre">=</span> <span class="pre">&lt;toluene.core.time.TerrestrialTimeJ2000</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#core.coordinates.ECI" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#core.coordinates.Coordinates" title="core.coordinates.Coordinates"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coordinates</span></code></a></p>
+<p>Defines a ECI (Earth Centered Inertial) vector. The ECI vector is defined by the x, y, z coordinates in meters and
+time in seconds since J2000.0 using TT. The time is used for conversion to <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> coordinates. The ellipsoid
+is not used by ECI directly but used for conversion to <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> coordinates. ECI is incredibly useful when
+talking about orbiting bodies as geostationary orbits defined in ECI coordinates still have velocity and
+acceleration however appear unmoving in ECEF coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – The x coordinate in meters.</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – The y coordinate in meters.</p></li>
+<li><p><strong>z</strong> (<em>float</em>) – The z coordinate in meters.</p></li>
+<li><p><strong>ellipsoid</strong> (<a class="reference internal" href="#core.ellipsoid.Ellipsoid" title="core.ellipsoid.Ellipsoid"><em>Ellipsoid</em></a><em>, </em><em>optional</em>) – The ellipsoid the coordinates are in. Defaults to the WGS84 ellipsoid.</p></li>
+<li><p><strong>time</strong> (<a class="reference internal" href="#core.time.TerrestrialTimeJ2000" title="core.time.TerrestrialTimeJ2000"><em>TerrestrialTimeJ2000</em></a><em>, </em><em>optional</em>) – The time the coordinates are in. Defaults to time of ECI vector initialization.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.ECI.ellipsoid">
+<span class="sig-name descname"><span class="pre">ellipsoid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.ellipsoid.Ellipsoid" title="core.ellipsoid.Ellipsoid"><span class="pre">core.ellipsoid.Ellipsoid</span></a></span></span><a class="headerlink" href="#core.coordinates.ECI.ellipsoid" title="Link to this definition"></a></dt>
+<dd><p>The ellipsoid the coordinates are in. Not used directly with ECI but is important if converting to <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a>
+coordinates. Defaults to the WGS84 ellipsoid, however others can be used if needed.
+<a class="reference internal" href="#core.ellipsoid.Ellipsoid" title="core.ellipsoid.Ellipsoid"><code class="xref py py-class docutils literal notranslate"><span class="pre">core.ellipsoid.Ellipsoid</span></code></a> has more info on how to create a custom ellipsoid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The ellipsoid in the <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> class.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.ECI.magnitude">
+<span class="sig-name descname"><span class="pre">magnitude</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#core.coordinates.ECI.magnitude" title="Link to this definition"></a></dt>
+<dd><p>The magnitude of the <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> vector. Simple Pythagorean theorem measurement of the displacement from the
+origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The magnitude of the <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> vector.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.ECI.time">
+<span class="sig-name descname"><span class="pre">time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.time.TerrestrialTimeJ2000" title="core.time.TerrestrialTimeJ2000"><span class="pre">core.time.TerrestrialTimeJ2000</span></a></span></span><a class="headerlink" href="#core.coordinates.ECI.time" title="Link to this definition"></a></dt>
+<dd><p>The time the coordinates are in. The time is used for conversion to <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> coordinates. Defaults to time
+of <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> vector initialization. This NEEDS to be set appropriately using the UTC timezone. If using
+<a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> you will probably need to convert to Earth Centered Earth Fixed coordinates at some point or
+geodetic coordinates to make sense as an observer on ground.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The time in the <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> class.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#core.time.TerrestrialTimeJ2000" title="core.time.TerrestrialTimeJ2000"><code class="xref py py-class docutils literal notranslate"><span class="pre">core.time.TerrestrialTimeJ2000</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.ECI.to_ecef">
+<span class="sig-name descname"><span class="pre">to_ecef</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><span class="pre">ECEF</span></a></span></span><a class="headerlink" href="#core.coordinates.ECI.to_ecef" title="Link to this definition"></a></dt>
+<dd><p>Converts the <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> vector into the equivalent <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> coordinates. The conversion is done using
+the inverse of the rotation matricies used to convert from <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> to <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a>. The conversion is
+done in 5 separate rotations just the same however we use the transpose as they’re orthaogonal matricies.
+Introduces some rounding error but is in the scale of micrometers so is negligible.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The equivalent <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> vector with relation to x, y, z, and time displacement from J2000.0.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.ECI.to_eci">
+<span class="sig-name descname"><span class="pre">to_eci</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><span class="pre">LLA</span></a></span></span><a class="headerlink" href="#core.coordinates.ECI.to_eci" title="Link to this definition"></a></dt>
+<dd><p>This just returns self so you don’t have a bug if you try to get ECI from ECI. It’s not a bug, it’s a feature.
+:return: self
+:rtype: ECI</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.ECI.to_lla">
+<span class="sig-name descname"><span class="pre">to_lla</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><span class="pre">LLA</span></a></span></span><a class="headerlink" href="#core.coordinates.ECI.to_lla" title="Link to this definition"></a></dt>
+<dd><p>Converts the <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> vector into the equivalent <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> coordinates. The conversion is done using
+the <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> as an intermediate step. Ensure that both time and ellipsoid are set appropriately to get the
+correct coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The equivalent <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> vector with relation to latitude, longitude, altitude, and time
+displacement from J2000.0.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.coordinates.LLA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.coordinates.</span></span><span class="sig-name descname"><span class="pre">LLA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latitude:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longitude:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">altitude:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ellipsoid:</span> <span class="pre">~toluene.core.ellipsoid.Ellipsoid</span> <span class="pre">=</span> <span class="pre">&lt;toluene.core.ellipsoid.Ellipsoid</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time:</span> <span class="pre">~toluene.core.time.TerrestrialTimeJ2000</span> <span class="pre">=</span> <span class="pre">&lt;toluene.core.time.TerrestrialTimeJ2000</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#core.coordinates.LLA" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#core.coordinates.Coordinates" title="core.coordinates.Coordinates"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coordinates</span></code></a></p>
+<p>Defines geodetic coordinates, I.E. Latitude, Longitude, Altitude over an ellipsoid. These coordinates are defined
+by the ellipsoid they are on meaning unlike <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> coordinates if you want to convert to any other coordinate
+frame, it is suggested that you ensure the ellipsoid is the proper one defaulting to the WGS84 ellipsoid. The time
+is also used when converting to <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>latitude</strong> (<em>float</em>) – The latitude of the point on the ellipsoid in degrees. Must be between -90 and 90 degrees. -90 is
+the South Pole and 90 is the North Pole and is just equal to the semi-minor axis. 0 is the equator and is equal
+to the semi-major axis. Represented in math as <span class="math notranslate nohighlight">\(\phi\)</span>.</p></li>
+<li><p><strong>longitude</strong> (<em>float</em>) – The longitude of the point on the ellipsoid in degrees. Must be between -180 and 180 degrees. -180
+is the International Date Line and 180 is the Prime Meridian. Represented in math as <span class="math notranslate nohighlight">\(\lambda\)</span>.</p></li>
+<li><p><strong>altitude</strong> (<em>float</em><em>, </em><em>optional</em>) – The altitude of the point over the ellipsoid in meters. Represented in math as <span class="math notranslate nohighlight">\(h\)</span>. Defaults
+to 0 meters.</p></li>
+<li><p><strong>ellipsoid</strong> (<a class="reference internal" href="#core.ellipsoid.Ellipsoid" title="core.ellipsoid.Ellipsoid"><code class="xref py py-class docutils literal notranslate"><span class="pre">core.ellipsoid.Ellipsoid</span></code></a>, optional) – The ellipsoid the coordinates are on. Defaults to the WGS84 ellipsoid.</p></li>
+<li><p><strong>time</strong> (<a class="reference internal" href="#core.time.TerrestrialTimeJ2000" title="core.time.TerrestrialTimeJ2000"><code class="xref py py-class docutils literal notranslate"><span class="pre">core.time.TerrestrialTimeJ2000</span></code></a>, optional) – The time the coordinates are in. Defaults to time of LLA coordinates initialization.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.LLA.ellipsoid">
+<span class="sig-name descname"><span class="pre">ellipsoid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.ellipsoid.Ellipsoid" title="core.ellipsoid.Ellipsoid"><span class="pre">core.ellipsoid.Ellipsoid</span></a></span></span><a class="headerlink" href="#core.coordinates.LLA.ellipsoid" title="Link to this definition"></a></dt>
+<dd><p>Getter for the ellipsoid in the <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> class. The ellipsoid is used for conversion to <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> AKA
+Earth Centered Earth Fixed coordinates. It could also be used to measure the distance from one point to another
+in meters. It defines the shape of the Earth and how the radius changes with respect to latitude.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The ellipsoid object in the <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> class.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#core.ellipsoid.Ellipsoid" title="core.ellipsoid.Ellipsoid">Ellipsoid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.LLA.magnitude">
+<span class="sig-name descname"><span class="pre">magnitude</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#core.coordinates.LLA.magnitude" title="Link to this definition"></a></dt>
+<dd><p>The magnitude of the <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> vector. Measurement of the displacement from the center of the Earth. This
+is the same as the altitude over the ellipsoid plus the radius of the ellipsoid at the latitude of the point.
+Should be equal to the Pythagorean theorem of the corresponding <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The magnitude of the <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> vector.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.LLA.time">
+<span class="sig-name descname"><span class="pre">time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.time.TerrestrialTimeJ2000" title="core.time.TerrestrialTimeJ2000"><span class="pre">core.time.TerrestrialTimeJ2000</span></a></span></span><a class="headerlink" href="#core.coordinates.LLA.time" title="Link to this definition"></a></dt>
+<dd><p>Getter for the time in the <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> class. The time is used for conversion to <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> AKA Earth
+Centered Inertial coordinates. It could be used to store time when the coordinates were taken.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The time object in the <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> class.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#core.time.TerrestrialTimeJ2000" title="core.time.TerrestrialTimeJ2000"><code class="xref py py-class docutils literal notranslate"><span class="pre">core.time.TerrestrialTimeJ2000</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.LLA.to_ecef">
+<span class="sig-name descname"><span class="pre">to_ecef</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><span class="pre">ECEF</span></a></span></span><a class="headerlink" href="#core.coordinates.LLA.to_ecef" title="Link to this definition"></a></dt>
+<dd><p>Converts the Geodetic coordinates to the equivalent <a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> coordinates. The conversion is done using the
+definied ellipsoid and must be set appropriately to get the correct coordinates. The conversion is much simpler
+than the other way around and could be computed with the equation. Still preformed in a C extension for speed.</p>
+<p><span class="math notranslate nohighlight">\(x = (N(\phi)+h)cos(\phi)cos(\lambda)\)</span></p>
+<p><span class="math notranslate nohighlight">\(y = (N(\phi)+h)cos(\phi)sin(\lambda)\)</span></p>
+<p><span class="math notranslate nohighlight">\(z = (N(\phi)(1-e^2)+h)sin(\phi)\)</span></p>
+<p>Where <span class="math notranslate nohighlight">\(N(\phi) = \frac{a}{\sqrt{1-e^2sin^2(\phi)}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(a=\)</span> semi-major axis</p>
+<p><span class="math notranslate nohighlight">\(b=\)</span> semi-minor axis</p>
+<p><span class="math notranslate nohighlight">\(e^2 = \frac{a^2-b^2}{a^2}\)</span></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.LLA.to_eci">
+<span class="sig-name descname"><span class="pre">to_eci</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><span class="pre">ECI</span></a></span></span><a class="headerlink" href="#core.coordinates.LLA.to_eci" title="Link to this definition"></a></dt>
+<dd><p>Converts the <a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLA</span></code></a> coordinates to the equivalent <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> coordinates. The conversion is done using
+<a class="reference internal" href="#core.coordinates.ECEF" title="core.coordinates.ECEF"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECEF</span></code></a> as an intermediate step. Ensure that both time and ellipsoid are set appropriately to get the
+correct coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The equivalent <a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a> vector with relation to x, y, z, and time displacement from J2000.0.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#core.coordinates.ECI" title="core.coordinates.ECI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ECI</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.coordinates.LLA.to_lla">
+<span class="sig-name descname"><span class="pre">to_lla</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#core.coordinates.LLA" title="core.coordinates.LLA"><span class="pre">LLA</span></a></span></span><a class="headerlink" href="#core.coordinates.LLA.to_lla" title="Link to this definition"></a></dt>
+<dd><p>This just returns self so you don’t have a bug if you try to get LLA from LLA. It’s not a bug, it’s a feature.
+:return: self
+:rtype: LLA</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-core.earth">
+<span id="core-earth-module"></span><h2>core.earth module<a class="headerlink" href="#module-core.earth" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="core.earth.EarthModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.earth.</span></span><span class="sig-name descname"><span class="pre">EarthModel</span></span><a class="headerlink" href="#core.earth.EarthModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-core.egm84">
+<span id="core-egm84-module"></span><h2>core.egm84 module<a class="headerlink" href="#module-core.egm84" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="core.egm84.EGM84">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.egm84.</span></span><span class="sig-name descname"><span class="pre">EGM84</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interpolation_grid_zip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spherical_harmonics_zip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#core.egm84.EGM84" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Geoid</span></code></p>
+<p>The EGM84 geoid. The EGM84 geoid is a geoid model of the earth. It is based on the WGS84 ellipsoid and is defined
+by a grid of points and the spherical harmonics. The spherical harmonics are used to calculate gravity. The grid is
+used to interpolate the sea level at a point. Created by the National Geospatial-Intelligence Agency (NGA) and the
+data is available at <a class="reference external" href="https://earth-info.nga.mil/#wgs84-data">https://earth-info.nga.mil/#wgs84-data</a>. It does not come with toluene and must be
+downloaded to use the EGM84 geoid. Opens the interpolation grid zip file and sphereical harmonics zip file into
+the temp dir of this run. The file WWGRID can be found there after super().__init__.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interpolation_grid_zip</strong> (<em>str</em>) – The path to the interpolation grid zip file.</p></li>
+<li><p><strong>spherical_harmonics_zip</strong> (<em>str</em><em>, </em><em>optional</em>) – The path to the spherical harmonics zip file. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="core.egm84.EGM84.height">
+<span class="sig-name descname"><span class="pre">height</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'bilinear'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'bilinear'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#core.egm84.EGM84.height" title="Link to this definition"></a></dt>
+<dd><p>Calculates the height of the EGM84 geoid at a point. Uses interpolation to calculate the height. The method of
+interpolation is defined by the interpolation parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>position</strong> (<a class="reference internal" href="#core.coordinates.Coordinates" title="core.coordinates.Coordinates"><em>Coordinates</em></a>) – The position to calculate the height at.</p></li>
+<li><p><strong>interpolation</strong> (<em>Literal</em><em>[</em><em>'bilinear'</em><em>]</em><em>, </em><em>optional. Defaults to bilinear.</em>) – The interpolation method to use for computing the value. Defaults to <code class="docutils literal notranslate"><span class="pre">bilinear</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The height of the EGM84 geoid at the point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-core.ellipsoid">
+<span id="core-ellipsoid-module"></span><h2>core.ellipsoid module<a class="headerlink" href="#module-core.ellipsoid" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="core.ellipsoid.Ellipsoid">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.ellipsoid.</span></span><span class="sig-name descname"><span class="pre">Ellipsoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">semi_major_axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse_flattening</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#core.ellipsoid.Ellipsoid" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Defines an ellipsoid for toluene. The ellipsoid is defined by the semi-major axis and the inverse flattening factor.
+For too complicated reasons to explain here, the earth is not a sphere, but an ellipsoid. An Ellipsoid is close to a
+sphere but bulges at the equator and is flattened at the poles. The semi-major axis is the radius of the ellipsoid
+at the equator and the inverse flattening factor is the flattening factor inverted. The flattening factor defines
+how much the ellipsoid is flattened at the poles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>semi_major_axis</strong> (<em>float</em>) – The semi-major axis of the ellipsoid in meters. The semi-major axis is the radius of the
+ellipsoid at the equator.</p></li>
+<li><p><strong>inverse_flattening</strong> (<em>float</em>) – The inverse flattening factor of the ellipsoid. The inverse flattening factor is defined
+as the flattening factor inverted. <span class="math notranslate nohighlight">\(\frac{1}{f} = \frac{a}{a-b}\)</span> where <span class="math notranslate nohighlight">\(a\)</span> is the semi-major axis
+and <span class="math notranslate nohighlight">\(b\)</span> is the semi-minor axis. The semi-minor axis is the radius of the ellipsoid at the poles in meters.</p></li>
+<li><p><strong>epsg</strong> (<em>int</em><em>, </em><em>optional</em>) – The EPSG number of the ellipsoid. More ellipsoids can be found at <a class="reference external" href="https://epsg.io">https://epsg.io</a>, Defaults to
+<code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="core.ellipsoid.Ellipsoid.ellipsoid_radius">
+<span class="sig-name descname"><span class="pre">ellipsoid_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latitude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#core.ellipsoid.Ellipsoid.ellipsoid_radius" title="Link to this definition"></a></dt>
+<dd><p>Calculates the radius of the ellipsoid at a given latitude. The latitude must be between -90 and 90 degrees.
+The solution is given in meters. The formula used is
+<span class="math notranslate nohighlight">\(R = \sqrt{\frac{a^2}{1+(\frac{1}{(1-f)^2}-1)\cdot sin^2(\phi)}}\)</span>. Where <span class="math notranslate nohighlight">\(a\)</span> is the semi-major
+axis, <span class="math notranslate nohighlight">\(f\)</span> is the flattening factor and <span class="math notranslate nohighlight">\(\phi\)</span> is the latitude.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>latitude</strong> (<em>float</em>) – The latitude of the point on the ellipsoid in degrees. Must be between -90 and 90 degrees.
+-90 is the South Pole and 90 is the North Pole and is just equal to the semi-minor axis. 0 is the equator
+and is equal to the semi-major axis.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The radius of the ellipsoid at the given latitude in meters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.ellipsoid.Ellipsoid.epsg">
+<span class="sig-name descname"><span class="pre">epsg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#core.ellipsoid.Ellipsoid.epsg" title="Link to this definition"></a></dt>
+<dd><p>EPSG number of the ellipsoid. More ellipsoids than the ones defined here can be found at <a class="reference external" href="https://epsg.io">https://epsg.io</a>.
+There are plans to add more ellipsoids to this class, but for now, the user can define their own ellipsoid if
+the one’s supplied don’t fit their needs. The fact that the epsg number is saved in the class is just a for
+reference and has no effect on the calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The EPSG number of the ellipsoid.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.ellipsoid.Ellipsoid.flattening">
+<span class="sig-name descname"><span class="pre">flattening</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#core.ellipsoid.Ellipsoid.flattening" title="Link to this definition"></a></dt>
+<dd><p>The flattening factor of the ellipsoid. The flattening factor is the relationship between the semi-major axis
+and the semi-minor axis. The mathematical symbol for the flattening factor is <span class="math notranslate nohighlight">\(f\)</span> in most cases. This is
+computed with the formula <span class="math notranslate nohighlight">\(f = \frac{a}{a-b}\)</span> where <span class="math notranslate nohighlight">\(a\)</span> is the semi-major axis and <span class="math notranslate nohighlight">\(b\)</span> is the
+semi-minor axis. The flattening factor isn’t saved in the class, but computed when the function is called with
+the formula <span class="math notranslate nohighlight">\(f = \frac{1}{\frac{1}{f}}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flattening factor of the ellipsoid.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.ellipsoid.Ellipsoid.semi_major_axis">
+<span class="sig-name descname"><span class="pre">semi_major_axis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#core.ellipsoid.Ellipsoid.semi_major_axis" title="Link to this definition"></a></dt>
+<dd><p>The semi major axis of the ellipsoid. The semi-major axis is the radius of the ellipsoid at the equator. The
+mathematical symbol for the semi-major axis is <span class="math notranslate nohighlight">\(a\)</span> in most cases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The semi-major axis of the ellipsoid.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.ellipsoid.Ellipsoid.semi_minor_axis">
+<span class="sig-name descname"><span class="pre">semi_minor_axis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#core.ellipsoid.Ellipsoid.semi_minor_axis" title="Link to this definition"></a></dt>
+<dd><p>The semi minor axis of the ellipsoid. The semi-minor axis is the radius of the ellipsoid at the poles. The
+mathematical symbol for the semi-minor axis is <span class="math notranslate nohighlight">\(b\)</span> in most cases. This is computed at the class’
+initialization using the formula <span class="math notranslate nohighlight">\(b = a(1-f)\)</span> where <span class="math notranslate nohighlight">\(a\)</span> is the semi-major axis and <span class="math notranslate nohighlight">\(f\)</span> is the
+flattening factor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The semi-minor axis of the ellipsoid.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="core.ellipsoid.grs_80_ellipsoid">
+<span class="sig-prename descclassname"><span class="pre">core.ellipsoid.</span></span><span class="sig-name descname"><span class="pre">grs_80_ellipsoid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;core.ellipsoid.Ellipsoid</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#core.ellipsoid.grs_80_ellipsoid" title="Link to this definition"></a></dt>
+<dd><p>GRS80/EPSG:7019 ellipsoid <a class="reference external" href="https://epsg.io/7019-ellipsoid">https://epsg.io/7019-ellipsoid</a> Geodetic Reference System 1980.
+The semi-major axis is 6,378,137.0 meters and the inverse flattening is 298.257222101.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="core.ellipsoid.wgs_66_ellipsoid">
+<span class="sig-prename descclassname"><span class="pre">core.ellipsoid.</span></span><span class="sig-name descname"><span class="pre">wgs_66_ellipsoid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;core.ellipsoid.Ellipsoid</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#core.ellipsoid.wgs_66_ellipsoid" title="Link to this definition"></a></dt>
+<dd><p>WGS66/EPSG:4890 ellipsoid <a class="reference external" href="https://epsg.io/4890">https://epsg.io/4890</a> World Geodetic System 1966.
+The semi-major axis is 6,378,145.0 meters and the inverse flattening is 298.25.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="core.ellipsoid.wgs_72_ellipsoid">
+<span class="sig-prename descclassname"><span class="pre">core.ellipsoid.</span></span><span class="sig-name descname"><span class="pre">wgs_72_ellipsoid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;core.ellipsoid.Ellipsoid</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#core.ellipsoid.wgs_72_ellipsoid" title="Link to this definition"></a></dt>
+<dd><p>WGS72/EPSG:4322 ellipsoid <a class="reference external" href="https://epsg.io/4322">https://epsg.io/4322</a> World Geodetic System 1972.
+The semi-major axis is 6,378,135.0 meters and the inverse flattening is 298.26.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="core.ellipsoid.wgs_84_ellipsoid">
+<span class="sig-prename descclassname"><span class="pre">core.ellipsoid.</span></span><span class="sig-name descname"><span class="pre">wgs_84_ellipsoid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;core.ellipsoid.Ellipsoid</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#core.ellipsoid.wgs_84_ellipsoid" title="Link to this definition"></a></dt>
+<dd><p>WGS84/EPSG:4326 ellipsoid <a class="reference external" href="https://epsg.io/4326">https://epsg.io/4326</a> World Geodetic System 1984.
+The semi-major axis is 6,378,137.0 meters and the inverse flattening is 298.257223563.
+This is the most commonly used ellipsoid.</p>
+</dd></dl>
+
+</section>
+<section id="module-core.geoid">
+<span id="core-geoid-module"></span><h2>core.geoid module<a class="headerlink" href="#module-core.geoid" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="core.geoid.Geoid">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.geoid.</span></span><span class="sig-name descname"><span class="pre">Geoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interpolation_grid_zip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spherical_harmonics_zip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#core.geoid.Geoid" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The abstract base class for a Geoid. A geoid is a model of the earth’s surface. It is defined by a grid of points
+and the spherical harmonics. The spherical harmonics are used to calculate gravity. The grid is used to interpolate
+the sea level at a point. The geoid is based on an ellipsoid. The ellipsoid is used to calculate the height of a
+perfect ellipsoid to model the earth. The geoid is then used to calculate the difference between the ellipsoid and
+the theoretical sea level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interpolation_grid_zip</strong> (<em>str</em>) – The path to the interpolation grid zip file.</p></li>
+<li><p><strong>spherical_harmonics_zip</strong> (<em>str</em><em>, </em><em>optional</em>) – The path to the spherical harmonics zip file. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="core.geoid.Geoid.height">
+<span class="sig-name descname"><span class="pre">height</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'bilinear'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'bilinear'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#core.geoid.Geoid.height" title="Link to this definition"></a></dt>
+<dd><p>Calculates the height of the geoid at a point. This method is pure virtual and must be implemented by the
+subclass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>position</strong> (<a class="reference internal" href="#core.coordinates.Coordinates" title="core.coordinates.Coordinates"><em>Coordinates</em></a>) – The position to calculate the height at.</p></li>
+<li><p><strong>interpolation</strong> (<em>Literal</em><em>[</em><em>'bilinear'</em><em>]</em><em>, </em><em>optional. Defaults to bilinear.</em>) – The interpolation method to use for computing the value. Defaults to <code class="docutils literal notranslate"><span class="pre">bilinear</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The height of the geoid at the point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-core.time">
+<span id="core-time-module"></span><h2>core.time module<a class="headerlink" href="#module-core.time" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="core.time.TerrestrialTimeJ2000">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.time.</span></span><span class="sig-name descname"><span class="pre">TerrestrialTimeJ2000</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">datetime.datetime(2023,</span> <span class="pre">11,</span> <span class="pre">27,</span> <span class="pre">2,</span> <span class="pre">49,</span> <span class="pre">29,</span> <span class="pre">725326)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#core.time.TerrestrialTimeJ2000" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Terrestrial Time (TT) is the timescale used for most ephemerides of planets and other solar system bodies. It is
+dependent on the rotation of the earth and the gravitational potential of the earth. I define the timezone as UTC
+so when using a datetime object it is important to set the time as UTC and not local time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dt</strong> (<em>datetime</em><em>, </em><em>optional</em>) – The datetime object to use for the time. Defaults to the current time.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="core.time.TerrestrialTimeJ2000.centuries_since">
+<span class="sig-name descname"><span class="pre">centuries_since</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#core.time.TerrestrialTimeJ2000.centuries_since" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.time.TerrestrialTimeJ2000.seconds_since">
+<span class="sig-name descname"><span class="pre">seconds_since</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#core.time.TerrestrialTimeJ2000.seconds_since" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-core">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-core" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="c_extensions.html" class="btn btn-neutral float-left" title="c_extensions package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="util.html" class="btn btn-neutral float-right" title="util package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, BleuHund.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -4,12 +4,16 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+include = ["toluene*"]
+exclude = ["docs*", "scratch*", "tests*"]
+
 [tool.setuptools.package-data]
 "*" = ["*.yml"]
 
 [project]
 name = "toluene"
-version = "0.0.0"
+dynamic = ['version']
 description = "Python library for geospatial and image processing functions"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -25,8 +29,10 @@ classifiers=[
     'Typing :: Typed'
 ]
 dependencies = [
-    'numpy'
 ]
+
+[tool.setuptools.dynamic]
+version = {attr = "toluene.__version__"}
 
 [project.scripts]
 toluene-build-config = "toluene.apps.config_builder:main"

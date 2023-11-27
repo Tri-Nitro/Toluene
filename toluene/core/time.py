@@ -8,8 +8,16 @@ leap_seconds_after_j2000 = [1136054400, 1230768000, 1341091200, 1435670400, 1483
 
 
 class TerrestrialTimeJ2000:
+    """
+    Terrestrial Time (TT) is the timescale used for most ephemerides of planets and other solar system bodies. It is
+    dependent on the rotation of the earth and the gravitational potential of the earth. I define the timezone as UTC
+    so when using a datetime object it is important to set the time as UTC and not local time.
+
+    :param dt: The datetime object to use for the time. Defaults to the current time.
+    :type dt: datetime, optional
+    """
     def __init__(self, dt: datetime = datetime.utcnow()):
-        self.__timestamp = dt.timestamp()
+        self.__timestamp = dt.replace(tzinfo=timezone.utc).astimezone(tz=None).timestamp()
         for leap_second in leap_seconds_after_j2000:
             if self.__timestamp >= leap_second:
                 self.__timestamp += 1

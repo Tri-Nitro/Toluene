@@ -20,10 +20,26 @@ core.earth module
    :undoc-members:
    :show-inheritance:
 
+core.egm84 module
+-----------------------------
+
+.. automodule:: core.egm84
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 core.ellipsoid module
 ---------------------
 
 .. automodule:: core.ellipsoid
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+core.geoid module
+-----------------------------
+
+.. automodule:: core.geoid
    :members:
    :undoc-members:
    :show-inheritance:

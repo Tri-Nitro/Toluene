@@ -16,7 +16,7 @@ ___________
        Publication Year: 2002
 
 Books
------
+___________
 
 .. [3] Explanatory Supplement to the Astronomical Almanac, 3rd Edition
        Author: Sean Urban and P. Kenneth Seidelmann
