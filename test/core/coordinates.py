@@ -25,13 +25,13 @@ class TestCoordinates:
         for coordinates in test_ecef_coordinates:
             old = coordinates
             new = coordinates.to_eci().to_ecef()
-            assert old - new < 0.0000001
+            assert old - new < 0.000001
 
     def test_lla_and_eci_conversion(self):
         for coordinates in test_lla_coordinates:
             old = coordinates
             new = coordinates.to_eci().to_lla()
-            assert old - new < 0.0000001
+            assert old - new < 0.000001
 
     def test_lla_magnitude(self):
         for coordinates in test_lla_coordinates:

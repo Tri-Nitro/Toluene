@@ -9,7 +9,12 @@ from toluene_extensions.core_extensions import eci_from_ecef, ecef_from_eci, ece
 logger = logging.getLogger('toluene.core.coordinates')
 
 
-class ECEF:
+class Coordinates:
+    def __init__(self):
+        pass
+
+
+class ECEF(Coordinates):
     """
     Defines a ECEF (Earth Centered Earth Fixed) vector. The ECEF vector is defined by the x, y, z coordinates in meters.
     Along with the ellipsoid if applicable which is used for conversion to :class:`LLA` coordinates and time which is
@@ -91,7 +96,7 @@ class ECEF:
         :rtype: float
         """
         logger.debug(f'Entering ECEF.magnitude()')
-        return (self.x**2 + self.y**2 + self.z**2)**0.5
+        return (self.x ** 2 + self.y ** 2 + self.z ** 2) ** 0.5
 
     def to_eci(self) -> ECI:
         """
@@ -169,7 +174,7 @@ class ECEF:
         return LLA(latitude, longitude, altitude, self.__ellipsoid, self.__time)
 
 
-class ECI:
+class ECI(Coordinates):
     """
     Defines a ECI (Earth Centered Inertial) vector. The ECI vector is defined by the x, y, z coordinates in meters and
     time in seconds since J2000.0 using TT. The time is used for conversion to :class:`ECEF` coordinates. The ellipsoid
@@ -249,7 +254,7 @@ class ECI:
         :rtype: float
         """
         logger.debug(f'Entering ECI.magnitude()')
-        return (self.x**2 + self.y**2 + self.z**2)**0.5
+        return (self.x ** 2 + self.y ** 2 + self.z ** 2) ** 0.5
 
     def to_eci(self) -> LLA:
         """
@@ -284,7 +289,8 @@ class ECI:
         """
         return self.to_ecef().to_lla()
 
-class LLA:
+
+class LLA(Coordinates):
     """
     Defines geodetic coordinates, I.E. Latitude, Longitude, Altitude over an ellipsoid. These coordinates are defined
     by the ellipsoid they are on meaning unlike :class:`ECEF` coordinates if you want to convert to any other coordinate
