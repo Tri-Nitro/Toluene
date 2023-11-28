@@ -27,6 +27,5 @@ void compute_polynomial(const double coefficients[], double x, int highest_order
 }
 
 #ifdef __cplusplus
-extern "C"
-{
+} /* extern "C" */
 #endif

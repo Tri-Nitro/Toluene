@@ -1,0 +1,237 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Tri-Nitro
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * */
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+
+#include "models/earth/model.h"
+
+#if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+#endif /* _WIN32 */
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+
+static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
+
+    EarthModel* model = (EarthModel*)malloc(sizeof(EarthModel));
+
+    if(model == NULL) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for new_EarthModel.");
+        return PyErr_Occurred();
+    }
+
+    model->cirs_to_tirs_coefficients.zeta_a = NULL;
+    model->cirs_to_tirs_coefficients.z_a = NULL;
+    model->cirs_to_tirs_coefficients.theta_a = NULL;
+    model->cirs_to_tirs_coefficients.psi_a = NULL;
+    model->cirs_to_tirs_coefficients.omega_a = NULL;
+    model->cirs_to_tirs_coefficients.epsilon_a = NULL;
+    model->cirs_to_tirs_coefficients.chi_a = NULL;
+
+    model->cirs_to_tirs_coefficients.l = NULL;
+    model->cirs_to_tirs_coefficients.l_prime = NULL;
+    model->cirs_to_tirs_coefficients.F = NULL;
+    model->cirs_to_tirs_coefficients.D = NULL;
+    model->cirs_to_tirs_coefficients.Omega = NULL;
+    model->cirs_to_tirs_coefficients.l_me = NULL;
+    model->cirs_to_tirs_coefficients.l_v = NULL;
+    model->cirs_to_tirs_coefficients.l_e = NULL;
+    model->cirs_to_tirs_coefficients.l_ma = NULL;
+    model->cirs_to_tirs_coefficients.l_j = NULL;
+    model->cirs_to_tirs_coefficients.l_s = NULL;
+    model->cirs_to_tirs_coefficients.l_u = NULL;
+    model->cirs_to_tirs_coefficients.l_n = NULL;
+    model->cirs_to_tirs_coefficients.p = NULL;
+
+    return PyCapsule_New(model, "EarthModel", delete_EarthModel);
+}
+
+
+static void delete_EarthModel(PyObject* obj) {
+
+    EarthModel* pointer = PyCapsule_GetPointer(obj, "EarthModel");
+    if(pointer) {
+
+        if(pointer->cirs_to_tirs_coefficients.zeta_a) {
+            if(pointer->cirs_to_tirs_coefficients.zeta_a->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.zeta_a->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.zeta_a);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.z_a) {
+            if(pointer->cirs_to_tirs_coefficients.z_a->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.z_a->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.z_a);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.theta_a) {
+            if(pointer->cirs_to_tirs_coefficients.theta_a->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.theta_a->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.theta_a);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.psi_a) {
+            if(pointer->cirs_to_tirs_coefficients.psi_a->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.psi_a->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.psi_a);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.omega_a) {
+            if(pointer->cirs_to_tirs_coefficients.omega_a->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.omega_a->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.omega_a);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.epsilon_a) {
+            if(pointer->cirs_to_tirs_coefficients.epsilon_a->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.epsilon_a->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.epsilon_a);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.chi_a) {
+            if(pointer->cirs_to_tirs_coefficients.chi_a->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.chi_a->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.chi_a);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.l) {
+            if(pointer->cirs_to_tirs_coefficients.l->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.l->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.l);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.l_prime) {
+            if(pointer->cirs_to_tirs_coefficients.l_prime->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.l_prime->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.l_prime);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.F) {
+            if(pointer->cirs_to_tirs_coefficients.F->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.F->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.F);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.D) {
+            if(pointer->cirs_to_tirs_coefficients.D->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.D->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.D);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.Omega) {
+            if(pointer->cirs_to_tirs_coefficients.Omega->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.Omega->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.Omega);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.l_me) {
+            if(pointer->cirs_to_tirs_coefficients.l_me->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.l_me->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.l_me);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.l_v) {
+            if(pointer->cirs_to_tirs_coefficients.l_v->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.l_v->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.l_v);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.l_e) {
+            if(pointer->cirs_to_tirs_coefficients.l_e->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.l_e->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.l_e);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.l_ma) {
+            if(pointer->cirs_to_tirs_coefficients.l_ma->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.l_ma->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.l_ma);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.l_j) {
+            if(pointer->cirs_to_tirs_coefficients.l_j->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.l_j->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.l_j);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.l_s) {
+            if(pointer->cirs_to_tirs_coefficients.l_s->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.l_s->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.l_s);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.l_u) {
+            if(pointer->cirs_to_tirs_coefficients.l_u->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.l_u->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.l_u);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.l_n) {
+            if(pointer->cirs_to_tirs_coefficients.l_n->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.l_n->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.l_n);
+        }
+
+        if(pointer->cirs_to_tirs_coefficients.p) {
+            if(pointer->cirs_to_tirs_coefficients.p->coefficients)
+                free(pointer->cirs_to_tirs_coefficients.p->coefficients);
+            free(pointer->cirs_to_tirs_coefficients.p);
+        }
+
+        free(pointer);
+    }
+
+}
+
+
+static PyMethodDef tolueneModelsEarthModelMethods[] = {
+    {"new_EarthModel", new_EarthModel, METH_VARARGS, "Create a new EarthModel object"},
+    {NULL, NULL, 0, NULL}
+};
+
+
+static struct PyModuleDef models_earth_model = {
+    PyModuleDef_HEAD_INIT,
+    "models.earth.model",
+    "C Extensions to toluene models earth functions",
+    -1,
+    tolueneModelsEarthModelMethods
+};
+
+
+PyMODINIT_FUNC PyInit_model(void) {
+    return PyModule_Create(&models_earth_model);
+}
+
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
