@@ -1,6 +1,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#include "polynomial.h"
 #include "rotation_matrices.h"
 #include "toluene_core_config.h"
 
@@ -17,30 +18,28 @@ extern "C"
 #endif
 
 
-void compute_polynomial(const double coefficients[], double x, int highest_order, double* value) {
+void compute_bias_matrix(double bias_matrix[]) {
 
-    *value = 0.0;
+    memcpy(bias_matrix, bias_rotation_matrix, 9*sizeof(double));
 
-    for(int i = highest_order; i >= 0; --i) {
-        *value = *value * x + coefficients[i];
-    }
+    return;
 
 }
 
 
-void compute_iau_coefficients(double tt_seconds, double iau_coefficients[]) {
+void compute_precession_arguments(double tt_seconds, double precession_arguments[]) {
 
     // 3155760000.0 is the number of seconds in a century. t is the number of centuries since J2000.0.
     double t = tt_seconds / 3155760000.0;
 
     // zeta_a(t) = zeta_0 + zeta_1 * t + zeta_2 * t^2 + zeta_3 * t^3 + zeta_4 * t^4 + zeta_5 * t^5.
-    compute_polynomial(ZETA_a, t, 5, iau_coefficients);
+    compute_polynomial(ZETA_a, t, 5, precession_arguments);
 
     // z_a(t) = z_0 + z_1 * t + z_2 * t^2 + z_3 * t^3 + z_4 * t^4 + z_5 * t^5.
-    compute_polynomial(Z_a, t, 5, iau_coefficients+1);
+    compute_polynomial(Z_a, t, 5, precession_arguments+1);
 
     // theta_a(t) = theta_0 + theta_1 * t + theta_2 * t^2 + theta_3 * t^3 + theta_4 * t^4 + theta_5 * t^5.
-    compute_polynomial(THETA_a, t, 5, iau_coefficients+2);
+    compute_polynomial(THETA_a, t, 5, precession_arguments+2);
 
     return;
 }

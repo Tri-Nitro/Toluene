@@ -11,4 +11,4 @@ void bilinear_interpolation(double x, double y, double corners[], double* value)
 }   /* extern "C" */
 #endif
 
-#endif /* __EARTH_GRAVITATIONAL_MODEL_H__ */
+#endif /* __INTERPOLATION_H__ */
