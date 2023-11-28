@@ -3,8 +3,8 @@
 
 #include "earth_gravitational_model.h"
 #include "interpolation.h"
+#include "matrix.h"
 #include "rotation_matrices.h"
-#include "toluene_core_config.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
 
@@ -89,58 +89,41 @@ eci_from_ecef(PyObject *self, PyObject *args) {
 
     double x, y, z, tt_seconds;
 
-    double precession_matrix[9];
-    double iau_coefficients[3];
+    double vector[3];
+    double arguments[4];
+    double matrix[9];
 
-    double nutation_matrix[9];
-    double nutation_arguments[4];
-
-    double terrestrial_matrix[9];
-
-    double polar_motion_matrix[9];
 
     if(!PyArg_ParseTuple(args, "dddd", &x, &y, &z, &tt_seconds)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ecef_from_eci(double x, double y, double z, double tt_seconds)");
         return PyErr_Occurred();
     }
 
-    compute_iau_coefficients(tt_seconds, iau_coefficients);
-    compute_precession_matrix(iau_coefficients, precession_matrix);
+    vector[0] = x;
+    vector[1] = y;
+    vector[2] = z;
 
-    compute_nutation_arguments(tt_seconds, nutation_arguments);
-    compute_nutation_matrix(nutation_arguments, nutation_matrix);
+    compute_polar_motion_matrix(tt_seconds, matrix);
+    matrix_dot_product_3_3_vector_in_place(vector, matrix);
 
-    compute_terrestrial_matrix(tt_seconds, nutation_arguments[3], terrestrial_matrix);
+    compute_nutation_arguments(tt_seconds, arguments);
 
-    compute_polar_motion_matrix(tt_seconds, polar_motion_matrix);
+    compute_terrestrial_matrix(tt_seconds, arguments[3],  matrix);
+    matrix_dot_product_3_3_vector_in_place(vector, matrix);
 
-    /* Terrestrial rotation of earth from GAST */
-    double x_prime = x*polar_motion_matrix[0] + y*polar_motion_matrix[1] + z*polar_motion_matrix[2];
-    double y_prime = x*polar_motion_matrix[3] + y*polar_motion_matrix[4] + z*polar_motion_matrix[5];
-    double z_prime = x*polar_motion_matrix[6] + y*polar_motion_matrix[7] + z*polar_motion_matrix[8];
+    compute_nutation_matrix(arguments, matrix);
+    matrix_dot_product_3_3_vector_in_place(vector, matrix);
 
-    x = x_prime*terrestrial_matrix[0] + y_prime*terrestrial_matrix[1] + z_prime*terrestrial_matrix[2];
-    y = x_prime*terrestrial_matrix[3] + y_prime*terrestrial_matrix[4] + z_prime*terrestrial_matrix[5];
-    z = x_prime*terrestrial_matrix[6] + y_prime*terrestrial_matrix[7] + z_prime*terrestrial_matrix[8];
+    compute_precession_arguments(tt_seconds, arguments);
+    compute_precession_matrix(arguments, matrix);
+    matrix_dot_product_3_3_vector_in_place(vector, matrix);
 
-    /* Nutation rotation of earth from J2000.0 */
-    x_prime = x*nutation_matrix[0] + y*nutation_matrix[1] + z*nutation_matrix[2];
-    y_prime = x*nutation_matrix[3] + y*nutation_matrix[4] + z*nutation_matrix[5];
-    z_prime = x*nutation_matrix[6] + y*nutation_matrix[7] + z*nutation_matrix[8];
+    compute_bias_matrix(matrix);
+    matrix_dot_product_3_3_vector_in_place(vector, matrix);
 
-    /* Precession rotation of earth from J2000.0 */
-    x = x_prime*precession_matrix[0] + y_prime*precession_matrix[1] + z_prime*precession_matrix[2];
-    y = x_prime*precession_matrix[3] + y_prime*precession_matrix[4] + z_prime*precession_matrix[5];
-    z = x_prime*precession_matrix[6] + y_prime*precession_matrix[7] + z_prime*precession_matrix[8];
-
-    /* Bias rotation of earth from J2000.0 */
-    x_prime = x*bias_rotation_matrix[0] + y*bias_rotation_matrix[1] + z*bias_rotation_matrix[2];
-    y_prime = x*bias_rotation_matrix[3] + y*bias_rotation_matrix[4] + z*bias_rotation_matrix[5];
-    z_prime = x*bias_rotation_matrix[6] + y*bias_rotation_matrix[7] + z*bias_rotation_matrix[8];
-
-    x = x_prime;
-    y = y_prime;
-    z = z_prime;
+    x = vector[0];
+    y = vector[1];
+    z = vector[2];
 
     return Py_BuildValue("(ddd)", x, y, z);
 }
@@ -151,54 +134,44 @@ ecef_from_eci(PyObject *self, PyObject *args) {
 
     double x, y, z, tt_seconds;
 
-    double precession_matrix[9];
-    double iau_coefficients[3];
-
-    double nutation_matrix[9];
-    double nutation_arguments[4];
-
-    double terrestrial_matrix[9];
-
-    double polar_motion_matrix[9];
+    double vector[3];
+    double arguments[4];
+    double matrix[9];
 
     if(!PyArg_ParseTuple(args, "dddd", &x, &y, &z, &tt_seconds)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ecef_from_eci(double x, double y, double z, double tt_seconds)");
         return PyErr_Occurred();
     }
 
-    compute_iau_coefficients(tt_seconds, iau_coefficients);
-    compute_precession_matrix(iau_coefficients, precession_matrix);
+    vector[0] = x;
+    vector[1] = y;
+    vector[2] = z;
 
-    compute_nutation_arguments(tt_seconds, nutation_arguments);
-    compute_nutation_matrix(nutation_arguments, nutation_matrix);
+    compute_bias_matrix(matrix);
+    matrix_transpose_3_3_in_place(matrix);
+    matrix_dot_product_3_3_vector_in_place(vector, matrix);
 
-    compute_terrestrial_matrix(tt_seconds, nutation_arguments[3], terrestrial_matrix);
+    compute_precession_arguments(tt_seconds, arguments);
+    compute_precession_matrix(arguments, matrix);
+    matrix_transpose_3_3_in_place(matrix);
+    matrix_dot_product_3_3_vector_in_place(vector, matrix);
 
-    compute_polar_motion_matrix(tt_seconds, polar_motion_matrix);
+    compute_nutation_arguments(tt_seconds, arguments);
+    compute_nutation_matrix(arguments, matrix);
+    matrix_transpose_3_3_in_place(matrix);
+    matrix_dot_product_3_3_vector_in_place(vector, matrix);
 
-    double x_prime = x*bias_rotation_matrix[0] + y*bias_rotation_matrix[3] + z*bias_rotation_matrix[6];
-    double y_prime = x*bias_rotation_matrix[1] + y*bias_rotation_matrix[4] + z*bias_rotation_matrix[7];
-    double z_prime = x*bias_rotation_matrix[2] + y*bias_rotation_matrix[5] + z*bias_rotation_matrix[8];
+    compute_terrestrial_matrix(tt_seconds, arguments[3], matrix);
+    matrix_transpose_3_3_in_place(matrix);
+    matrix_dot_product_3_3_vector_in_place(vector, matrix);
 
-    x = x_prime*precession_matrix[0] + y_prime*precession_matrix[3] + z_prime*precession_matrix[6];
-    y = x_prime*precession_matrix[1] + y_prime*precession_matrix[4] + z_prime*precession_matrix[7];
-    z = x_prime*precession_matrix[2] + y_prime*precession_matrix[5] + z_prime*precession_matrix[8];
+    compute_polar_motion_matrix(tt_seconds, matrix);
+    matrix_transpose_3_3_in_place(matrix);
+    matrix_dot_product_3_3_vector_in_place(vector, matrix);
 
-    x_prime = x*nutation_matrix[0] + y*nutation_matrix[3] + z*nutation_matrix[6];
-    y_prime = x*nutation_matrix[1] + y*nutation_matrix[4] + z*nutation_matrix[7];
-    z_prime = x*nutation_matrix[2] + y*nutation_matrix[5] + z*nutation_matrix[8];
-
-    x = x_prime*terrestrial_matrix[0] + y_prime*terrestrial_matrix[3] + z_prime*terrestrial_matrix[6];
-    y = x_prime*terrestrial_matrix[1] + y_prime*terrestrial_matrix[4] + z_prime*terrestrial_matrix[7];
-    z = x_prime*terrestrial_matrix[2] + y_prime*terrestrial_matrix[5] + z_prime*terrestrial_matrix[8];
-
-    x_prime = x*polar_motion_matrix[0] + y*polar_motion_matrix[3] + z*polar_motion_matrix[6];
-    y_prime = x*polar_motion_matrix[1] + y*polar_motion_matrix[4] + z*polar_motion_matrix[7];
-    z_prime = x*polar_motion_matrix[2] + y*polar_motion_matrix[5] + z*polar_motion_matrix[8];
-
-    x = x_prime;
-    y = y_prime;
-    z = z_prime;
+    x = vector[0];
+    y = vector[1];
+    z = vector[2];
 
     return Py_BuildValue("(ddd)", x, y, z);
 }
