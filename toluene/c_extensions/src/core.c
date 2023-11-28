@@ -2,6 +2,7 @@
 #include <Python.h>
 
 #include "earth_gravitational_model.h"
+#include "egm84.h"
 #include "interpolation.h"
 #include "matrix.h"
 #include "rotation_matrices.h"
@@ -225,7 +226,63 @@ ellipsoid_radius(PyObject *self, PyObject *args) {
 }
 
 
+
+static void delete_egm84_coefficients(PyObject * obj) {
+    EGM84_Coefficients* pointer = PyCapsule_GetPointer(obj, "EGM84_Coefficients");
+    free(pointer->coefficients);
+    free(pointer);
+}
+
+
+static PyObject*
+load_egm84_coefficients(PyObject* self, PyObject* args) {
+
+
+    const char* filename;
+
+    if (!PyArg_ParseTuple(args, "s", &filename)) {
+        return NULL;
+    }
+
+    EGM84_Coefficients* egm84 = (EGM84_Coefficients*)malloc(sizeof(EGM84_Coefficients));
+    egm84->coefficients = (GravityCoefficients*)malloc(sizeof(GravityCoefficients) * 16467);
+    if(egm84->coefficients == NULL) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for EGM84 coefficients.");
+        return PyErr_Occurred();
+    } else {
+        printf("coefficients: %p\n", egm84->coefficients);
+    }
+
+    egm84->num_coefficients = 16467;
+
+    egm84->coefficients[0].n = 1;
+    egm84->coefficients[0].m = 2;
+    egm84->coefficients[0].C = 3;
+    egm84->coefficients[0].S = 4;
+
+    PyObject* capsule = PyCapsule_New(egm84, "EGM84_Coefficients", delete_egm84_coefficients);
+    return capsule;
+}
+
+
+static PyObject* test_egm84(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    EGM84_Coefficients* test;
+
+    if (!PyArg_ParseTuple(args, "O", &capsule)) {
+        return NULL;
+    }
+    test = (EGM84_Coefficients*)PyCapsule_GetPointer(capsule, "EGM84_Coefficients");
+
+    printf("n: %d, m: %d, C: %f, S: %f\n", test->coefficients[0].n, test->coefficients[0].m, test->coefficients[0].C, test->coefficients[0].S);
+
+    return Py_BuildValue("d", 0);
+}
+
 static PyMethodDef tolueneCoreMethods[] = {
+    {"load_egm84_coefficients", load_egm84_coefficients, METH_VARARGS, "Load the EGM84 geoid model coefficients into memory."},
+    {"test_egm84", test_egm84, METH_VARARGS, "Test the EGM84 geoid model."},
     {"ecef_from_lla", ecef_from_lla, METH_VARARGS, "Convert lla coordinates to ecef."},
     {"lla_from_ecef", lla_from_ecef, METH_VARARGS, "Convert ecef coordinates to lla using the none recursive method."},
     {"eci_from_ecef", eci_from_ecef, METH_VARARGS, "Convert ecef coordinates to eci."},
