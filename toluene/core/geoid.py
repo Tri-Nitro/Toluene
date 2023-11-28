@@ -31,6 +31,10 @@ class Geoid:
         self._interpolation_grid = None
 
 
+    def __load_spherical_harmonics(self):
+        pass
+
+
     def height(self, position: Coordinates, interpolation: Literal['bilinear'] = 'bilinear') -> float:
         """
         Calculates the height of the geoid at a point. This method is pure virtual and must be implemented by the
