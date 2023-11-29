@@ -24,6 +24,74 @@
 #                                                                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+from toluene_extensions.models.earth.ellipsoid import new_Ellipsoid, set_axes, get_axes, ellipsoid_radius
+
+
 class Ellipsoid:
-    def __init__(self):
-        pass
+    """
+    Representation of an ellipsoid model of the Earth based on semi-major and semi-minor axis.
+
+    :param a: The semi-major axis of the ellipsoid in meters.
+    :type a: float
+    :param b: The semi-minor axis of the ellipsoid in meters.
+    :type b: float
+    """
+
+    def __init__(self, a: float = None, b: float = None, c_ellipsoid=None):
+        if c_ellipsoid is not None:
+            self.__ellipsoid = c_ellipsoid
+        else:
+            self.__ellipsoid = new_Ellipsoid()
+        if a is not None and b is not None:
+            self.set_axes(a, b)
+
+    def set_axes(self, a: float, b: float):
+        """
+        Sets the semi-major and semi-minor axes of the ellipsoid.
+
+        :param a: The semi-major axis of the ellipsoid in meters.
+        :type a: float
+        :param b: The semi-minor axis of the ellipsoid in meters.
+        :type b: float
+        """
+        set_axes(self.__ellipsoid, a, b)
+
+    def axes(self) -> (float, float):
+        """
+        Gets the semi-major and semi-minor axes of the ellipsoid.
+
+        :return: The semi-major and semi-minor axes of the ellipsoid in meters.
+        :rtype: (float, float)
+        """
+        return get_axes(self.__ellipsoid)
+
+    def a(self) -> float:
+        """
+        :return: The semi-major axis of the ellipsoid in meters.
+        :rtype: float
+        """
+        return self.axes()[0]
+
+    def b(self) -> float:
+        """
+        :return: The semi-minor axis of the ellipsoid in meters.
+        :rtype: float
+        """
+        return self.axes()[1]
+
+    def radius(self, latitude: float) -> float:
+        """
+        Calculates the radius of the ellipsoid at a given latitude.
+
+        :param latitude: The latitude in degrees.
+        :type latitude: float
+        :return: The radius of the ellipsoid in meters.
+        :rtype: float
+        """
+        return ellipsoid_radius(self.__ellipsoid, latitude)
+
+    def c_ellipsoid(self):
+        """
+        :return: The C ellipsoid object.
+        """
+        return self.__ellipsoid

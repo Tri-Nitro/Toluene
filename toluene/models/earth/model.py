@@ -27,19 +27,22 @@
 from toluene.models.earth.ellipsoid import Ellipsoid
 from toluene.models.earth.geoid import Geoid
 
-from toluene_extensions.models.earth.model import new_EarthModel
+from toluene_extensions.models.earth.model import new_EarthModel, get_ellipsoid, set_ellipsoid
 
 
 class EarthModel:
 
     def __init__(self):
         self.__model = new_EarthModel()
+        self.__ellipsoid = None
 
     def ellipsoid(self) -> Ellipsoid:
-        pass
+        self.__ellipsoid = Ellipsoid(c_ellipsoid=get_ellipsoid(self.__model))
+        return self.__ellipsoid
 
     def set_ellipsoid(self, ellipsoid: Ellipsoid):
-        pass
+        self.__ellipsoid = ellipsoid
+        set_ellipsoid(self.__model, ellipsoid.c_ellipsoid())
 
     def geoid(self) -> Geoid:
         pass

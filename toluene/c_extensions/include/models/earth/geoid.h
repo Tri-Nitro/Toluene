@@ -31,6 +31,14 @@ extern "C" {
 #endif
 
 typedef struct {
+    double C;
+    double S;
+    double C_dot;
+    double S_dot;
+} Harmonic;
+
+typedef struct {
+    Harmonic *harmonics;
 } Geoid;
 
 #ifdef __cplusplus

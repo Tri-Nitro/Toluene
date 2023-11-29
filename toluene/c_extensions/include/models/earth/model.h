@@ -44,7 +44,7 @@ typedef struct {
     double epoch;
 
     /* Ellipsoid */
-    Ellipsoid ellipsoid;
+    Ellipsoid* ellipsoid;
 
     /* Geoid */
     Geoid geoid;
@@ -55,6 +55,8 @@ typedef struct {
 
 } EarthModel;
 
+static PyObject* get_ellipsoid(PyObject* self, PyObject* args);
+static PyObject* set_ellipsoid(PyObject* self, PyObject* args);
 
 static PyObject* new_EarthModel(PyObject* self, PyObject* args);
 static void delete_EarthModel(PyObject* obj);

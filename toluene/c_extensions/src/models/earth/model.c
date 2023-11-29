@@ -39,6 +39,58 @@ extern "C"
 #endif
 
 
+static PyObject* get_ellipsoid(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+
+    EarthModel* earth_model;
+
+    if(!PyArg_ParseTuple(args, "O", &capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. get_ellipsoid(EarthModel)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model && earth_model->ellipsoid) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule. Or the ellipsoid is NULL.");
+        return PyErr_Occurred();
+    }
+
+    return PyCapsule_New(earth_model->ellipsoid, "Ellipsoid", NULL);
+}
+
+
+static PyObject* set_ellipsoid(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    PyObject* ellipsoid_capsule;
+
+    EarthModel* earth_model;
+    Ellipsoid* ellipsoid;
+
+    if(!PyArg_ParseTuple(args, "OO", &capsule, &ellipsoid_capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. set_ellipsoid(EarthModel, Ellipsoid)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
+        return PyErr_Occurred();
+    }
+
+    ellipsoid = (Ellipsoid*)PyCapsule_GetPointer(ellipsoid_capsule, "Ellipsoid");
+    if(!ellipsoid) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the Ellipsoid from capsule.");
+        return PyErr_Occurred();
+    }
+
+    earth_model->ellipsoid = ellipsoid;
+
+    Py_RETURN_NONE;
+}
+
+
 static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
 
     EarthModel* model = (EarthModel*)malloc(sizeof(EarthModel));
@@ -71,6 +123,8 @@ static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
     model->cirs_to_tirs_coefficients.l_n = NULL;
     model->cirs_to_tirs_coefficients.p = NULL;
 
+    model->ellipsoid = NULL;
+
     return PyCapsule_New(model, "EarthModel", delete_EarthModel);
 }
 
@@ -78,6 +132,7 @@ static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
 static void delete_EarthModel(PyObject* obj) {
 
     EarthModel* pointer = PyCapsule_GetPointer(obj, "EarthModel");
+
     if(pointer) {
 
         if(pointer->cirs_to_tirs_coefficients.zeta_a) {
@@ -213,6 +268,8 @@ static void delete_EarthModel(PyObject* obj) {
 
 
 static PyMethodDef tolueneModelsEarthModelMethods[] = {
+    {"get_ellipsoid", get_ellipsoid, METH_VARARGS, "Get the ellipsoid of the EarthModel"},
+    {"set_ellipsoid", set_ellipsoid, METH_VARARGS, "Set the ellipsoid of the EarthModel"},
     {"new_EarthModel", new_EarthModel, METH_VARARGS, "Create a new EarthModel object"},
     {NULL, NULL, 0, NULL}
 };
