@@ -128,7 +128,7 @@ static PyObject* new_Ellipsoid(PyObject* self, PyObject* args) {
 
 static void delete_Ellipsoid(PyObject* obj) {
 
-    Ellipsoid* ellipsoid = PyCapsule_GetPointer(obj, "Ellipsoid");
+    Ellipsoid* ellipsoid = (Ellipsoid*)PyCapsule_GetPointer(obj, "Ellipsoid");
 
     if(ellipsoid) {
         free(ellipsoid);
@@ -137,7 +137,7 @@ static void delete_Ellipsoid(PyObject* obj) {
 }
 
 
-static PyMethodDef tolueneModelsEllipsoidMethods[] = {
+static PyMethodDef tolueneModelsEarthEllipsoidMethods[] = {
     {"set_axes", set_axes, METH_VARARGS, "Sets the ellipsoid axes."},
     {"get_axes", get_axes, METH_VARARGS, "Gets the ellipsoid axes."},
     {"ellipsoid_radius", ellipsoid_radius, METH_VARARGS, "Gets the ellipsoid radius at a given latitude."},
@@ -151,7 +151,7 @@ static struct PyModuleDef models_earth_ellipsoid = {
     "models.earth.ellipsoid",
     "C Extensions to toluene models ellipsoid functions",
     -1,
-    tolueneModelsEllipsoidMethods
+    tolueneModelsEarthEllipsoidMethods
 };
 
 

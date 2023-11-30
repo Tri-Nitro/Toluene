@@ -57,6 +57,32 @@ typedef struct {
 
 } CIRStoTIRSCoefficients;
 
+static PyObject* load_zeta_a(PyObject* self, PyObject* args);
+static PyObject* load_z_a(PyObject* self, PyObject* args);
+static PyObject* load_theta_a(PyObject* self, PyObject* args);
+static PyObject* load_psi_a(PyObject* self, PyObject* args);
+static PyObject* load_omega_a(PyObject* self, PyObject* args);
+static PyObject* load_epsilon_a(PyObject* self, PyObject* args);
+static PyObject* load_chi_a(PyObject* self, PyObject* args);
+
+static PyObject* load_l(PyObject* self, PyObject* args);
+static PyObject* load_l_prime(PyObject* self, PyObject* args);
+static PyObject* load_F(PyObject* self, PyObject* args);
+static PyObject* load_D(PyObject* self, PyObject* args);
+static PyObject* load_Omega(PyObject* self, PyObject* args);
+static PyObject* load_l_me(PyObject* self, PyObject* args);
+static PyObject* load_l_v(PyObject* self, PyObject* args);
+static PyObject* load_l_e(PyObject* self, PyObject* args);
+static PyObject* load_l_ma(PyObject* self, PyObject* args);
+static PyObject* load_l_j(PyObject* self, PyObject* args);
+static PyObject* load_l_s(PyObject* self, PyObject* args);
+static PyObject* load_l_u(PyObject* self, PyObject* args);
+static PyObject* load_l_n(PyObject* self, PyObject* args);
+static PyObject* load_p(PyObject* self, PyObject* args);
+
+static PyObject* new_CIRStoTIRSCoefficients(PyObject* self, PyObject* args);
+static void delete_CIRStoTIRSCoefficients(PyObject* obj);
+
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif

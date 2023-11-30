@@ -33,11 +33,11 @@ classifiers=[
     'Typing :: Typed'
 ]
 dependencies = [
+    "pyyaml",
 ]
 
 [project.optional-dependencies]
 update-data = [
-    "pyyaml",
     "requests",
 ]
 

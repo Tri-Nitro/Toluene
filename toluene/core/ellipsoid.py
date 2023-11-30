@@ -1,6 +1,5 @@
 import logging
 
-from toluene.util.exception import LatitudeOutOfRange
 from toluene_extensions.core_extensions import ellipsoid_radius
 
 logger = logging.getLogger('toluene.core.ellipsoid')

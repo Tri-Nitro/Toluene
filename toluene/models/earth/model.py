@@ -23,11 +23,12 @@
 #   SOFTWARE.                                                                       #
 #                                                                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
+from toluene.models.earth.cirs_to_tirs_coefficients import CIRStoTIRSCoefficients
 from toluene.models.earth.ellipsoid import Ellipsoid
 from toluene.models.earth.geoid import Geoid
 
-from toluene_extensions.models.earth.model import new_EarthModel, get_ellipsoid, set_ellipsoid
+from toluene_extensions.models.earth.model import new_EarthModel, get_ellipsoid, set_ellipsoid, \
+    get_cirs_to_tirs_coefficients, set_cirs_to_tirs_coefficients
 
 
 class EarthModel:
@@ -35,7 +36,11 @@ class EarthModel:
     def __init__(self):
         self.__model = new_EarthModel()
         self.__ellipsoid = None
+        self.__geoid = None
+        self.__epoch = None
+        self.__cirs_to_tirs_coefficients = None
 
+    @property
     def ellipsoid(self) -> Ellipsoid:
         self.__ellipsoid = Ellipsoid(c_ellipsoid=get_ellipsoid(self.__model))
         return self.__ellipsoid
@@ -44,14 +49,26 @@ class EarthModel:
         self.__ellipsoid = ellipsoid
         set_ellipsoid(self.__model, ellipsoid.c_ellipsoid())
 
+    @property
     def geoid(self) -> Geoid:
-        pass
+        return self.__geoid
 
     def set_geoid(self, geoid: Geoid):
         pass
 
+    @property
     def epoch(self) -> float:
-        pass
+        return self.__epoch
 
     def set_epoch(self, epoch: float):
         pass
+
+    @property
+    def cirs_to_tirs_coefficients(self):
+        self.__cirs_to_tirs_coefficients = (
+            CIRStoTIRSCoefficients(cirs_to_tirs_dict=get_cirs_to_tirs_coefficients(self.__model)))
+        return self.__cirs_to_tirs_coefficients
+
+    def set_cirs_to_tirs_coefficients(self, cirs_to_tirs_coefficients: CIRStoTIRSCoefficients):
+        self.__cirs_to_tirs_coefficients = cirs_to_tirs_coefficients
+        set_cirs_to_tirs_coefficients(self.__model, cirs_to_tirs_coefficients.c_cirs_to_tirs_coefficients())

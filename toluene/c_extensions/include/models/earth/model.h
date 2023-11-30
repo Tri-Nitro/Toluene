@@ -24,7 +24,7 @@
 #ifndef __MODELS_EARTH_MODEL_H__
 #define __MODELS_EARTH_MODEL_H__
 
-#include "models/earth/cirs_to_tirs_coefficients.h"
+#include "models/earth/coefficients.h"
 #include "models/earth/ellipsoid.h"
 #include "models/earth/geoid.h"
 #include "models/earth/nutation.h"
@@ -38,7 +38,7 @@ extern "C" {
 typedef struct {
 
     /* CIRS to TIRS Rotation Models */
-    CIRStoTIRSCoefficients cirs_to_tirs_coefficients;
+    CIRStoTIRSCoefficients* cirs_to_tirs_coefficients;
     EarthNutationModel nutation_model;
     EarthPrecessionModel precession_model;
     double epoch;
@@ -57,6 +57,9 @@ typedef struct {
 
 static PyObject* get_ellipsoid(PyObject* self, PyObject* args);
 static PyObject* set_ellipsoid(PyObject* self, PyObject* args);
+
+static PyObject* get_cirs_to_tirs_coefficients(PyObject* self, PyObject* args);
+static PyObject* set_cirs_to_tirs_coefficients(PyObject* self, PyObject* args);
 
 static PyObject* new_EarthModel(PyObject* self, PyObject* args);
 static void delete_EarthModel(PyObject* obj);

@@ -91,6 +91,58 @@ static PyObject* set_ellipsoid(PyObject* self, PyObject* args) {
 }
 
 
+static PyObject* get_cirs_to_tirs_coefficients(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+
+    EarthModel* earth_model;
+
+    if(!PyArg_ParseTuple(args, "O", &capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. cirs_to_tirs_coefficients(EarthModel)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model && earth_model->ellipsoid) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule. Or the ellipsoid is NULL.");
+        return PyErr_Occurred();
+    }
+
+    return PyCapsule_New(earth_model->cirs_to_tirs_coefficients, "CIRStoTIRSCoefficients", NULL);
+}
+
+
+static PyObject* set_cirs_to_tirs_coefficients(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    PyObject* cirs_to_tirs_coefficients_capsule;
+
+    EarthModel* earth_model;
+    CIRStoTIRSCoefficients* cirs_to_tirs_coefficients;
+
+    if(!PyArg_ParseTuple(args, "OO", &capsule, &cirs_to_tirs_coefficients_capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. set_cirs_to_tirs_coefficients(EarthModel, CIRStoTIRSCoefficients)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
+        return PyErr_Occurred();
+    }
+
+    cirs_to_tirs_coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(cirs_to_tirs_coefficients_capsule, "CIRStoTIRSCoefficients");
+    if(!cirs_to_tirs_coefficients) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        return PyErr_Occurred();
+    }
+
+    earth_model->cirs_to_tirs_coefficients = cirs_to_tirs_coefficients;
+
+    Py_RETURN_NONE;
+}
+
+
 static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
 
     EarthModel* model = (EarthModel*)malloc(sizeof(EarthModel));
@@ -100,29 +152,7 @@ static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    model->cirs_to_tirs_coefficients.zeta_a = NULL;
-    model->cirs_to_tirs_coefficients.z_a = NULL;
-    model->cirs_to_tirs_coefficients.theta_a = NULL;
-    model->cirs_to_tirs_coefficients.psi_a = NULL;
-    model->cirs_to_tirs_coefficients.omega_a = NULL;
-    model->cirs_to_tirs_coefficients.epsilon_a = NULL;
-    model->cirs_to_tirs_coefficients.chi_a = NULL;
-
-    model->cirs_to_tirs_coefficients.l = NULL;
-    model->cirs_to_tirs_coefficients.l_prime = NULL;
-    model->cirs_to_tirs_coefficients.F = NULL;
-    model->cirs_to_tirs_coefficients.D = NULL;
-    model->cirs_to_tirs_coefficients.Omega = NULL;
-    model->cirs_to_tirs_coefficients.l_me = NULL;
-    model->cirs_to_tirs_coefficients.l_v = NULL;
-    model->cirs_to_tirs_coefficients.l_e = NULL;
-    model->cirs_to_tirs_coefficients.l_ma = NULL;
-    model->cirs_to_tirs_coefficients.l_j = NULL;
-    model->cirs_to_tirs_coefficients.l_s = NULL;
-    model->cirs_to_tirs_coefficients.l_u = NULL;
-    model->cirs_to_tirs_coefficients.l_n = NULL;
-    model->cirs_to_tirs_coefficients.p = NULL;
-
+    model->cirs_to_tirs_coefficients = NULL;
     model->ellipsoid = NULL;
 
     return PyCapsule_New(model, "EarthModel", delete_EarthModel);
@@ -131,134 +161,139 @@ static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
 
 static void delete_EarthModel(PyObject* obj) {
 
-    EarthModel* pointer = PyCapsule_GetPointer(obj, "EarthModel");
+    EarthModel* pointer = (EarthModel*)PyCapsule_GetPointer(obj, "EarthModel");
 
     if(pointer) {
 
-        if(pointer->cirs_to_tirs_coefficients.zeta_a) {
-            if(pointer->cirs_to_tirs_coefficients.zeta_a->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.zeta_a->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.zeta_a);
-        }
+        if(pointer->cirs_to_tirs_coefficients) {
 
-        if(pointer->cirs_to_tirs_coefficients.z_a) {
-            if(pointer->cirs_to_tirs_coefficients.z_a->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.z_a->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.z_a);
-        }
+            if(pointer->cirs_to_tirs_coefficients->zeta_a) {
+                if(pointer->cirs_to_tirs_coefficients->zeta_a->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->zeta_a->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->zeta_a);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.theta_a) {
-            if(pointer->cirs_to_tirs_coefficients.theta_a->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.theta_a->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.theta_a);
-        }
+            if(pointer->cirs_to_tirs_coefficients->z_a) {
+                if(pointer->cirs_to_tirs_coefficients->z_a->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->z_a->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->z_a);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.psi_a) {
-            if(pointer->cirs_to_tirs_coefficients.psi_a->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.psi_a->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.psi_a);
-        }
+            if(pointer->cirs_to_tirs_coefficients->theta_a) {
+                if(pointer->cirs_to_tirs_coefficients->theta_a->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->theta_a->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->theta_a);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.omega_a) {
-            if(pointer->cirs_to_tirs_coefficients.omega_a->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.omega_a->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.omega_a);
-        }
+            if(pointer->cirs_to_tirs_coefficients->psi_a) {
+                if(pointer->cirs_to_tirs_coefficients->psi_a->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->psi_a->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->psi_a);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.epsilon_a) {
-            if(pointer->cirs_to_tirs_coefficients.epsilon_a->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.epsilon_a->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.epsilon_a);
-        }
+            if(pointer->cirs_to_tirs_coefficients->omega_a) {
+                if(pointer->cirs_to_tirs_coefficients->omega_a->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->omega_a->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->omega_a);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.chi_a) {
-            if(pointer->cirs_to_tirs_coefficients.chi_a->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.chi_a->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.chi_a);
-        }
+            if(pointer->cirs_to_tirs_coefficients->epsilon_a) {
+                if(pointer->cirs_to_tirs_coefficients->epsilon_a->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->epsilon_a->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->epsilon_a);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.l) {
-            if(pointer->cirs_to_tirs_coefficients.l->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.l->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.l);
-        }
+            if(pointer->cirs_to_tirs_coefficients->chi_a) {
+                if(pointer->cirs_to_tirs_coefficients->chi_a->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->chi_a->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->chi_a);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.l_prime) {
-            if(pointer->cirs_to_tirs_coefficients.l_prime->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.l_prime->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.l_prime);
-        }
+            if(pointer->cirs_to_tirs_coefficients->l) {
+                if(pointer->cirs_to_tirs_coefficients->l->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->l->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->l);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.F) {
-            if(pointer->cirs_to_tirs_coefficients.F->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.F->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.F);
-        }
+            if(pointer->cirs_to_tirs_coefficients->l_prime) {
+                if(pointer->cirs_to_tirs_coefficients->l_prime->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->l_prime->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->l_prime);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.D) {
-            if(pointer->cirs_to_tirs_coefficients.D->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.D->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.D);
-        }
+            if(pointer->cirs_to_tirs_coefficients->F) {
+                if(pointer->cirs_to_tirs_coefficients->F->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->F->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->F);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.Omega) {
-            if(pointer->cirs_to_tirs_coefficients.Omega->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.Omega->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.Omega);
-        }
+            if(pointer->cirs_to_tirs_coefficients->D) {
+                if(pointer->cirs_to_tirs_coefficients->D->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->D->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->D);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.l_me) {
-            if(pointer->cirs_to_tirs_coefficients.l_me->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.l_me->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.l_me);
-        }
+            if(pointer->cirs_to_tirs_coefficients->Omega) {
+                if(pointer->cirs_to_tirs_coefficients->Omega->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->Omega->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->Omega);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.l_v) {
-            if(pointer->cirs_to_tirs_coefficients.l_v->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.l_v->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.l_v);
-        }
+            if(pointer->cirs_to_tirs_coefficients->l_me) {
+                if(pointer->cirs_to_tirs_coefficients->l_me->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->l_me->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->l_me);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.l_e) {
-            if(pointer->cirs_to_tirs_coefficients.l_e->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.l_e->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.l_e);
-        }
+            if(pointer->cirs_to_tirs_coefficients->l_v) {
+                if(pointer->cirs_to_tirs_coefficients->l_v->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->l_v->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->l_v);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.l_ma) {
-            if(pointer->cirs_to_tirs_coefficients.l_ma->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.l_ma->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.l_ma);
-        }
+            if(pointer->cirs_to_tirs_coefficients->l_e) {
+                if(pointer->cirs_to_tirs_coefficients->l_e->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->l_e->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->l_e);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.l_j) {
-            if(pointer->cirs_to_tirs_coefficients.l_j->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.l_j->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.l_j);
-        }
+            if(pointer->cirs_to_tirs_coefficients->l_ma) {
+                if(pointer->cirs_to_tirs_coefficients->l_ma->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->l_ma->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->l_ma);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.l_s) {
-            if(pointer->cirs_to_tirs_coefficients.l_s->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.l_s->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.l_s);
-        }
+            if(pointer->cirs_to_tirs_coefficients->l_j) {
+                if(pointer->cirs_to_tirs_coefficients->l_j->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->l_j->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->l_j);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.l_u) {
-            if(pointer->cirs_to_tirs_coefficients.l_u->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.l_u->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.l_u);
-        }
+            if(pointer->cirs_to_tirs_coefficients->l_s) {
+                if(pointer->cirs_to_tirs_coefficients->l_s->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->l_s->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->l_s);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.l_n) {
-            if(pointer->cirs_to_tirs_coefficients.l_n->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.l_n->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.l_n);
-        }
+            if(pointer->cirs_to_tirs_coefficients->l_u) {
+                if(pointer->cirs_to_tirs_coefficients->l_u->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->l_u->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->l_u);
+            }
 
-        if(pointer->cirs_to_tirs_coefficients.p) {
-            if(pointer->cirs_to_tirs_coefficients.p->coefficients)
-                free(pointer->cirs_to_tirs_coefficients.p->coefficients);
-            free(pointer->cirs_to_tirs_coefficients.p);
+            if(pointer->cirs_to_tirs_coefficients->l_n) {
+                if(pointer->cirs_to_tirs_coefficients->l_n->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->l_n->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->l_n);
+            }
+
+            if(pointer->cirs_to_tirs_coefficients->p) {
+                if(pointer->cirs_to_tirs_coefficients->p->coefficients)
+                    free(pointer->cirs_to_tirs_coefficients->p->coefficients);
+                free(pointer->cirs_to_tirs_coefficients->p);
+            }
+
+            free(pointer->cirs_to_tirs_coefficients);
         }
 
         free(pointer);

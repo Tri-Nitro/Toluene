@@ -5,11 +5,6 @@ class CLibraryNotFound(Exception):
     pass
 
 
-class ImplementationError(Exception):
-    """
-    Used when a pure virtual function was not implemented.
-    """
-    pass
 
 
 class JPEGDecodingError(Exception):

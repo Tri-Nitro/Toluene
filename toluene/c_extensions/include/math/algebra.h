@@ -35,6 +35,9 @@ typedef struct {
 
 void solve(Polynomial* polynomial, double* value);
 
+static PyObject* new_Polynomial(PyObject* self, PyObject* args);
+static void delete_Polynomial(PyObject* obj);
+
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif
