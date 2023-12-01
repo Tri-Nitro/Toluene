@@ -38,7 +38,7 @@ extern "C" {
 typedef struct {
 
     /* CIRS to TIRS Rotation Models */
-    CIRStoTIRSCoefficients* cirs_to_tirs_coefficients;
+    CIRSCoefficients* cirs_coefficients;
     EarthNutationModel nutation_model;
     EarthPrecessionModel precession_model;
     double epoch;

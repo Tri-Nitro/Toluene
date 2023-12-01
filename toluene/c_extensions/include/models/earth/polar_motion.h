@@ -21,34 +21,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MATH_LINEAR_ALGEBRA_H__
-#define __MATH_LINEAR_ALGEBRA_H__
+#ifndef __MODELS_EARTH_POLAR_MOTION_H__
+#define __MODELS_EARTH_POLAR_MOTION_H__
+
+#include "math/linear_algebra.h"
+#include "models/earth/coefficients.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct {
-    int nrows, ncols;
-    double* elements;
-} Matrix;
+
+    double timestamp;
+
+    bool is_bulletin_a_PM_predicted;
+    double bulletin_a_PM_x;
+    double bulletin_a_PM_x_error;
+    double bulletin_a_PM_y;
+    double bulletin_a_PM_y_error;
+
+    bool is_bulletin_a_dut1_predicted;
+    double bulletin_a_dut1;
+    double bulletin_a_dut1_error;
+
+    double bulletin_a_lod;
+    double bulletin_a_lod_error;
+
+    double bulletin_b_PM_x;
+    double bulletin_b_PM_y;
+    double bulletin_b_dut1;
+
+} EOP_TableRecord;
 
 typedef struct {
-    int nelements;
-    double* elements;
-} Vector;
+    int nrecords
+    EOP_TableRecord* records;
+} EOP_Table;
 
-static PyObject* new_vector(Vector* vector, int nelements);
-static PyObject* new_matrix(Matrix* matrix, int nrows, int ncols);
+void itrs_to_tirs_polar_motion_approximation(double tt, Matrix* matrix);
+void itrs_to_tirs_polar_motion_exact(double tt, Matrix* matrix);
 
-void delete_vector(Vector* vector);
-void delete_matrix(Matrix* matrix);
+static PyObject* new_EOP_Table(PyObject* self, PyObject* args);
+static void delete_EOP_Table(PyObject* obj);
 
-void dot_product(Vector* vector, Matrix* matrix, Vector* product);
-void dot_product_matrix_transpose(Vector* vector, Matrix* matrix, Vector* product);
 
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif
 
-#endif /* __MATH_LINEAR_ALGEBRA_H__ */
+#endif /* __MODELS_EARTH_POLAR_MOTION_H__ */

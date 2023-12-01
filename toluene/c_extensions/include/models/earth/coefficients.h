@@ -32,6 +32,10 @@ extern "C" {
 
 typedef struct {
 
+    double eta_0;
+    double xi_0;
+    double d_alpha_0;
+
     Polynomial* zeta_a;
     Polynomial* z_a;
     Polynomial* theta_a;
@@ -55,7 +59,13 @@ typedef struct {
     Polynomial* l_n;
     Polynomial* p;
 
-} CIRStoTIRSCoefficients;
+} CIRSCoefficients;
+
+#ifdef __compile_models_earth_coefficients
+
+static PyObject* load_eta_0(PyObject* self, PyObject* args);
+static PyObject* load_xi_0(PyObject* self, PyObject* args);
+static PyObject* load_d_alpha_0(PyObject* self, PyObject* args);
 
 static PyObject* load_zeta_a(PyObject* self, PyObject* args);
 static PyObject* load_z_a(PyObject* self, PyObject* args);
@@ -80,8 +90,10 @@ static PyObject* load_l_u(PyObject* self, PyObject* args);
 static PyObject* load_l_n(PyObject* self, PyObject* args);
 static PyObject* load_p(PyObject* self, PyObject* args);
 
-static PyObject* new_CIRStoTIRSCoefficients(PyObject* self, PyObject* args);
-static void delete_CIRStoTIRSCoefficients(PyObject* obj);
+static PyObject* new_CIRSCoefficients(PyObject* self, PyObject* args);
+static void delete_CIRSCoefficients(PyObject* obj);
+
+#endif /* __compile_models_earth_coefficients */
 
 #ifdef __cplusplus
 }   /* extern "C" */

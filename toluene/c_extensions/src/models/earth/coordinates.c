@@ -44,7 +44,7 @@ extern "C"
 static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
 
     double x, y, z, tt, epoch;
 
@@ -53,9 +53,9 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -66,20 +66,59 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
 static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
 
     double x, y, z, tt, epoch;
 
-    if(!PyArg_ParseTuple(args, "ddddO", &x, &y, &z, &tt, &epoch, &capsule)) {
+    if(!PyArg_ParseTuple(args, "dddddO", &x, &y, &z, &tt, &epoch, &capsule)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ecef_to_eci()");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
+
+    Matrix matrix;
+    matrix.nrows = 3;
+    matrix.ncols = 3;
+    matrix.elements = (double*)malloc(sizeof(double)*9);
+    if(!matrix.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for matrix.");
+        return PyErr_Occurred();
+    }
+
+    Vector x;
+    x.nelements = 3;
+    x.elements = (double*)malloc(sizeof(double)*3);
+    if(!x.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for vector.");
+        return PyErr_Occurred();
+    }
+    x.elements[0] = x;
+    x.elements[1] = y;
+    x.elements[2] = z;
+
+    Vector x_prime;
+    x_prime.nelements = 3;
+    x_prime.elements = (double*)malloc(sizeof(double)*3);
+    if(!x_prime.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for vector.");
+        return PyErr_Occurred();
+    }
+
+    icrs_to_mean_j2000_bias_approximation(coefficients, &matrix);
+    dot_product(&x, &matrix, &x_prime);
+
+
+    printf("x: %f, y: %f, z: %f\n", x.elements[0], x.elements[1], x.elements[2]);
+    printf("x: %f, y: %f, z: %f\n", x_prime.elements[0], x_prime.elements[1], x_prime.elements[2]);
+
+    free(matrix.elements);
+    free(x.elements);
+    free(x_prime.elements);
 
     return Py_BuildValue("(ddd)", x, y, z);
 }

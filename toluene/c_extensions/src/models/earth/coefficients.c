@@ -24,6 +24,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#define __compile_models_earth_coefficients
 #include "models/earth/coefficients.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
@@ -39,20 +40,89 @@ extern "C"
 #endif
 
 
-static PyObject* load_zeta_a(PyObject* self, PyObject* args) {
+static PyObject* load_eta_0(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
-    PyObject* list;
+    CIRSCoefficients* coefficients;
+    double eta_0;
 
-    if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_zeta_a(CIRStoTIRSCoefficients, double).");
+    if(!PyArg_ParseTuple(args, "Od", &capsule, &eta_0)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_eta_0(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
+        return PyErr_Occurred();
+    }
+
+    coefficients->eta_0 = eta_0;
+
+    Py_RETURN_NONE;
+}
+
+
+static PyObject* load_xi_0(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    CIRSCoefficients* coefficients;
+    double xi_0;
+
+    if(!PyArg_ParseTuple(args, "Od", &capsule, &xi_0)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_xi_0(CIRSCoefficients, double).");
+        return PyErr_Occurred();
+    }
+
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
+    if(!coefficients) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
+        return PyErr_Occurred();
+    }
+
+    coefficients->xi_0 = xi_0;
+
+    Py_RETURN_NONE;
+}
+
+
+static PyObject* load_d_alpha_0(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    CIRSCoefficients* coefficients;
+    double d_alpha_0;
+
+    if(!PyArg_ParseTuple(args, "Od", &capsule, &d_alpha_0)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_d_alpha_0(CIRSCoefficients, double).");
+        return PyErr_Occurred();
+    }
+
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
+    if(!coefficients) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
+        return PyErr_Occurred();
+    }
+
+    coefficients->d_alpha_0 = d_alpha_0;
+
+    Py_RETURN_NONE;
+}
+
+
+static PyObject* load_zeta_a(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    CIRSCoefficients* coefficients;
+    PyObject* list;
+
+    if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_zeta_a(CIRSCoefficients, double).");
+        return PyErr_Occurred();
+    }
+
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
+    if(!coefficients) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -85,17 +155,17 @@ static PyObject* load_zeta_a(PyObject* self, PyObject* args) {
 static PyObject* load_z_a(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_z_a(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_z_a(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -128,17 +198,17 @@ static PyObject* load_z_a(PyObject* self, PyObject* args) {
 static PyObject* load_theta_a(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_theta_a(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_theta_a(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -171,17 +241,17 @@ static PyObject* load_theta_a(PyObject* self, PyObject* args) {
 static PyObject* load_psi_a(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_psi_a(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_psi_a(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -214,17 +284,17 @@ static PyObject* load_psi_a(PyObject* self, PyObject* args) {
 static PyObject* load_omega_a(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_omega_a(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_omega_a(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -257,17 +327,17 @@ static PyObject* load_omega_a(PyObject* self, PyObject* args) {
 static PyObject* load_epsilon_a(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_epsilon_a(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_epsilon_a(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -300,17 +370,17 @@ static PyObject* load_epsilon_a(PyObject* self, PyObject* args) {
 static PyObject* load_chi_a(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_chi_a(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_chi_a(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -343,17 +413,17 @@ static PyObject* load_chi_a(PyObject* self, PyObject* args) {
 static PyObject* load_l(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -386,17 +456,17 @@ static PyObject* load_l(PyObject* self, PyObject* args) {
 static PyObject* load_l_prime(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_prime(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_prime(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -429,17 +499,17 @@ static PyObject* load_l_prime(PyObject* self, PyObject* args) {
 static PyObject* load_F(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_F(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_F(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -472,17 +542,17 @@ static PyObject* load_F(PyObject* self, PyObject* args) {
 static PyObject* load_D(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_D(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_D(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -515,17 +585,17 @@ static PyObject* load_D(PyObject* self, PyObject* args) {
 static PyObject* load_Omega(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_Omega(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_Omega(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -558,17 +628,17 @@ static PyObject* load_Omega(PyObject* self, PyObject* args) {
 static PyObject* load_l_me(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_me(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_me(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -601,17 +671,17 @@ static PyObject* load_l_me(PyObject* self, PyObject* args) {
 static PyObject* load_l_v(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_v(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_v(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -644,17 +714,17 @@ static PyObject* load_l_v(PyObject* self, PyObject* args) {
 static PyObject* load_l_e(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_e(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_e(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -687,17 +757,17 @@ static PyObject* load_l_e(PyObject* self, PyObject* args) {
 static PyObject* load_l_ma(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_ma(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_ma(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -730,17 +800,17 @@ static PyObject* load_l_ma(PyObject* self, PyObject* args) {
 static PyObject* load_l_j(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_j(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_j(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -773,17 +843,17 @@ static PyObject* load_l_j(PyObject* self, PyObject* args) {
 static PyObject* load_l_s(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_s(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_s(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -816,17 +886,17 @@ static PyObject* load_l_s(PyObject* self, PyObject* args) {
 static PyObject* load_l_u(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_u(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_u(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -859,17 +929,17 @@ static PyObject* load_l_u(PyObject* self, PyObject* args) {
 static PyObject* load_l_n(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_n(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_l_n(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -902,17 +972,17 @@ static PyObject* load_l_n(PyObject* self, PyObject* args) {
 static PyObject* load_p(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    CIRStoTIRSCoefficients* coefficients;
+    CIRSCoefficients* coefficients;
     PyObject* list;
 
     if(!PyArg_ParseTuple(args, "OO!", &capsule, &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_p(CIRStoTIRSCoefficients, double).");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_p(CIRSCoefficients, double).");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
@@ -942,14 +1012,18 @@ static PyObject* load_p(PyObject* self, PyObject* args) {
 }
 
 
-static PyObject* new_CIRStoTIRSCoefficients(PyObject* self, PyObject* args) {
+static PyObject* new_CIRSCoefficients(PyObject* self, PyObject* args) {
 
-    CIRStoTIRSCoefficients* coefficients = (CIRStoTIRSCoefficients*)malloc(sizeof(CIRStoTIRSCoefficients));
+    CIRSCoefficients* coefficients = (CIRSCoefficients*)malloc(sizeof(CIRSCoefficients));
 
     if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for new_CIRStoTIRSCoefficients.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for new_CIRSCoefficients.");
         return PyErr_Occurred();
     }
+
+    coefficients->eta_0 = 0.0;
+    coefficients->xi_0 = 0.0;
+    coefficients->d_alpha_0 = 0.0;
 
     coefficients->zeta_a = NULL;
     coefficients->z_a = NULL;
@@ -974,13 +1048,13 @@ static PyObject* new_CIRStoTIRSCoefficients(PyObject* self, PyObject* args) {
     coefficients->l_n = NULL;
     coefficients->p = NULL;
 
-    return PyCapsule_New(coefficients, "CIRStoTIRSCoefficients", delete_CIRStoTIRSCoefficients);
+    return PyCapsule_New(coefficients, "CIRSCoefficients", delete_CIRSCoefficients);
 }
 
 
-static void delete_CIRStoTIRSCoefficients(PyObject* obj) {
+static void delete_CIRSCoefficients(PyObject* obj) {
 
-    CIRStoTIRSCoefficients* coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(obj, "CIRStoTIRSCoefficients");
+    CIRSCoefficients* coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(obj, "CIRSCoefficients");
 
     if(coefficients) {
         free(coefficients);
@@ -990,6 +1064,9 @@ static void delete_CIRStoTIRSCoefficients(PyObject* obj) {
 
 
 static PyMethodDef tolueneModelsEarthCoefficientsMethods[] = {
+    {"load_eta_0", load_eta_0, METH_VARARGS, "Load the eta_0 coefficient."},
+    {"load_xi_0", load_xi_0, METH_VARARGS, "Load the xi_0 coefficient."},
+    {"load_d_alpha_0", load_d_alpha_0, METH_VARARGS, "Load the d_alpha_0 coefficient."},
     {"load_zeta_a", load_zeta_a, METH_VARARGS, "Load the zeta_a coefficients."},
     {"load_z_a", load_z_a, METH_VARARGS, "Load the z_a coefficients."},
     {"load_theta_a", load_theta_a, METH_VARARGS, "Load the theta_a coefficients."},
@@ -1011,7 +1088,7 @@ static PyMethodDef tolueneModelsEarthCoefficientsMethods[] = {
     {"load_l_u", load_l_u, METH_VARARGS, "Load the l_u coefficients."},
     {"load_l_n", load_l_n, METH_VARARGS, "Load the l_n coefficients."},
     {"load_p", load_p, METH_VARARGS, "Load the p coefficients."},
-    {"new_CIRStoTIRSCoefficients", new_CIRStoTIRSCoefficients, METH_VARARGS, "Create a new CIRStoTIRSCoefficients object."},
+    {"new_CIRSCoefficients", new_CIRSCoefficients, METH_VARARGS, "Create a new CIRSCoefficients object."},
     {NULL, NULL, 0, NULL}
 };
 

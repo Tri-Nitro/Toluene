@@ -21,6 +21,7 @@ setup_args = dict(
         Extension(
             'toluene_extensions.models.earth.coordinates',
             [
+                'toluene/c_extensions/src/models/earth/bias.c',
                 'toluene/c_extensions/src/models/earth/coordinates.c'
             ],
             include_dirs=['toluene/c_extensions/include'],

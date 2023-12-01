@@ -24,6 +24,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#define __compile_math_algebra /* Used to get prototypes so we don't get warnings about missing definitions. */
 #include "math/algebra.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
@@ -37,6 +38,18 @@
 extern "C"
 {
 #endif
+
+
+void solve(Polynomial* polynomial, double x, double* value) {
+
+    if(polynomial && value) {
+        *value = 0.0;
+        for(int i = polynomial->order; i >= 0; --i) {
+            *value = (*value)*x + polynomial->coefficients[i];
+        }
+    }
+
+}
 
 
 static PyObject* new_Polynomial(PyObject* self, PyObject* args) {
@@ -66,7 +79,7 @@ static PyObject* new_Polynomial(PyObject* self, PyObject* args) {
 }
 
 
-static void delete_Polynomial(PyObject* obj) {
+void delete_Polynomial(PyObject* obj) {
 
     Polynomial* polynomial = (Polynomial*)PyCapsule_GetPointer(obj, "Polynomial");
 

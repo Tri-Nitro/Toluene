@@ -25,87 +25,105 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 from typing import List
 
-from toluene_extensions.models.earth.coefficients import new_CIRStoTIRSCoefficients, load_zeta_a, load_z_a, load_theta_a, \
-    load_psi_a, load_omega_a, load_epsilon_a, load_chi_a, load_l, load_l_prime, load_F, load_D, load_Omega, load_l_me, \
-    load_l_v, load_l_e, load_l_ma, load_l_j, load_l_s, load_l_u, load_l_n, load_p
+from toluene_extensions.models.earth.coefficients import new_CIRSCoefficients, load_eta_0, load_xi_0, load_d_alpha_0, \
+    load_zeta_a, load_z_a, load_theta_a, load_psi_a, load_omega_a, load_epsilon_a, load_chi_a, load_l, load_l_prime, \
+    load_F, load_D, load_Omega, load_l_me, load_l_v, load_l_e, load_l_ma, load_l_j, load_l_s, load_l_u, load_l_n, load_p
 
 
-class CIRStoTIRSCoefficients:
+class CIRSCoefficients:
 
-    def __init__(self, cirs_to_tirs_dict: dict = None):
+    def __init__(self, cirs_dict: dict = None):
         self.__coefficients = None
-        if cirs_to_tirs_dict is not None:
-            self.load_from_dict(cirs_to_tirs_dict)
+        if cirs_dict is not None:
+            self.load_from_dict(cirs_dict)
 
-    def load_from_dict(self, cirs_to_tirs_dict: dict):
-        self.__coefficients = new_CIRStoTIRSCoefficients()
+    def load_from_dict(self, cirs_dict: dict):
+        self.__coefficients = new_CIRSCoefficients()
 
-        if 'zeta_a' in cirs_to_tirs_dict:
-            self.__send_zeta_a_to_c(cirs_to_tirs_dict['zeta_a'])
+        if 'eta_0' in cirs_dict:
+            self.__send_eta_0_to_c(float(cirs_dict['eta_0']))
 
-        if 'z_a' in cirs_to_tirs_dict:
-            self.__send_z_a_to_c(cirs_to_tirs_dict['z_a'])
+        if 'xi_0' in cirs_dict:
+            self.__send_xi_0_to_c(float(cirs_dict['xi_0']))
 
-        if 'theta_a' in cirs_to_tirs_dict:
-            self.__send_theta_a_to_c(cirs_to_tirs_dict['theta_a'])
+        if 'd_alpha_0' in cirs_dict:
+            self.__send_d_alpha_0_to_c(float(cirs_dict['d_alpha_0']))
 
-        if 'psi_a' in cirs_to_tirs_dict:
-            self.__send_psi_a_to_c(cirs_to_tirs_dict['psi_a'])
+        if 'zeta_a' in cirs_dict:
+            self.__send_zeta_a_to_c(cirs_dict['zeta_a'])
 
-        if 'omega_a' in cirs_to_tirs_dict:
-            self.__send_omega_a_to_c(cirs_to_tirs_dict['omega_a'])
+        if 'z_a' in cirs_dict:
+            self.__send_z_a_to_c(cirs_dict['z_a'])
 
-        if 'epsilon_a' in cirs_to_tirs_dict:
-            self.__send_epsilon_a_to_c(cirs_to_tirs_dict['epsilon_a'])
+        if 'theta_a' in cirs_dict:
+            self.__send_theta_a_to_c(cirs_dict['theta_a'])
 
-        if 'chi_a' in cirs_to_tirs_dict:
-            self.__send_chi_a_to_c(cirs_to_tirs_dict['chi_a'])
+        if 'psi_a' in cirs_dict:
+            self.__send_psi_a_to_c(cirs_dict['psi_a'])
 
-        if 'l' in cirs_to_tirs_dict:
-            self.__send_l_to_c(cirs_to_tirs_dict['l'])
+        if 'omega_a' in cirs_dict:
+            self.__send_omega_a_to_c(cirs_dict['omega_a'])
 
-        if 'l_prime' in cirs_to_tirs_dict:
-            self.__send_l_prime_to_c(cirs_to_tirs_dict['l_prime'])
+        if 'epsilon_a' in cirs_dict:
+            self.__send_epsilon_a_to_c(cirs_dict['epsilon_a'])
 
-        if 'F' in cirs_to_tirs_dict:
-            self.__send_F_to_c(cirs_to_tirs_dict['F'])
+        if 'chi_a' in cirs_dict:
+            self.__send_chi_a_to_c(cirs_dict['chi_a'])
 
-        if 'D' in cirs_to_tirs_dict:
-            self.__send_D_to_c(cirs_to_tirs_dict['D'])
+        if 'l' in cirs_dict:
+            self.__send_l_to_c(cirs_dict['l'])
 
-        if 'Omega' in cirs_to_tirs_dict:
-            self.__send_Omega_to_c(cirs_to_tirs_dict['Omega'])
+        if 'l_prime' in cirs_dict:
+            self.__send_l_prime_to_c(cirs_dict['l_prime'])
 
-        if 'l_me' in cirs_to_tirs_dict:
-            self.__send_l_me_to_c(cirs_to_tirs_dict['l_me'])
+        if 'F' in cirs_dict:
+            self.__send_F_to_c(cirs_dict['F'])
 
-        if 'l_v' in cirs_to_tirs_dict:
-            self.__send_l_v_to_c(cirs_to_tirs_dict['l_v'])
+        if 'D' in cirs_dict:
+            self.__send_D_to_c(cirs_dict['D'])
 
-        if 'l_e' in cirs_to_tirs_dict:
-            self.__send_l_e_to_c(cirs_to_tirs_dict['l_e'])
+        if 'Omega' in cirs_dict:
+            self.__send_Omega_to_c(cirs_dict['Omega'])
 
-        if 'l_ma' in cirs_to_tirs_dict:
-            self.__send_l_ma_to_c(cirs_to_tirs_dict['l_ma'])
+        if 'l_me' in cirs_dict:
+            self.__send_l_me_to_c(cirs_dict['l_me'])
 
-        if 'l_j' in cirs_to_tirs_dict:
-            self.__send_l_j_to_c(cirs_to_tirs_dict['l_j'])
+        if 'l_v' in cirs_dict:
+            self.__send_l_v_to_c(cirs_dict['l_v'])
 
-        if 'l_s' in cirs_to_tirs_dict:
-            self.__send_l_s_to_c(cirs_to_tirs_dict['l_s'])
+        if 'l_e' in cirs_dict:
+            self.__send_l_e_to_c(cirs_dict['l_e'])
 
-        if 'l_u' in cirs_to_tirs_dict:
-            self.__send_l_u_to_c(cirs_to_tirs_dict['l_u'])
+        if 'l_ma' in cirs_dict:
+            self.__send_l_ma_to_c(cirs_dict['l_ma'])
 
-        if 'l_n' in cirs_to_tirs_dict:
-            self.__send_l_n_to_c(cirs_to_tirs_dict['l_n'])
+        if 'l_j' in cirs_dict:
+            self.__send_l_j_to_c(cirs_dict['l_j'])
 
-        if 'p' in cirs_to_tirs_dict:
-            self.__send_p_to_c(cirs_to_tirs_dict['p'])
+        if 'l_s' in cirs_dict:
+            self.__send_l_s_to_c(cirs_dict['l_s'])
+
+        if 'l_u' in cirs_dict:
+            self.__send_l_u_to_c(cirs_dict['l_u'])
+
+        if 'l_n' in cirs_dict:
+            self.__send_l_n_to_c(cirs_dict['l_n'])
+
+        if 'p' in cirs_dict:
+            self.__send_p_to_c(cirs_dict['p'])
 
     @property
     def coefficients(self):
         return self.__coefficients
+
+    def __send_eta_0_to_c(self, eta_0: float):
+        load_eta_0(self.__coefficients, eta_0)
+
+    def __send_xi_0_to_c(self, xi_0: float):
+        load_xi_0(self.__coefficients, xi_0)
+
+    def __send_d_alpha_0_to_c(self, d_alpha_0: float):
+        load_d_alpha_0(self.__coefficients, d_alpha_0)
 
     def __send_zeta_a_to_c(self, zeta_a: List[float]):
         load_zeta_a(self.__coefficients, zeta_a)

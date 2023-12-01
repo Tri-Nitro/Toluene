@@ -34,7 +34,8 @@ typedef enum {
     EARTH_PRECESSION_MODEL_IAU_2000A
 } EarthPrecessionModel;
 
-void earth_precession_transform_matrix_iau_2000a(double tt_seconds, Vector* model_coefficients, Matrix* matrix);
+void earth_precession_transform_matrix_iau_2000a(double tt_seconds, CIRSCoefficients* coefficients, Matrix* matrix);
+
 
 #ifdef __cplusplus
 }   /* extern "C" */

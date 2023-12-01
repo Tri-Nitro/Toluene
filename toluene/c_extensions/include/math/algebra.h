@@ -33,10 +33,14 @@ typedef struct {
     double* coefficients;
 } Polynomial;
 
-void solve(Polynomial* polynomial, double* value);
+#ifdef __compile_math_algebra
+
+void solve(Polynomial* polynomial, double x, double* value);
 
 static PyObject* new_Polynomial(PyObject* self, PyObject* args);
-static void delete_Polynomial(PyObject* obj);
+void delete_Polynomial(PyObject* obj);
+
+#endif /* __compile_math_algebra */
 
 #ifdef __cplusplus
 }   /* extern "C" */

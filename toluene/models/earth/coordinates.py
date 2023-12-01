@@ -28,28 +28,35 @@ from __future__ import annotations
 from datetime import datetime, timezone
 import yaml
 
-from toluene.models.earth.cirs_to_tirs_coefficients import CIRStoTIRSCoefficients
+from toluene.models.earth.cirs_coefficients import CIRSCoefficients
 from toluene.models.earth.ellipsoid import Ellipsoid
 from toluene.models.earth.geoid import Geoid
 from toluene.util.file import configdir
 
-from toluene_extensions.models.earth.coordinates import ecef_to_lla, lla_to_ecef
+from toluene_extensions.models.earth.coordinates import eci_to_ecef, ecef_to_eci, ecef_to_lla, lla_to_ecef
+
+default_cirs_coefficients = None
+default_ellipsoid = None
+default_geoid = None
+default_epoch = None
 
 
-yaml_config = None
-with open(configdir + '/config.yml') as f:
-    yaml_config = yaml.safe_load(f)
-default_cirs_to_tirs_coefficients = CIRStoTIRSCoefficients(yaml_config['cirs_to_tirs'])
-default_ellipsoid = Ellipsoid(yaml_config['ellipsoid']['a'], yaml_config['ellipsoid']['b'])
-default_geoid = Geoid()
-default_epoch = (datetime.strptime(yaml_config['epoch'], "%Y-%m-%d %H:%M:%S.%f")
-                 .replace(tzinfo=timezone.utc).timestamp())
+def use_defaults_cirs_parameters():
+    global default_cirs_coefficients, default_ellipsoid, default_geoid, default_epoch
+    yaml_config = None
+    with open(configdir + '/config.yml') as f:
+        yaml_config = yaml.safe_load(f)
+    default_cirs_coefficients = CIRSCoefficients(yaml_config['cirs_coefficients'])
+    default_ellipsoid = Ellipsoid(yaml_config['ellipsoid']['a'], yaml_config['ellipsoid']['b'])
+    default_geoid = Geoid()
+    default_epoch = (datetime.strptime(yaml_config['epoch'], "%Y-%m-%d %H:%M:%S.%f")
+                     .replace(tzinfo=timezone.utc).timestamp())
 
 
 class EarthCoordinates:
 
     def __init__(self, ellipsoid: Ellipsoid, geoid: Geoid,
-                 time: float, epoch: float = None, cirs_to_tirs: CIRStoTIRSCoefficients = None):
+                 time: float, epoch: float = None, cirs: CIRSCoefficients = None):
 
         if ellipsoid is None:
             self.__ellipsoid = default_ellipsoid
@@ -71,10 +78,10 @@ class EarthCoordinates:
         else:
             self.__epoch = epoch
 
-        if cirs_to_tirs is None:
-            self.__cirs_to_tirs = default_cirs_to_tirs_coefficients
+        if cirs is None:
+            self.__cirs = default_cirs_coefficients
         else:
-            self.__cirs_to_tirs = cirs_to_tirs
+            self.__cirs = cirs
 
     @property
     def ellipsoid(self) -> Ellipsoid:
@@ -93,8 +100,8 @@ class EarthCoordinates:
         return self.__epoch
 
     @property
-    def cirs_to_tirs(self) -> CIRStoTIRSCoefficients:
-        return self.__cirs_to_tirs
+    def cirs(self) -> CIRSCoefficients:
+        return self.__cirs
 
     @property
     def eci(self) -> Eci:
@@ -112,8 +119,8 @@ class EarthCoordinates:
 class Ecef(EarthCoordinates):
 
     def __init__(self, x: float, y: float, z: float, ellipsoid: Ellipsoid = None, geoid: Geoid = None,
-                 time: float = None, epoch: float = None, cirs_to_tirs: CIRStoTIRSCoefficients = None):
-        super().__init__(ellipsoid, geoid, time, epoch, cirs_to_tirs)
+                 time: float = None, epoch: float = None, cirs: CIRSCoefficients = None):
+        super().__init__(ellipsoid, geoid, time, epoch, cirs)
         self.__x = x
         self.__y = y
         self.__z = z
@@ -139,8 +146,8 @@ class Ecef(EarthCoordinates):
 
     @property
     def eci(self) -> Eci:
-        x, y, z = ecef_to_eci(self.__x, self.__y, self.__z, self.time, self.epoch, self.cirs_to_tirs.coefficients)
-        return Eci(x, y, z, self.ellipsoid, self.geoid, self.time, self.epoch, self.cirs_to_tirs)
+        x, y, z = ecef_to_eci(self.__x, self.__y, self.__z, self.time, self.epoch, self.cirs.coefficients)
+        return Eci(x, y, z, self.ellipsoid, self.geoid, self.time, self.epoch, self.cirs)
 
     @property
     def lla(self) -> Lla:
@@ -151,8 +158,8 @@ class Ecef(EarthCoordinates):
 class Eci(EarthCoordinates):
 
     def __init__(self, x: float, y: float, z: float, ellipsoid: Ellipsoid = None, geoid: Geoid = None,
-                 time: float = None, epoch: float = None, cirs_to_tirs: CIRStoTIRSCoefficients = None):
-        super().__init__(ellipsoid, geoid, time, epoch, cirs_to_tirs)
+                 time: float = None, epoch: float = None, cirs: CIRSCoefficients = None):
+        super().__init__(ellipsoid, geoid, time, epoch, cirs)
         self.__x = x
         self.__y = y
         self.__z = z
@@ -189,8 +196,8 @@ class Lla(EarthCoordinates):
 
     def __init__(self, latitude: float, longitude: float, altitude: float,
                  ellipsoid: Ellipsoid = None, geoid: Geoid = None,
-                 time: float = None, epoch: float = None, cirs_to_tirs: CIRStoTIRSCoefficients = None):
-        super().__init__(ellipsoid, geoid, time, epoch, cirs_to_tirs)
+                 time: float = None, epoch: float = None, cirs: CIRSCoefficients = None):
+        super().__init__(ellipsoid, geoid, time, epoch, cirs)
         self.__latitude = latitude
         self.__longitude = longitude
         self.__altitude = altitude

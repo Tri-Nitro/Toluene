@@ -108,7 +108,7 @@ static PyObject* get_cirs_to_tirs_coefficients(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    return PyCapsule_New(earth_model->cirs_to_tirs_coefficients, "CIRStoTIRSCoefficients", NULL);
+    return PyCapsule_New(earth_model->cirs_to_tirs_coefficients, "CIRSCoefficients", NULL);
 }
 
 
@@ -118,10 +118,10 @@ static PyObject* set_cirs_to_tirs_coefficients(PyObject* self, PyObject* args) {
     PyObject* cirs_to_tirs_coefficients_capsule;
 
     EarthModel* earth_model;
-    CIRStoTIRSCoefficients* cirs_to_tirs_coefficients;
+    CIRSCoefficients* cirs_to_tirs_coefficients;
 
     if(!PyArg_ParseTuple(args, "OO", &capsule, &cirs_to_tirs_coefficients_capsule)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. set_cirs_to_tirs_coefficients(EarthModel, CIRStoTIRSCoefficients)");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. set_cirs_to_tirs_coefficients(EarthModel, CIRSCoefficients)");
         return PyErr_Occurred();
     }
 
@@ -131,9 +131,9 @@ static PyObject* set_cirs_to_tirs_coefficients(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    cirs_to_tirs_coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(cirs_to_tirs_coefficients_capsule, "CIRStoTIRSCoefficients");
+    cirs_to_tirs_coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(cirs_to_tirs_coefficients_capsule, "CIRSCoefficients");
     if(!cirs_to_tirs_coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 

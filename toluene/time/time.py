@@ -23,52 +23,34 @@
 #   SOFTWARE.                                                                       #
 #                                                                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-from toluene.models.earth.cirs_coefficients import CIRSCoefficients
-from toluene.models.earth.ellipsoid import Ellipsoid
-from toluene.models.earth.geoid import Geoid
 
-from toluene_extensions.models.earth.model import new_EarthModel, get_ellipsoid, set_ellipsoid, \
-    get_cirs_coefficients, set_cirs_coefficients
-
-
-class EarthModel:
-
-    def __init__(self):
-        self.__model = new_EarthModel()
-        self.__ellipsoid = None
-        self.__geoid = None
-        self.__epoch = None
-        self.__cirs_to_tirs_coefficients = None
-
-    @property
-    def ellipsoid(self) -> Ellipsoid:
-        self.__ellipsoid = Ellipsoid(c_ellipsoid=get_ellipsoid(self.__model))
-        return self.__ellipsoid
-
-    def set_ellipsoid(self, ellipsoid: Ellipsoid):
-        self.__ellipsoid = ellipsoid
-        set_ellipsoid(self.__model, ellipsoid.c_ellipsoid())
-
-    @property
-    def geoid(self) -> Geoid:
-        return self.__geoid
-
-    def set_geoid(self, geoid: Geoid):
-        pass
-
-    @property
-    def epoch(self) -> float:
-        return self.__epoch
-
-    def set_epoch(self, epoch: float):
-        pass
-
-    @property
-    def cirs_to_tirs_coefficients(self):
-        self.__cirs_to_tirs_coefficients = (
-            CIRSCoefficients(cirs_to_tirs_dict=get_cirs_to_tirs_coefficients(self.__model)))
-        return self.__cirs_to_tirs_coefficients
-
-    def set_cirs_to_tirs_coefficients(self, cirs_to_tirs_coefficients: CIRSCoefficients):
-        self.__cirs_to_tirs_coefficients = cirs_to_tirs_coefficients
-        set_cirs_to_tirs_coefficients(self.__model, cirs_to_tirs_coefficients.c_cirs_to_tirs_coefficients())
+# Hard coded because leap seconds don't exist anymore.
+leap_seconds_utc = [
+    78796800,    # 1972-06-30
+    86878800,    # 1972-12-31
+    123078600,   # 1973-12-31
+    157766400,   # 1974-12-31
+    17395200,    # 1975-12-31
+    216230400,   # 1976-12-31
+    252460800,   # 1977-12-31
+    284019600,   # 1978-12-31
+    31496400,    # 1979-12-31
+    360432000,   # 1981-06-30
+    393750000,   # 1982-06-30
+    427401600,   # 1983-06-30
+    487372800,   # 1985-06-30
+    567993600,   # 1987-12-31
+    630806400,   # 1989-12-31
+    631152000,   # 1990-12-31
+    710227200,   # 1992-06-30
+    741484800,   # 1993-06-30
+    774144000,   # 1994-06-30
+    819638400,   # 1995-12-31
+    868860000,   # 1997-06-30
+    915148800,   # 1998-12-31
+    1136054400,  # 2005-12-31
+    1230768000,  # 2008-12-31
+    1341091200,  # 2012-06-30
+    1435670400,  # 2015-06-30
+    1483228800   # 2016-12-31
+]

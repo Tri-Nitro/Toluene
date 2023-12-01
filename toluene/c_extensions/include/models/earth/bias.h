@@ -21,34 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MATH_LINEAR_ALGEBRA_H__
-#define __MATH_LINEAR_ALGEBRA_H__
+#ifndef __MODELS_EARTH_BIAS_H__
+#define __MODELS_EARTH_BIAS_H__
+
+#include "math/linear_algebra.h"
+#include "models/earth/coefficients.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct {
-    int nrows, ncols;
-    double* elements;
-} Matrix;
 
-typedef struct {
-    int nelements;
-    double* elements;
-} Vector;
+void icrs_to_mean_j2000_bias_approximation(CIRSCoefficients* coefficients, Matrix* matrix);
+void icrs_to_mean_j2000_bias_exact(CIRSCoefficients* coefficients, Matrix* matrix);
 
-static PyObject* new_vector(Vector* vector, int nelements);
-static PyObject* new_matrix(Matrix* matrix, int nrows, int ncols);
-
-void delete_vector(Vector* vector);
-void delete_matrix(Matrix* matrix);
-
-void dot_product(Vector* vector, Matrix* matrix, Vector* product);
-void dot_product_matrix_transpose(Vector* vector, Matrix* matrix, Vector* product);
 
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif
 
-#endif /* __MATH_LINEAR_ALGEBRA_H__ */
+#endif /* __MODELS_EARTH_BIAS_H__ */
