@@ -26,13 +26,15 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import yaml
 
 from toluene.models.earth.cirs_to_tirs_coefficients import CIRStoTIRSCoefficients
 from toluene.models.earth.ellipsoid import Ellipsoid
 from toluene.models.earth.geoid import Geoid
 from toluene.util.file import configdir
 
-import yaml
+from toluene_extensions.models.earth.coordinates import ecef_to_lla, lla_to_ecef
+
 
 yaml_config = None
 with open(configdir + '/config.yml') as f:
@@ -46,10 +48,27 @@ default_epoch = (datetime.strptime(yaml_config['epoch'], "%Y-%m-%d %H:%M:%S.%f")
 
 class EarthCoordinates:
 
-    def __init__(self, ellipsoid: Ellipsoid, geoid: Geoid, time: datetime):
-        self.__ellipsoid = ellipsoid
-        self.__geoid = geoid
-        self.__time = time
+    def __init__(self, ellipsoid: Ellipsoid, geoid: Geoid, time: float, epoch: float = None):
+
+        if ellipsoid is None:
+            self.__ellipsoid = default_ellipsoid
+        else:
+            self.__ellipsoid = ellipsoid
+
+        if geoid is None:
+            self.__geoid = default_geoid
+        else:
+            self.__geoid = geoid
+
+        if time is None:
+            self.__time = default_epoch
+        else:
+            self.__time = time
+
+        if epoch is None:
+            self.__epoch = default_epoch
+        else:
+            self.__epoch = epoch
 
     @property
     def ellipsoid(self) -> Ellipsoid:
@@ -60,8 +79,12 @@ class EarthCoordinates:
         return self.__geoid
 
     @property
-    def time(self) -> datetime:
+    def time(self) -> float:
         return self.__time
+
+    @property
+    def epoch(self) -> float:
+        return self.__epoch
 
     @property
     def eci(self) -> Eci:
@@ -79,11 +102,14 @@ class EarthCoordinates:
 class Ecef(EarthCoordinates):
 
     def __init__(self, x: float, y: float, z: float,
-                 ellipsoid: Ellipsoid = None, geoid: Geoid = None, time: datetime = None):
-        super().__init__(ellipsoid, geoid, time)
+                 ellipsoid: Ellipsoid = None, geoid: Geoid = None, time: float = None, epoch: float = None):
+        super().__init__(ellipsoid, geoid, time, epoch)
         self.__x = x
         self.__y = y
         self.__z = z
+
+    def __str__(self):
+        return f'[{self.x}, {self.y}, {self.z}]'
 
     @property
     def x(self) -> float:
@@ -107,17 +133,21 @@ class Ecef(EarthCoordinates):
 
     @property
     def lla(self) -> Lla:
-        pass
+        latitude, longitude, altitude = ecef_to_lla(self.__x, self.__y, self.__z, self.ellipsoid.c_ellipsoid())
+        return Lla(latitude, longitude, altitude, self.ellipsoid, self.geoid, self.time, self.epoch)
 
 
 class Eci(EarthCoordinates):
 
     def __init__(self, x: float, y: float, z: float,
-                 ellipsoid: Ellipsoid = None, geoid: Geoid = None, time: datetime = None):
-        super().__init__(ellipsoid, geoid, time)
+                 ellipsoid: Ellipsoid = None, geoid: Geoid = None, time: float = None, epoch: float = None):
+        super().__init__(ellipsoid, geoid, time, epoch)
         self.__x = x
         self.__y = y
         self.__z = z
+
+    def __str__(self):
+        return f'[{self.x}, {self.y}, {self.z}]'
 
     @property
     def x(self) -> float:
@@ -147,11 +177,14 @@ class Eci(EarthCoordinates):
 class Lla(EarthCoordinates):
 
     def __init__(self, latitude: float, longitude: float, altitude: float,
-                 ellipsoid: Ellipsoid = None, geoid: Geoid = None, time: datetime = None):
-        super().__init__(ellipsoid, geoid, time)
+                 ellipsoid: Ellipsoid = None, geoid: Geoid = None, time: float = None, epoch: float = None):
+        super().__init__(ellipsoid, geoid, time, epoch)
         self.__latitude = latitude
         self.__longitude = longitude
         self.__altitude = altitude
+
+    def __str__(self):
+        return f'[{self.latitude}, {self.longitude}, {self.altitude}]'
 
     @property
     def latitude(self) -> float:
@@ -167,7 +200,8 @@ class Lla(EarthCoordinates):
 
     @property
     def ecef(self) -> Ecef:
-        pass
+        x, y, z = lla_to_ecef(self.__latitude, self.__longitude, self.__altitude, self.ellipsoid.c_ellipsoid())
+        return Ecef(x, y, z, self.ellipsoid, self.geoid, self.time, self.epoch)
 
     @property
     def eci(self) -> Eci:
