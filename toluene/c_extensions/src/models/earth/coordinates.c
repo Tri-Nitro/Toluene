@@ -24,6 +24,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#include "models/earth/coefficients.h"
 #include "models/earth/coordinates.h"
 #include "models/earth/ellipsoid.h"
 
@@ -38,6 +39,50 @@
 extern "C"
 {
 #endif
+
+
+static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
+
+    PyObject* capsule;
+    CIRStoTIRSCoefficients* coefficients;
+
+    double x, y, z, tt, epoch;
+
+    if(!PyArg_ParseTuple(args, "dddddO", &x, &y, &z, &tt, &epoch, &capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ecef_to_eci()");
+        return PyErr_Occurred();
+    }
+
+    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    if(!coefficients) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        return PyErr_Occurred();
+    }
+
+    return Py_BuildValue("(ddd)", x, y, z);
+}
+
+
+static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
+
+    PyObject* capsule;
+    CIRStoTIRSCoefficients* coefficients;
+
+    double x, y, z, tt, epoch;
+
+    if(!PyArg_ParseTuple(args, "ddddO", &x, &y, &z, &tt, &epoch, &capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ecef_to_eci()");
+        return PyErr_Occurred();
+    }
+
+    coefficients = (CIRStoTIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRStoTIRSCoefficients");
+    if(!coefficients) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRStoTIRSCoefficients from capsule.");
+        return PyErr_Occurred();
+    }
+
+    return Py_BuildValue("(ddd)", x, y, z);
+}
 
 
 static PyObject* ecef_to_lla(PyObject *self, PyObject *args) {
@@ -116,12 +161,13 @@ static PyObject* lla_to_ecef(PyObject *self, PyObject *args) {
     double y = (n_phi + altitude) * cos(latitude * M_PI/180) * sin(longitude * M_PI/180);
     double z = ((1 - e_2) * n_phi + altitude) * sin(latitude * M_PI/180);
 
-
     return Py_BuildValue("(ddd)", x, y, z);
 }
 
 
 static PyMethodDef tolueneModelsEarthEllipsoidMethods[] = {
+    {"eci_to_ecef", eci_to_ecef, METH_VARARGS, "Converts ECI to ECEF."},
+    {"ecef_to_eci", ecef_to_eci, METH_VARARGS, "Converts ECEF to ECI."},
     {"lla_to_ecef", lla_to_ecef, METH_VARARGS, "Converts LLA to ECEF."},
     {"ecef_to_lla", ecef_to_lla, METH_VARARGS, "Converts ECEF to LLA."},
     {NULL, NULL, 0, NULL}

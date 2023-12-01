@@ -31,6 +31,8 @@ extern "C" {
 #endif
 
 
+static PyObject* eci_to_ecef(PyObject *self, PyObject *args);
+static PyObject* ecef_to_eci(PyObject *self, PyObject *args);
 static PyObject* ecef_to_lla(PyObject *self, PyObject *args);
 static PyObject* lla_to_ecef(PyObject *self, PyObject *args);
 

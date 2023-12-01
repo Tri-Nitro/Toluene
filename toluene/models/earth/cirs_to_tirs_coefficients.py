@@ -103,6 +103,9 @@ class CIRStoTIRSCoefficients:
         if 'p' in cirs_to_tirs_dict:
             self.__send_p_to_c(cirs_to_tirs_dict['p'])
 
+    @property
+    def coefficients(self):
+        return self.__coefficients
 
     def __send_zeta_a_to_c(self, zeta_a: List[float]):
         load_zeta_a(self.__coefficients, zeta_a)

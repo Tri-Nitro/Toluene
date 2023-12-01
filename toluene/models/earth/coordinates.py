@@ -48,7 +48,8 @@ default_epoch = (datetime.strptime(yaml_config['epoch'], "%Y-%m-%d %H:%M:%S.%f")
 
 class EarthCoordinates:
 
-    def __init__(self, ellipsoid: Ellipsoid, geoid: Geoid, time: float, epoch: float = None):
+    def __init__(self, ellipsoid: Ellipsoid, geoid: Geoid,
+                 time: float, epoch: float = None, cirs_to_tirs: CIRStoTIRSCoefficients = None):
 
         if ellipsoid is None:
             self.__ellipsoid = default_ellipsoid
@@ -70,6 +71,11 @@ class EarthCoordinates:
         else:
             self.__epoch = epoch
 
+        if cirs_to_tirs is None:
+            self.__cirs_to_tirs = default_cirs_to_tirs_coefficients
+        else:
+            self.__cirs_to_tirs = cirs_to_tirs
+
     @property
     def ellipsoid(self) -> Ellipsoid:
         return self.__ellipsoid
@@ -87,6 +93,10 @@ class EarthCoordinates:
         return self.__epoch
 
     @property
+    def cirs_to_tirs(self) -> CIRStoTIRSCoefficients:
+        return self.__cirs_to_tirs
+
+    @property
     def eci(self) -> Eci:
         raise NotImplementedError
 
@@ -101,9 +111,9 @@ class EarthCoordinates:
 
 class Ecef(EarthCoordinates):
 
-    def __init__(self, x: float, y: float, z: float,
-                 ellipsoid: Ellipsoid = None, geoid: Geoid = None, time: float = None, epoch: float = None):
-        super().__init__(ellipsoid, geoid, time, epoch)
+    def __init__(self, x: float, y: float, z: float, ellipsoid: Ellipsoid = None, geoid: Geoid = None,
+                 time: float = None, epoch: float = None, cirs_to_tirs: CIRStoTIRSCoefficients = None):
+        super().__init__(ellipsoid, geoid, time, epoch, cirs_to_tirs)
         self.__x = x
         self.__y = y
         self.__z = z
@@ -129,7 +139,8 @@ class Ecef(EarthCoordinates):
 
     @property
     def eci(self) -> Eci:
-        pass
+        x, y, z = ecef_to_eci(self.__x, self.__y, self.__z, self.time, self.epoch, self.cirs_to_tirs.coefficients)
+        return Eci(x, y, z, self.ellipsoid, self.geoid, self.time, self.epoch, self.cirs_to_tirs)
 
     @property
     def lla(self) -> Lla:
@@ -139,9 +150,9 @@ class Ecef(EarthCoordinates):
 
 class Eci(EarthCoordinates):
 
-    def __init__(self, x: float, y: float, z: float,
-                 ellipsoid: Ellipsoid = None, geoid: Geoid = None, time: float = None, epoch: float = None):
-        super().__init__(ellipsoid, geoid, time, epoch)
+    def __init__(self, x: float, y: float, z: float, ellipsoid: Ellipsoid = None, geoid: Geoid = None,
+                 time: float = None, epoch: float = None, cirs_to_tirs: CIRStoTIRSCoefficients = None):
+        super().__init__(ellipsoid, geoid, time, epoch, cirs_to_tirs)
         self.__x = x
         self.__y = y
         self.__z = z
@@ -177,8 +188,9 @@ class Eci(EarthCoordinates):
 class Lla(EarthCoordinates):
 
     def __init__(self, latitude: float, longitude: float, altitude: float,
-                 ellipsoid: Ellipsoid = None, geoid: Geoid = None, time: float = None, epoch: float = None):
-        super().__init__(ellipsoid, geoid, time, epoch)
+                 ellipsoid: Ellipsoid = None, geoid: Geoid = None,
+                 time: float = None, epoch: float = None, cirs_to_tirs: CIRStoTIRSCoefficients = None):
+        super().__init__(ellipsoid, geoid, time, epoch, cirs_to_tirs)
         self.__latitude = latitude
         self.__longitude = longitude
         self.__altitude = altitude
