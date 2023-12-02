@@ -21,11 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_POLAR_MOTION_H__
-#define __MODELS_EARTH_POLAR_MOTION_H__
+#ifndef __MODELS_EARTH_EARTH_ORIENTATION_H__
+#define __MODELS_EARTH_EARTH_ORIENTATION_H__
 
 #include "math/linear_algebra.h"
-#include "models/earth/model.h"
 
 #include <stdbool.h>
 
@@ -34,16 +33,50 @@ extern "C" {
 #endif
 
 
-#ifdef __compile_models_earth_polar_motion
+typedef struct {
 
-void itrs_to_tirs_polar_motion_approximation(double tt, EarthModel* model, Matrix* matrix);
-void itrs_to_tirs_polar_motion_exact(double tt, EarthModel* model, Matrix* matrix);
+    double timestamp;
 
-#endif /* __compile_models_earth_polar_motion */
+    bool is_bulletin_a_PM_predicted;
+    double bulletin_a_PM_x;
+    double bulletin_a_PM_x_error;
+    double bulletin_a_PM_y;
+    double bulletin_a_PM_y_error;
 
+    bool is_bulletin_a_dut1_predicted;
+    double bulletin_a_dut1;
+    double bulletin_a_dut1_error;
+
+    double bulletin_a_lod;
+    double bulletin_a_lod_error;
+
+    double bulletin_b_PM_x;
+    double bulletin_b_PM_y;
+    double bulletin_b_dut1;
+
+} EOPTableRecord;
+
+
+typedef struct {
+    int nrecords;
+    int nrecords_allocated;
+    EOPTableRecord* records;
+} EOPTable;
+
+
+#ifdef __compile_models_earth_earth_orientation
+
+
+static PyObject* add_record(PyObject* self, PyObject* args);
+
+static PyObject* new_EOPTable(PyObject* self, PyObject* args);
+static void delete_EOPTable(PyObject* obj);
+
+
+#endif /* __compile_models_earth_earth_orientation */
 
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif
 
-#endif /* __MODELS_EARTH_POLAR_MOTION_H__ */
+#endif /* __MODELS_EARTH_EARTH_ORIENTATION_H__ */

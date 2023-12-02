@@ -25,11 +25,9 @@
 #define __MODELS_EARTH_MODEL_H__
 
 #include "models/earth/coefficients.h"
+#include "models/earth/earth_orientation.h"
 #include "models/earth/ellipsoid.h"
 #include "models/earth/geoid.h"
-#include "models/earth/nutation.h"
-#include "models/earth/polar_motion.h"
-#include "models/earth/precession.h"
 
 #ifdef __cplusplus
 extern "C" {

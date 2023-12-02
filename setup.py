@@ -21,6 +21,14 @@ setup_args = dict(
             py_limited_api=True
         ),
         Extension(
+            'toluene_extensions.models.earth.earth_orientation',
+            [
+                'toluene/c_extensions/src/models/earth/earth_orientation.c'
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=True
+        ),
+        Extension(
             'toluene_extensions.models.earth.ellipsoid',
             [
                 'toluene/c_extensions/src/models/earth/ellipsoid.c'
@@ -32,14 +40,6 @@ setup_args = dict(
             'toluene_extensions.models.earth.model',
             [
                 'toluene/c_extensions/src/models/earth/model.c'
-            ],
-            include_dirs=['toluene/c_extensions/include'],
-            py_limited_api=True
-        ),
-        Extension(
-            'toluene_extensions.models.earth.polar_motion',
-            [
-                'toluene/c_extensions/src/models/earth/polar_motion.c'
             ],
             include_dirs=['toluene/c_extensions/include'],
             py_limited_api=True

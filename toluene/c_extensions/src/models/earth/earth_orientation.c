@@ -24,8 +24,8 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
-#define __compile_models_earth_polar_motion
-#include "models/earth/polar_motion.h"
+#define __compile_models_earth_earth_orientation
+#include "models/earth/earth_orientation.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
 
@@ -38,14 +38,6 @@
 extern "C"
 {
 #endif
-
-
-void itrs_to_tirs_polar_motion_approximation(double tt, Matrix* matrix) {
-}
-
-
-void itrs_to_tirs_polar_motion_exact(double tt, Matrix* matrix) {
-}
 
 
 static PyObject* add_record(PyObject* self, PyObject* args) {
@@ -141,24 +133,24 @@ static void delete_EOPTable(PyObject* obj) {
 }
 
 
-static PyMethodDef tolueneModelsEarthPolarMotionMethods[] = {
+static PyMethodDef tolueneModelsEarthEarthOrientationMethods[] = {
     {"add_record", add_record, METH_VARARGS, "Add a record to the EOPTable"},
     {"new_EOPTable", new_EOPTable, METH_VARARGS, "Create a new EOPTable"},
     {NULL, NULL, 0, NULL}
 };
 
 
-static struct PyModuleDef models_earth_polar_motion = {
+static struct PyModuleDef models_earth_earth_orientation = {
     PyModuleDef_HEAD_INIT,
-    "models.earth.polar_motion",
+    "models.earth.earth_orientation",
     "C Extensions to toluene models ellipsoid functions",
     -1,
-    tolueneModelsEarthPolarMotionMethods
+    tolueneModelsEarthEarthOrientationMethods
 };
 
 
-PyMODINIT_FUNC PyInit_polar_motion(void) {
-    return PyModule_Create(&models_earth_polar_motion);
+PyMODINIT_FUNC PyInit_earth_orientation(void) {
+    return PyModule_Create(&models_earth_earth_orientation);
 }
 
 
