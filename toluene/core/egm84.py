@@ -14,7 +14,7 @@ class EGM84(Geoid):
     used to interpolate the sea level at a point. Created by the National Geospatial-Intelligence Agency (NGA) and the
     data is available at `<https://earth-info.nga.mil/#wgs84-data>`_. It does not come with toluene and must be
     downloaded to use the EGM84 geoid. Opens the interpolation grid zip file and sphereical harmonics zip file into
-    the temp dir of this run. The file WWGRID can be found there after super().__init__.
+    the temp dir of this run. The file WWGRID can be found there after super().__init__.py.
 
     :param interpolation_grid_zip: The path to the interpolation grid zip file.
     :type interpolation_grid_zip: str

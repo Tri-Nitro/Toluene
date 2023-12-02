@@ -37,8 +37,8 @@ typedef struct {
 
 void solve(Polynomial* polynomial, double x, double* value);
 
-static PyObject* new_Polynomial(PyObject* self, PyObject* args);
-void delete_Polynomial(PyObject* obj);
+//static PyObject* new_Polynomial(PyObject* self, PyObject* args);
+//void delete_Polynomial(PyObject* obj);
 
 #endif /* __compile_math_algebra */
 

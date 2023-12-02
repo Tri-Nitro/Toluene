@@ -38,11 +38,11 @@ typedef struct {
     double* elements;
 } Vector;
 
-static PyObject* new_Vector(Vector* vector, int nelements);
-static PyObject* new_Matrix(Matrix* matrix, int nrows, int ncols);
-
-void delete_Vector(PyObject* obj);
-void delete_Matrix(PyObject* obj);
+//static PyObject* new_Vector(Vector* vector, int nelements);
+//static PyObject* new_Matrix(Matrix* matrix, int nrows, int ncols);
+//
+//void delete_Vector(PyObject* obj);
+//void delete_Matrix(PyObject* obj);
 
 void dot_product(Vector* vector, Matrix* matrix, Vector* product);
 void dot_product_matrix_transpose(Vector* vector, Matrix* matrix, Vector* product);

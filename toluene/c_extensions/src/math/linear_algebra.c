@@ -39,69 +39,69 @@ extern "C"
 #endif
 
 
-static PyObject* new_Vector(Vector* vector, int nelements) {
-
-    if(vector) {
-        if(vector->nelements == nelements) {
-            return PyCapsule_New(vector, "Vector", NULL);
-        }
-        free(vector->elements);
-    }
-
-    vector = (Vector*)malloc(sizeof(Vector));
-    vector->nelements = nelements;
-    vector->elements = (double*)malloc(sizeof(double) * nelements);
-
-    return PyCapsule_New(vector, "Vector", delete_Vector);
-}
-
-
-static PyObject* new_Matrix(Matrix* matrix, int nrows, int ncols) {
-
-    if(matrix->elements) {
-        if(matrix->nrows*matrix->ncols == nrows*ncols) {
-            matrix->nrows = nrows;
-            matrix->ncols = ncols;
-            return PyCapsule_New(matrix, "Matrix", NULL);
-        }
-        delete_Matrix(matrix->elements);
-    }
-
-    matrix = (Matrix*)malloc(sizeof(Matrix));
-    matrix->nrows = nrows;
-    matrix->ncols = ncols;
-    matrix->elements = (double*)malloc(sizeof(double) * nrows * ncols);
-
-    return PyCapsule_New(matrix, "Matrix", delete_Matrix);
-}
-
-
-void delete_Vector(PyObject* obj) {
-
-    Vector* vector = (Vector*)PyCapsule_GetPointer(obj, "Vector");
-
-    if(vector) {
-        if(vector->elements) {
-            free(vector->elements);
-        }
-        free(vector);
-    }
-
-}
-
-
-void delete_Matrix(PyObject* obj) {
-
-    Matrix* matrix = (Matrix*)PyCapsule_GetPointer(obj, "Matrix");
-
-    if(matrix) {
-        if(matrix->elements) {
-            free(matrix->elements);
-        }
-        free(matrix);
-    }
-
-}
+//static PyObject* new_Vector(Vector* vector, int nelements) {
+//
+//    if(vector) {
+//        if(vector->nelements == nelements) {
+//            return PyCapsule_New(vector, "Vector", NULL);
+//        }
+//        free(vector->elements);
+//    }
+//
+//    vector = (Vector*)malloc(sizeof(Vector));
+//    vector->nelements = nelements;
+//    vector->elements = (double*)malloc(sizeof(double) * nelements);
+//
+//    return PyCapsule_New(vector, "Vector", delete_Vector);
+//}
+//
+//
+//static PyObject* new_Matrix(Matrix* matrix, int nrows, int ncols) {
+//
+//    if(matrix->elements) {
+//        if(matrix->nrows*matrix->ncols == nrows*ncols) {
+//            matrix->nrows = nrows;
+//            matrix->ncols = ncols;
+//            return PyCapsule_New(matrix, "Matrix", NULL);
+//        }
+//        delete_Matrix(matrix->elements);
+//    }
+//
+//    matrix = (Matrix*)malloc(sizeof(Matrix));
+//    matrix->nrows = nrows;
+//    matrix->ncols = ncols;
+//    matrix->elements = (double*)malloc(sizeof(double) * nrows * ncols);
+//
+//    return PyCapsule_New(matrix, "Matrix", delete_Matrix);
+//}
+//
+//
+//void delete_Vector(PyObject* obj) {
+//
+//    Vector* vector = (Vector*)PyCapsule_GetPointer(obj, "Vector");
+//
+//    if(vector) {
+//        if(vector->elements) {
+//            free(vector->elements);
+//        }
+//        free(vector);
+//    }
+//
+//}
+//
+//
+//void delete_Matrix(PyObject* obj) {
+//
+//    Matrix* matrix = (Matrix*)PyCapsule_GetPointer(obj, "Matrix");
+//
+//    if(matrix) {
+//        if(matrix->elements) {
+//            free(matrix->elements);
+//        }
+//        free(matrix);
+//    }
+//
+//}
 
 
 void dot_product(Vector* vector, Matrix* matrix, Vector* product) {

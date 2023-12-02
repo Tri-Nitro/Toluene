@@ -52,63 +52,63 @@ void solve(Polynomial* polynomial, double x, double* value) {
 }
 
 
-static PyObject* new_Polynomial(PyObject* self, PyObject* args) {
-
-    Polynomial* polynomial = (Polynomial*)malloc(sizeof(Polynomial));
-
-    if(!polynomial) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for new_Polynomial.");
-        return PyErr_Occurred();
-    }
-
-    PyObject* list;
-
-    if(!PyArg_ParseTuple(args, "O!", &PyList_Type, &list)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for new_Polynomial.");
-        return PyErr_Occurred();
-    }
-
-    polynomial->order = (int)PyList_Size(list);
-    polynomial->coefficients = (double*)malloc(sizeof(double) * polynomial->order);
-
-    for(int i = 0; i < polynomial->order; i++) {
-        polynomial->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
-    }
-
-    return PyCapsule_New(polynomial, "Polynomial", delete_Polynomial);
-}
-
-
-void delete_Polynomial(PyObject* obj) {
-
-    Polynomial* polynomial = (Polynomial*)PyCapsule_GetPointer(obj, "Polynomial");
-
-    if(polynomial) {
-        if(polynomial->coefficients) free(polynomial->coefficients);
-        free(polynomial);
-    }
-
-}
-
-
-static PyMethodDef tolueneMathAlgebraMethods[] = {
-    {"new_Polynomial", new_Polynomial, METH_VARARGS, "Create a new Polynomial object."},
-    {NULL, NULL, 0, NULL}
-};
+//static PyObject* new_Polynomial(PyObject* self, PyObject* args) {
+//
+//    Polynomial* polynomial = (Polynomial*)malloc(sizeof(Polynomial));
+//
+//    if(!polynomial) {
+//        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for new_Polynomial.");
+//        return PyErr_Occurred();
+//    }
+//
+//    PyObject* list;
+//
+//    if(!PyArg_ParseTuple(args, "O!", &PyList_Type, &list)) {
+//        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for new_Polynomial.");
+//        return PyErr_Occurred();
+//    }
+//
+//    polynomial->order = (int)PyList_Size(list);
+//    polynomial->coefficients = (double*)malloc(sizeof(double) * polynomial->order);
+//
+//    for(int i = 0; i < polynomial->order; i++) {
+//        polynomial->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
+//    }
+//
+//    return PyCapsule_New(polynomial, "Polynomial", delete_Polynomial);
+//}
+//
+//
+//void delete_Polynomial(PyObject* obj) {
+//
+//    Polynomial* polynomial = (Polynomial*)PyCapsule_GetPointer(obj, "Polynomial");
+//
+//    if(polynomial) {
+//        if(polynomial->coefficients) free(polynomial->coefficients);
+//        free(polynomial);
+//    }
+//
+//}
 
 
-static struct PyModuleDef math_algebra = {
-    PyModuleDef_HEAD_INIT,
-    "math.algebra",
-    "C Extensions to toluene models polynomial functions",
-    -1,
-    tolueneMathAlgebraMethods
-};
-
-
-PyMODINIT_FUNC PyInit_algebra(void) {
-    return PyModule_Create(&math_algebra);
-}
+//static PyMethodDef tolueneMathAlgebraMethods[] = {
+//    {"new_Polynomial", new_Polynomial, METH_VARARGS, "Create a new Polynomial object."},
+//    {NULL, NULL, 0, NULL}
+//};
+//
+//
+//static struct PyModuleDef math_algebra = {
+//    PyModuleDef_HEAD_INIT,
+//    "math.algebra",
+//    "C Extensions to toluene models polynomial functions",
+//    -1,
+//    tolueneMathAlgebraMethods
+//};
+//
+//
+//PyMODINIT_FUNC PyInit_algebra(void) {
+//    return PyModule_Create(&math_algebra);
+//}
 
 
 #ifdef __cplusplus
