@@ -65,8 +65,8 @@ typedef struct {
 
 #ifdef __compile_models_earth_polar_motion
 
-void itrs_to_tirs_polar_motion_approximation(double tt, EOPTable* table, Matrix* matrix);
-void itrs_to_tirs_polar_motion_exact(double tt, EOPTable* table, Matrix* matrix);
+void itrs_to_tirs_polar_motion_approximation(double tt, EarthModel* model, Matrix* matrix);
+void itrs_to_tirs_polar_motion_exact(double tt, EarthModel* model, Matrix* matrix);
 
 static PyObject* add_record(PyObject* self, PyObject* args);
 

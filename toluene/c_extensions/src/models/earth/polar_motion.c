@@ -40,11 +40,11 @@ extern "C"
 #endif
 
 
-void itrs_to_tirs_polar_motion_approximation(double tt, Matrix* matrix) {
+void itrs_to_tirs_polar_motion_approximation(double tt, EarthModel* model, Matrix* matrix) {
 }
 
 
-void itrs_to_tirs_polar_motion_exact(double tt, Matrix* matrix) {
+void itrs_to_tirs_polar_motion_exact(double tt, EarthModel* model, Matrix* matrix) {
 }
 
 
