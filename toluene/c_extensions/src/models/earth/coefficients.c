@@ -1012,6 +1012,29 @@ static PyObject* load_p(PyObject* self, PyObject* args) {
 }
 
 
+static PyObject* load_s_prime(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    CIRSCoefficients* coefficients;
+    double s_prime;
+
+    if(!PyArg_ParseTuple(args, "Od", &capsule, &s_prime)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for load_s_prime(CIRSCoefficients, double).");
+        return PyErr_Occurred();
+    }
+
+    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
+    if(!coefficients) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
+        return PyErr_Occurred();
+    }
+
+    coefficients->s_prime = s_prime;
+
+    Py_RETURN_NONE;
+}
+
+
 static PyObject* new_CIRSCoefficients(PyObject* self, PyObject* args) {
 
     CIRSCoefficients* coefficients = (CIRSCoefficients*)malloc(sizeof(CIRSCoefficients));
@@ -1047,6 +1070,8 @@ static PyObject* new_CIRSCoefficients(PyObject* self, PyObject* args) {
     coefficients->l_u = NULL;
     coefficients->l_n = NULL;
     coefficients->p = NULL;
+
+    coefficients->s_prime = 0.0;
 
     return PyCapsule_New(coefficients, "CIRSCoefficients", delete_CIRSCoefficients);
 }
@@ -1088,6 +1113,7 @@ static PyMethodDef tolueneModelsEarthCoefficientsMethods[] = {
     {"load_l_u", load_l_u, METH_VARARGS, "Load the l_u coefficients."},
     {"load_l_n", load_l_n, METH_VARARGS, "Load the l_n coefficients."},
     {"load_p", load_p, METH_VARARGS, "Load the p coefficients."},
+    {"load_s_prime", load_s_prime, METH_VARARGS, "Load the s_prime coefficient."},
     {"new_CIRSCoefficients", new_CIRSCoefficients, METH_VARARGS, "Create a new CIRSCoefficients object."},
     {NULL, NULL, 0, NULL}
 };

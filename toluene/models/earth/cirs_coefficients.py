@@ -27,7 +27,8 @@ from typing import List
 
 from toluene_extensions.models.earth.coefficients import new_CIRSCoefficients, load_eta_0, load_xi_0, load_d_alpha_0, \
     load_zeta_a, load_z_a, load_theta_a, load_psi_a, load_omega_a, load_epsilon_a, load_chi_a, load_l, load_l_prime, \
-    load_F, load_D, load_Omega, load_l_me, load_l_v, load_l_e, load_l_ma, load_l_j, load_l_s, load_l_u, load_l_n, load_p
+    load_F, load_D, load_Omega, load_l_me, load_l_v, load_l_e, load_l_ma, load_l_j, load_l_s, load_l_u, load_l_n, \
+    load_p, load_s_prime
 
 
 class CIRSCoefficients:
@@ -112,6 +113,9 @@ class CIRSCoefficients:
         if 'p' in cirs_dict:
             self.__send_p_to_c(cirs_dict['p'])
 
+        if 's_prime' in cirs_dict:
+            self.__send_s_prime_to_c(cirs_dict['s_prime'])
+
     @property
     def coefficients(self):
         return self.__coefficients
@@ -187,3 +191,6 @@ class CIRSCoefficients:
 
     def __send_p_to_c(self, p: List[float]):
         load_p(self.__coefficients, p)
+
+    def __send_s_prime_to_c(self, s_prime: float):
+        load_s_prime(self.__coefficients, s_prime)

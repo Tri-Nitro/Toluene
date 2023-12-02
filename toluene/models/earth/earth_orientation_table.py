@@ -23,7 +23,7 @@
 #   SOFTWARE.                                                                       #
 #                                                                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-from toluene_extensions.models.earth.polar_motion import new_EOPTable, add_record
+from toluene_extensions.models.earth.earth_orientation import new_EOPTable, add_record
 
 from datetime import datetime
 
@@ -81,8 +81,16 @@ class EarthOrientationTable:
                     bulletin_b_PM_x = 0.0
                     bulletin_b_PM_y = 0.0
                     bulletin_b_dut1 = 0.0
-                timestamp = datetime(2000+year, month, day, 0, 0, 0, 0).timestamp()
+                if year <= 73:
+                    year += 2000
+                else:
+                    year += 1900
+                timestamp = datetime(year, month, day, 0, 0, 0, 0).timestamp()
                 add_record(self.__eop_table, timestamp, is_bulletin_a_PM_predicted, bulletin_a_PM_x,
                            bulletin_a_PM_x_error, bulletin_a_PM_y, bulletin_a_PM_y_error,
                            is_bulletin_a_dut1_predicted, bulletin_a_dut1, bulletin_a_dut1_error, bulletin_a_lod,
                            bulletin_a_lod_error, bulletin_b_PM_x, bulletin_b_PM_y, bulletin_b_dut1)
+
+    @property
+    def table(self):
+        return self.__eop_table

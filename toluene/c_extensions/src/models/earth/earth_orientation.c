@@ -40,6 +40,23 @@ extern "C"
 #endif
 
 
+void record_lookup(EOPTable* table, double timestamp, EOPTableRecord* record) {
+
+    int lower = 0, upper = (table->nrecords)-1, pointer = upper;
+
+    while(upper - lower > 1) {
+        pointer = (upper + lower) / 2;
+        if(table->records[pointer].timestamp > timestamp) {
+            upper = pointer;
+        } else {
+            lower = pointer;
+        }
+        *record = table->records[pointer];
+    }
+
+}
+
+
 static PyObject* add_record(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
@@ -98,7 +115,7 @@ static PyObject* add_record(PyObject* self, PyObject* args) {
     table->records[table->nrecords].bulletin_b_PM_y = bulletin_b_PM_y;
     table->records[table->nrecords++].bulletin_b_dut1 = bulletin_b_dut1;
 
-    return Py_BuildValue("i", table->nrecords);
+    return Py_BuildValue("i", table->records[table->nrecords].timestamp);
 }
 
 

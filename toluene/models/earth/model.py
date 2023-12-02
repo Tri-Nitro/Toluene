@@ -30,7 +30,7 @@ from toluene.models.earth.ellipsoid import Ellipsoid
 from toluene.models.earth.geoid import Geoid
 
 from toluene_extensions.models.earth.model import new_EarthModel, get_ellipsoid, set_ellipsoid, \
-    get_cirs_coefficients, set_cirs_coefficients
+    get_cirs_coefficients, set_cirs_coefficients, get_eop_table, set_eop_table
 
 
 class EarthModel:
@@ -75,10 +75,12 @@ class EarthModel:
 
     @property
     def eop_table(self) -> EarthOrientationTable:
-        pass
+        self.__eop_table = EarthOrientationTable(get_eop_table(self.__model))
+        return self.__eop_table
 
     def set_eop_table(self, eop_table: EarthOrientationTable):
-        pass
+        self.__eop_table = eop_table
+        set_eop_table(self.__model, eop_table.table)
 
     @property
     def epoch(self) -> float:

@@ -25,7 +25,10 @@
 #include <Python.h>
 
 #define __compile_models_earth_polar_motion
+#include "math/constants.h"
+#include "models/earth/earth_orientation.h"
 #include "models/earth/polar_motion.h"
+#include "util/time.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
 
@@ -40,125 +43,61 @@ extern "C"
 #endif
 
 
-void itrs_to_tirs_polar_motion_approximation(double tt, Matrix* matrix) {
-}
+void itrs_to_tirs_polar_motion_approximation(double tt, EarthModel* model, Matrix* matrix) {
 
+    double julian_centuries = (tt - model->epoch) / SECONDS_PER_JULIAN_CENTURY;
+    double s_prime = (model->cirs_coefficients->s_prime)*julian_centuries*ARCSECONDS_PER_RADIAN;
+    EOPTableRecord record;
+    record_lookup(model->eop_table, tt, &record);
+    double x = record.bulletin_a_PM_x*ARCSECONDS_PER_RADIAN, y = record.bulletin_a_PM_y*ARCSECONDS_PER_RADIAN;
 
-void itrs_to_tirs_polar_motion_exact(double tt, Matrix* matrix) {
-}
+    printf("Dut1: %f\n", record.bulletin_a_dut1);
 
+    if(matrix && matrix->ncols == 3 && matrix->nrows == 3) {
 
-static PyObject* add_record(PyObject* self, PyObject* args) {
+        matrix->elements[0] = 1.0;
+        matrix->elements[1] = -1.0 * s_prime;
+        matrix->elements[2] = -1.0 * x;
+        matrix->elements[3] = s_prime;
+        matrix->elements[4] = 1.0;
+        matrix->elements[5] = y;
+        matrix->elements[6] = x;
+        matrix->elements[7] = -1.0 * y;
+        matrix->elements[8] = 1.0;
 
-    PyObject* capsule;
-    EOPTable* table;
-
-    double timestamp;
-
-    bool is_bulletin_a_PM_predicted;
-    double bulletin_a_PM_x, bulletin_a_PM_x_error, bulletin_a_PM_y, bulletin_a_PM_y_error;
-
-    bool is_bulletin_a_dut1_predicted;
-    double bulletin_a_dut1, bulletin_a_dut1_error;
-
-    double bulletin_a_lod, bulletin_a_lod_error;
-
-    double bulletin_b_PM_x, bulletin_b_PM_y, bulletin_b_dut1;
-
-    if(!PyArg_ParseTuple(args, "Odpddddpddddddd", &capsule, &timestamp, &is_bulletin_a_PM_predicted, &bulletin_a_PM_x,
-                            &bulletin_a_PM_x_error, &bulletin_a_PM_y, &bulletin_a_PM_y_error,
-                            &is_bulletin_a_dut1_predicted, &bulletin_a_dut1, &bulletin_a_dut1_error, &bulletin_a_lod,
-                            &bulletin_a_lod_error, &bulletin_b_PM_x, &bulletin_b_PM_y, &bulletin_b_dut1)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. add_record()");
-        return PyErr_Occurred();
-    }
-
-    table = (EOPTable*)PyCapsule_GetPointer(capsule, "EOPTable");
-    if(!table) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the EOPTable from capsule.");
-        return PyErr_Occurred();
-    }
-
-    if (table->nrecords_allocated < table->nrecords+1) {
-        table->nrecords_allocated += 100;
-        EOPTableRecord* new_table = (EOPTableRecord*)malloc(table->nrecords_allocated * sizeof(EOPTableRecord));
-        if(!new_table) {
-            PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for EOPTable records.");
-            return PyErr_Occurred();
-        }
-        memcpy(new_table, table->records, table->nrecords * sizeof(EOPTableRecord));
-        free(table->records);
-        table->records = new_table;
-    }
-
-    table->records[table->nrecords].timestamp = timestamp;
-    table->records[table->nrecords].is_bulletin_a_PM_predicted = is_bulletin_a_PM_predicted;
-    table->records[table->nrecords].bulletin_a_PM_x = bulletin_a_PM_x;
-    table->records[table->nrecords].bulletin_a_PM_x_error = bulletin_a_PM_x_error;
-    table->records[table->nrecords].bulletin_a_PM_y = bulletin_a_PM_y;
-    table->records[table->nrecords].bulletin_a_PM_y_error = bulletin_a_PM_y_error;
-    table->records[table->nrecords].is_bulletin_a_dut1_predicted = is_bulletin_a_dut1_predicted;
-    table->records[table->nrecords].bulletin_a_dut1 = bulletin_a_dut1;
-    table->records[table->nrecords].bulletin_a_dut1_error = bulletin_a_dut1_error;
-    table->records[table->nrecords].bulletin_a_lod = bulletin_a_lod;
-    table->records[table->nrecords].bulletin_a_lod_error = bulletin_a_lod_error;
-    table->records[table->nrecords].bulletin_b_PM_x = bulletin_b_PM_x;
-    table->records[table->nrecords].bulletin_b_PM_y = bulletin_b_PM_y;
-    table->records[table->nrecords++].bulletin_b_dut1 = bulletin_b_dut1;
-
-    return Py_BuildValue("i", table->nrecords);
-}
-
-
-static PyObject* new_EOPTable(PyObject* self, PyObject* args)  {
-
-    EOPTable* table = (EOPTable*)malloc(sizeof(EOPTable));
-
-    if(!table) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for new_EOPTable.");
-        return PyErr_Occurred();
-    }
-
-    table->nrecords = 0;
-    table->nrecords_allocated = 0;
-    table->records = NULL;
-
-    return PyCapsule_New(table, "EOPTable", delete_EOPTable);
-}
-
-
-static void delete_EOPTable(PyObject* obj) {
-
-    EOPTable* table = (EOPTable*)PyCapsule_GetPointer(obj, "EOPTable");
-
-    if(table) {
-        if(table->records) {
-            free(table->records);
-        }
-        free(table);
     }
 
 }
 
 
-static PyMethodDef tolueneModelsEarthPolarMotionMethods[] = {
-    {"add_record", add_record, METH_VARARGS, "Add a record to the EOPTable"},
-    {"new_EOPTable", new_EOPTable, METH_VARARGS, "Create a new EOPTable"},
-    {NULL, NULL, 0, NULL}
-};
+void itrs_to_tirs_polar_motion_exact(double tt, EarthModel* model, Matrix* matrix) {
 
+    double julian_centuries = (tt - model->epoch) / SECONDS_PER_JULIAN_CENTURY;
+    double s_prime = (model->cirs_coefficients->s_prime)*julian_centuries*ARCSECONDS_PER_RADIAN;
+    EOPTableRecord record;
+    record_lookup(model->eop_table, tt, &record);
+    double x = record.bulletin_a_PM_x*ARCSECONDS_PER_RADIAN, y = record.bulletin_a_PM_y*ARCSECONDS_PER_RADIAN;
 
-static struct PyModuleDef models_earth_polar_motion = {
-    PyModuleDef_HEAD_INIT,
-    "models.earth.polar_motion",
-    "C Extensions to toluene models ellipsoid functions",
-    -1,
-    tolueneModelsEarthPolarMotionMethods
-};
+    printf("Dut1: %f\n", record.bulletin_a_dut1);
 
+    double cos_x = cos(x), sin_x = sin(x),
+            cos_y = cos(y), sin_y = sin(y),
+            cos_s_prime = cos(-1 * s_prime), sin_s_prime = sin(-1 * s_prime);
 
-PyMODINIT_FUNC PyInit_polar_motion(void) {
-    return PyModule_Create(&models_earth_polar_motion);
+    if(matrix && matrix->ncols == 3 && matrix->nrows == 3) {
+
+        matrix->elements[0] = cos_x * cos_s_prime;
+        matrix->elements[1] = sin_x * sin_y * cos_s_prime + cos_y * sin_s_prime;
+        matrix->elements[2] = -1.0 * sin_x * cos_y * cos_s_prime + sin_y * sin_s_prime;
+        matrix->elements[3] = -1.0 * cos_x * sin_s_prime;
+        matrix->elements[4] = -1.0 * sin_x * sin_y * sin_s_prime + cos_y * cos_s_prime;
+        matrix->elements[5] = sin_x * cos_y * sin_s_prime + sin_y * cos_s_prime;
+        matrix->elements[6] = sin_x;
+        matrix->elements[7] = -1.0 * cos_x * sin_y;
+        matrix->elements[8] = cos_x * cos_y;
+
+    }
+
 }
 
 

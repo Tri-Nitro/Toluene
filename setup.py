@@ -15,7 +15,9 @@ setup_args = dict(
             [
                 'toluene/c_extensions/src/math/linear_algebra.c',
                 'toluene/c_extensions/src/models/earth/bias.c',
-                'toluene/c_extensions/src/models/earth/coordinates.c'
+                'toluene/c_extensions/src/models/earth/coordinates.c',
+                'toluene/c_extensions/src/models/earth/earth_orientation.c',
+                'toluene/c_extensions/src/models/earth/polar_motion.c',
             ],
             include_dirs=['toluene/c_extensions/include'],
             py_limited_api=True

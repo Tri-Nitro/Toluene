@@ -21,63 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_EARTH_ORIENTATION_H__
-#define __MODELS_EARTH_EARTH_ORIENTATION_H__
-
-#include "math/linear_algebra.h"
-
-#include <stdbool.h>
+#ifndef __MATH_CONSTANTS_H__
+#define __MATH_CONSTANTS_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
 
-typedef struct {
+#define _USE_MATH_DEFINES
+#include <math.h>
 
-    double timestamp;
+#endif
 
-    bool is_bulletin_a_PM_predicted;
-    double bulletin_a_PM_x;
-    double bulletin_a_PM_x_error;
-    double bulletin_a_PM_y;
-    double bulletin_a_PM_y_error;
-
-    bool is_bulletin_a_dut1_predicted;
-    double bulletin_a_dut1;
-    double bulletin_a_dut1_error;
-
-    double bulletin_a_lod;
-    double bulletin_a_lod_error;
-
-    double bulletin_b_PM_x;
-    double bulletin_b_PM_y;
-    double bulletin_b_dut1;
-
-} EOPTableRecord;
-
-
-typedef struct {
-    int nrecords;
-    int nrecords_allocated;
-    EOPTableRecord* records;
-} EOPTable;
-
-
-#ifdef __compile_models_earth_earth_orientation
-
-void record_lookup(EOPTable* table, double timestamp, EOPTableRecord* record);
-
-static PyObject* add_record(PyObject* self, PyObject* args);
-
-static PyObject* new_EOPTable(PyObject* self, PyObject* args);
-static void delete_EOPTable(PyObject* obj);
-
-
-#endif /* __compile_models_earth_earth_orientation */
+const double ARCSECONDS_PER_RADIAN = M_PI/648000;
 
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif
 
-#endif /* __MODELS_EARTH_EARTH_ORIENTATION_H__ */
+#endif /* __MATH_CONSTANTS_H__ */

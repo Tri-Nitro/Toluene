@@ -45,6 +45,9 @@ typedef struct {
     /* Rotation Models */
     CIRSCoefficients* cirs_coefficients;
     EOPTable* eop_table;
+
+    /* Time Models */
+
     double epoch;
 
 } EarthModel;

@@ -59,6 +59,8 @@ typedef struct {
     Polynomial* l_n;
     Polynomial* p;
 
+    double s_prime;
+
 } CIRSCoefficients;
 
 #ifdef __compile_models_earth_coefficients
@@ -89,6 +91,8 @@ static PyObject* load_l_s(PyObject* self, PyObject* args);
 static PyObject* load_l_u(PyObject* self, PyObject* args);
 static PyObject* load_l_n(PyObject* self, PyObject* args);
 static PyObject* load_p(PyObject* self, PyObject* args);
+
+static PyObject* load_s_prime(PyObject* self, PyObject* args);
 
 static PyObject* new_CIRSCoefficients(PyObject* self, PyObject* args);
 static void delete_CIRSCoefficients(PyObject* obj);
