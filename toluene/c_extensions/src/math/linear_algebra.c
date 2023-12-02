@@ -39,31 +39,32 @@ extern "C"
 #endif
 
 
-void new_vector(Vector* vector, int nelements) {
+static PyObject* new_Vector(Vector* vector, int nelements) {
 
     if(vector) {
         if(vector->nelements == nelements) {
-            return;
+            return PyCapsule_New(vector, "Vector", NULL);
         }
-        delete_vector(vector);
+        free(vector->elements);
     }
 
     vector = (Vector*)malloc(sizeof(Vector));
     vector->nelements = nelements;
     vector->elements = (double*)malloc(sizeof(double) * nelements);
 
+    return PyCapsule_New(vector, "Vector", delete_Vector);
 }
 
 
-void new_matrix(Matrix* matrix, int nrows, int ncols) {
+static PyObject* new_Matrix(Matrix* matrix, int nrows, int ncols) {
 
-    if(matrix) {
+    if(matrix->elements) {
         if(matrix->nrows*matrix->ncols == nrows*ncols) {
             matrix->nrows = nrows;
             matrix->ncols = ncols;
-            return;
+            return PyCapsule_New(matrix, "Matrix", NULL);
         }
-        delete_matrix(vector);
+        delete_Matrix(matrix->elements);
     }
 
     matrix = (Matrix*)malloc(sizeof(Matrix));
@@ -71,14 +72,17 @@ void new_matrix(Matrix* matrix, int nrows, int ncols) {
     matrix->ncols = ncols;
     matrix->elements = (double*)malloc(sizeof(double) * nrows * ncols);
 
+    return PyCapsule_New(matrix, "Matrix", delete_Matrix);
 }
 
 
-void delete_vector(Vector* vector) {
+void delete_Vector(PyObject* obj) {
+
+    Vector* vector = (Vector*)PyCapsule_GetPointer(obj, "Vector");
 
     if(vector) {
         if(vector->elements) {
-            free(vector->elements)
+            free(vector->elements);
         }
         free(vector);
     }
@@ -86,11 +90,13 @@ void delete_vector(Vector* vector) {
 }
 
 
-void delete_matrix(Matrix* matrix) {
+void delete_Matrix(PyObject* obj) {
+
+    Matrix* matrix = (Matrix*)PyCapsule_GetPointer(obj, "Matrix");
 
     if(matrix) {
         if(matrix->elements) {
-            free(matrix->elements)
+            free(matrix->elements);
         }
         free(matrix);
     }
@@ -102,7 +108,6 @@ void dot_product(Vector* vector, Matrix* matrix, Vector* product) {
 
     if(vector && matrix && vector->nelements == matrix->nrows) {
 
-        new_vector(product, vector->nelements);
         for(int i = 0; i < vector->nelements; i++) {
             product->elements[i] = 0;
             for(int j = 0; j < matrix->ncols; j++) {
@@ -117,7 +122,6 @@ void dot_product_matrix_transpose(Vector* vector, Matrix* matrix, Vector* produc
 
     if(vector && matrix && vector->nelements == matrix->ncols) {
 
-        new_vector(product, vector->nelements);
         for(int i = 0; i < vector->nelements; i++) {
             product->elements[i] = 0;
             for(int j = 0; j < matrix->nrows; j++) {

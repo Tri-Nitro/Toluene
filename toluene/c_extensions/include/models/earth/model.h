@@ -28,6 +28,7 @@
 #include "models/earth/ellipsoid.h"
 #include "models/earth/geoid.h"
 #include "models/earth/nutation.h"
+#include "models/earth/polar_motion.h"
 #include "models/earth/precession.h"
 
 #ifdef __cplusplus
@@ -37,29 +38,27 @@ extern "C" {
 
 typedef struct {
 
-    /* CIRS to TIRS Rotation Models */
-    CIRSCoefficients* cirs_coefficients;
-    EarthNutationModel nutation_model;
-    EarthPrecessionModel precession_model;
-    double epoch;
-
     /* Ellipsoid */
     Ellipsoid* ellipsoid;
 
     /* Geoid */
-    Geoid geoid;
+    Geoid* geoid;
 
-    /* Tables */
-    char* delta_t_table;
-    char* earth_orientation_table;
+    /* Rotation Models */
+    CIRSCoefficients* cirs_coefficients;
+    EOPTable* eop_table;
+    double epoch;
 
 } EarthModel;
 
 static PyObject* get_ellipsoid(PyObject* self, PyObject* args);
 static PyObject* set_ellipsoid(PyObject* self, PyObject* args);
 
-static PyObject* get_cirs_to_tirs_coefficients(PyObject* self, PyObject* args);
-static PyObject* set_cirs_to_tirs_coefficients(PyObject* self, PyObject* args);
+static PyObject* get_cirs_coefficients(PyObject* self, PyObject* args);
+static PyObject* set_cirs_coefficients(PyObject* self, PyObject* args);
+
+static PyObject* get_eop_table(PyObject* self, PyObject* args);
+static PyObject* set_eop_table(PyObject* self, PyObject* args);
 
 static PyObject* new_EarthModel(PyObject* self, PyObject* args);
 static void delete_EarthModel(PyObject* obj);

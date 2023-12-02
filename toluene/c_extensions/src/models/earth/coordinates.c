@@ -24,9 +24,11 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#include "models/earth/bias.h"
 #include "models/earth/coefficients.h"
 #include "models/earth/coordinates.h"
 #include "models/earth/ellipsoid.h"
+#include "models/earth/model.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
 
@@ -44,18 +46,18 @@ extern "C"
 static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
 
     PyObject* capsule;
-    CIRSCoefficients* coefficients;
+    EarthModel* model;
 
-    double x, y, z, tt, epoch;
+    double x, y, z, tt;
 
-    if(!PyArg_ParseTuple(args, "dddddO", &x, &y, &z, &tt, &epoch, &capsule)) {
+    if(!PyArg_ParseTuple(args, "ddddO", &x, &y, &z, &tt, &capsule)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ecef_to_eci()");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
-    if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
+    model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
         return PyErr_Occurred();
     }
 
@@ -66,18 +68,18 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
 static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
 
     PyObject* capsule;
-    CIRSCoefficients* coefficients;
+    EarthModel* model;
 
-    double x, y, z, tt, epoch;
+    double x, y, z, tt;
 
-    if(!PyArg_ParseTuple(args, "dddddO", &x, &y, &z, &tt, &epoch, &capsule)) {
+    if(!PyArg_ParseTuple(args, "ddddO", &x, &y, &z, &tt, &capsule)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ecef_to_eci()");
         return PyErr_Occurred();
     }
 
-    coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(capsule, "CIRSCoefficients");
-    if(!coefficients) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
+    model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
         return PyErr_Occurred();
     }
 
@@ -90,35 +92,33 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
 
-    Vector x;
-    x.nelements = 3;
-    x.elements = (double*)malloc(sizeof(double)*3);
-    if(!x.elements) {
+    Vector vecx;
+    vecx.nelements = 3;
+    vecx.elements = (double*)malloc(sizeof(double)*3);
+    if(!vecx.elements) {
         PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for vector.");
         return PyErr_Occurred();
     }
-    x.elements[0] = x;
-    x.elements[1] = y;
-    x.elements[2] = z;
+    vecx.elements[0] = x;
+    vecx.elements[1] = y;
+    vecx.elements[2] = z;
 
-    Vector x_prime;
-    x_prime.nelements = 3;
-    x_prime.elements = (double*)malloc(sizeof(double)*3);
-    if(!x_prime.elements) {
+    Vector vecx_prime;
+    vecx_prime.nelements = 3;
+    vecx_prime.elements = (double*)malloc(sizeof(double)*3);
+    if(!vecx_prime.elements) {
         PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for vector.");
         return PyErr_Occurred();
     }
 
-    icrs_to_mean_j2000_bias_approximation(coefficients, &matrix);
-    dot_product(&x, &matrix, &x_prime);
+    dot_product(&vecx, &matrix, &vecx_prime);
 
-
-    printf("x: %f, y: %f, z: %f\n", x.elements[0], x.elements[1], x.elements[2]);
-    printf("x: %f, y: %f, z: %f\n", x_prime.elements[0], x_prime.elements[1], x_prime.elements[2]);
+    printf("x: %f, y: %f, z: %f\n", vecx.elements[0], vecx.elements[1], vecx.elements[2]);
+    printf("x: %f, y: %f, z: %f\n", vecx_prime.elements[0], vecx_prime.elements[1], vecx_prime.elements[2]);
 
     free(matrix.elements);
-    free(x.elements);
-    free(x_prime.elements);
+    free(vecx.elements);
+    free(vecx_prime.elements);
 
     return Py_BuildValue("(ddd)", x, y, z);
 }
@@ -127,6 +127,7 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
 static PyObject* ecef_to_lla(PyObject *self, PyObject *args) {
 
     PyObject* capsule;
+    EarthModel* earth_model;
     Ellipsoid* ellipsoid;
 
     double x, y, z;
@@ -136,9 +137,14 @@ static PyObject* ecef_to_lla(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
     
-    ellipsoid = (Ellipsoid*)PyCapsule_GetPointer(capsule, "Ellipsoid");
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
+        return PyErr_Occurred();
+    }
+    ellipsoid = earth_model->ellipsoid;
     if(!ellipsoid) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the Ellipsoid from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the Ellipsoid from EarthModel.");
         return PyErr_Occurred();
     }
 
@@ -177,6 +183,7 @@ static PyObject* ecef_to_lla(PyObject *self, PyObject *args) {
 static PyObject* lla_to_ecef(PyObject *self, PyObject *args) {
 
     PyObject* capsule;
+    EarthModel* earth_model;
     Ellipsoid* ellipsoid;
 
     double latitude, longitude, altitude;
@@ -186,9 +193,14 @@ static PyObject* lla_to_ecef(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
 
-    ellipsoid = (Ellipsoid*)PyCapsule_GetPointer(capsule, "Ellipsoid");
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
+        return PyErr_Occurred();
+    }
+    ellipsoid = earth_model->ellipsoid;
     if(!ellipsoid) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the Ellipsoid from capsule.");
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the Ellipsoid from EarthModel.");
         return PyErr_Occurred();
     }
 

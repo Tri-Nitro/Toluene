@@ -29,79 +29,55 @@ from datetime import datetime, timezone
 import yaml
 
 from toluene.models.earth.cirs_coefficients import CIRSCoefficients
+from toluene.models.earth.earth_orientation_table import EarthOrientationTable
 from toluene.models.earth.ellipsoid import Ellipsoid
 from toluene.models.earth.geoid import Geoid
-from toluene.util.file import configdir
+from toluene.models.earth.model import EarthModel
+from toluene.util.file import configdir, datadir
 
 from toluene_extensions.models.earth.coordinates import eci_to_ecef, ecef_to_eci, ecef_to_lla, lla_to_ecef
 
-default_cirs_coefficients = None
-default_ellipsoid = None
-default_geoid = None
-default_epoch = None
+default_earth_model = None
 
 
-def use_defaults_cirs_parameters():
-    global default_cirs_coefficients, default_ellipsoid, default_geoid, default_epoch
+def use_default_model():
+    global default_earth_model
+    default_earth_model = EarthModel()
+
     yaml_config = None
     with open(configdir + '/config.yml') as f:
         yaml_config = yaml.safe_load(f)
+
     default_cirs_coefficients = CIRSCoefficients(yaml_config['cirs_coefficients'])
     default_ellipsoid = Ellipsoid(yaml_config['ellipsoid']['a'], yaml_config['ellipsoid']['b'])
     default_geoid = Geoid()
     default_epoch = (datetime.strptime(yaml_config['epoch'], "%Y-%m-%d %H:%M:%S.%f")
                      .replace(tzinfo=timezone.utc).timestamp())
+    default_eop_table = EarthOrientationTable(datadir + '/finals2000A.all')
+
+    default_earth_model.set_cirs_coefficients(default_cirs_coefficients)
+    default_earth_model.set_ellipsoid(default_ellipsoid)
+    default_earth_model.set_geoid(default_geoid)
+    default_earth_model.set_epoch(default_epoch)
+    default_earth_model.set_eop_table(default_eop_table)
 
 
 class EarthCoordinates:
 
-    def __init__(self, ellipsoid: Ellipsoid, geoid: Geoid,
-                 time: float, epoch: float = None, cirs: CIRSCoefficients = None):
-
-        if ellipsoid is None:
-            self.__ellipsoid = default_ellipsoid
+    def __init__(self, time: float, model: EarthModel = None):
+        self.__time = time
+        if model is None:
+            self.__model = default_earth_model
         else:
-            self.__ellipsoid = ellipsoid
-
-        if geoid is None:
-            self.__geoid = default_geoid
-        else:
-            self.__geoid = geoid
-
-        if time is None:
-            self.__time = default_epoch
-        else:
-            self.__time = time
-
-        if epoch is None:
-            self.__epoch = default_epoch
-        else:
-            self.__epoch = epoch
-
-        if cirs is None:
-            self.__cirs = default_cirs_coefficients
-        else:
-            self.__cirs = cirs
-
-    @property
-    def ellipsoid(self) -> Ellipsoid:
-        return self.__ellipsoid
-
-    @property
-    def geoid(self) -> Geoid:
-        return self.__geoid
+            self.__model = model
 
     @property
     def time(self) -> float:
         return self.__time
 
     @property
-    def epoch(self) -> float:
-        return self.__epoch
-
-    @property
-    def cirs(self) -> CIRSCoefficients:
-        return self.__cirs
+    def model(self) -> EarthModel:
+        return self.__model
 
     @property
     def eci(self) -> Eci:
@@ -118,9 +94,8 @@ class EarthCoordinates:
 
 class Ecef(EarthCoordinates):
 
-    def __init__(self, x: float, y: float, z: float, ellipsoid: Ellipsoid = None, geoid: Geoid = None,
-                 time: float = None, epoch: float = None, cirs: CIRSCoefficients = None):
-        super().__init__(ellipsoid, geoid, time, epoch, cirs)
+    def __init__(self, x: float, y: float, z: float, time: float = None, model: EarthModel = None):
+        super().__init__(time, model)
         self.__x = x
         self.__y = y
         self.__z = z
@@ -146,20 +121,19 @@ class Ecef(EarthCoordinates):
 
     @property
     def eci(self) -> Eci:
-        x, y, z = ecef_to_eci(self.__x, self.__y, self.__z, self.time, self.epoch, self.cirs.coefficients)
-        return Eci(x, y, z, self.ellipsoid, self.geoid, self.time, self.epoch, self.cirs)
+        x, y, z = ecef_to_eci(self.__x, self.__y, self.__z, self.time, self.model.model)
+        return Eci(x, y, z, self.time, self.model)
 
     @property
     def lla(self) -> Lla:
-        latitude, longitude, altitude = ecef_to_lla(self.__x, self.__y, self.__z, self.ellipsoid.c_ellipsoid())
-        return Lla(latitude, longitude, altitude, self.ellipsoid, self.geoid, self.time, self.epoch)
+        latitude, longitude, altitude = ecef_to_lla(self.__x, self.__y, self.__z, self.model.model)
+        return Lla(latitude, longitude, altitude, self.time, self.model)
 
 
 class Eci(EarthCoordinates):
 
-    def __init__(self, x: float, y: float, z: float, ellipsoid: Ellipsoid = None, geoid: Geoid = None,
-                 time: float = None, epoch: float = None, cirs: CIRSCoefficients = None):
-        super().__init__(ellipsoid, geoid, time, epoch, cirs)
+    def __init__(self, x: float, y: float, z: float, time: float = None, model: EarthModel = None):
+        super().__init__(time, model)
         self.__x = x
         self.__y = y
         self.__z = z
@@ -195,9 +169,8 @@ class Eci(EarthCoordinates):
 class Lla(EarthCoordinates):
 
     def __init__(self, latitude: float, longitude: float, altitude: float,
-                 ellipsoid: Ellipsoid = None, geoid: Geoid = None,
-                 time: float = None, epoch: float = None, cirs: CIRSCoefficients = None):
-        super().__init__(ellipsoid, geoid, time, epoch, cirs)
+                 time: float = None, model: EarthModel = None):
+        super().__init__(time, model)
         self.__latitude = latitude
         self.__longitude = longitude
         self.__altitude = altitude
@@ -219,8 +192,8 @@ class Lla(EarthCoordinates):
 
     @property
     def ecef(self) -> Ecef:
-        x, y, z = lla_to_ecef(self.__latitude, self.__longitude, self.__altitude, self.ellipsoid.c_ellipsoid())
-        return Ecef(x, y, z, self.ellipsoid, self.geoid, self.time, self.epoch)
+        x, y, z = lla_to_ecef(self.__latitude, self.__longitude, self.__altitude, self.model.model)
+        return Ecef(x, y, z, self.time, self.model)
 
     @property
     def eci(self) -> Eci:

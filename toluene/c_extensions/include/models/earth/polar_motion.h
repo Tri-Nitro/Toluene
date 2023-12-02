@@ -27,9 +27,12 @@
 #include "math/linear_algebra.h"
 #include "models/earth/coefficients.h"
 
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 typedef struct {
 
@@ -52,18 +55,21 @@ typedef struct {
     double bulletin_b_PM_y;
     double bulletin_b_dut1;
 
-} EOP_TableRecord;
+} EOPTableRecord;
 
 typedef struct {
-    int nrecords
-    EOP_TableRecord* records;
-} EOP_Table;
+    int nrecords;
+    int nrecords_allocated;
+    EOPTableRecord* records;
+} EOPTable;
 
-void itrs_to_tirs_polar_motion_approximation(double tt, Matrix* matrix);
-void itrs_to_tirs_polar_motion_exact(double tt, Matrix* matrix);
+void itrs_to_tirs_polar_motion_approximation(double tt, EOPTable* table, Matrix* matrix);
+void itrs_to_tirs_polar_motion_exact(double tt, EOPTable* table, Matrix* matrix);
 
-static PyObject* new_EOP_Table(PyObject* self, PyObject* args);
-static void delete_EOP_Table(PyObject* obj);
+static PyObject* add_record(PyObject* self, PyObject* args);
+
+static PyObject* new_EOPTable(PyObject* self, PyObject* args);
+static void delete_EOPTable(PyObject* obj);
 
 
 #ifdef __cplusplus

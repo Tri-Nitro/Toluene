@@ -23,6 +23,8 @@
 #   SOFTWARE.                                                                       #
 #                                                                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+from toluene.models.earth.earth_orientation_table import EarthOrientationTable
+
 from toluene.models.earth.cirs_coefficients import CIRSCoefficients
 from toluene.models.earth.ellipsoid import Ellipsoid
 from toluene.models.earth.geoid import Geoid
@@ -37,8 +39,13 @@ class EarthModel:
         self.__model = new_EarthModel()
         self.__ellipsoid = None
         self.__geoid = None
+        self.__cirs_coefficients = None
+        self.__eop_table = None
         self.__epoch = None
-        self.__cirs_to_tirs_coefficients = None
+
+    @property
+    def model(self):
+        return self.__model
 
     @property
     def ellipsoid(self) -> Ellipsoid:
@@ -57,18 +64,25 @@ class EarthModel:
         pass
 
     @property
+    def cirs_coefficients(self) -> CIRSCoefficients:
+        self.__cirs_coefficients = (
+            CIRSCoefficients(cirs_dict=get_cirs_coefficients(self.__model)))
+        return self.__cirs_coefficients
+
+    def set_cirs_coefficients(self, cirs_to_tirs_coefficients: CIRSCoefficients):
+        self.__cirs_coefficients = cirs_to_tirs_coefficients
+        set_cirs_coefficients(self.__model, cirs_to_tirs_coefficients.coefficients)
+
+    @property
+    def eop_table(self) -> EarthOrientationTable:
+        pass
+
+    def set_eop_table(self, eop_table: EarthOrientationTable):
+        pass
+
+    @property
     def epoch(self) -> float:
         return self.__epoch
 
     def set_epoch(self, epoch: float):
         pass
-
-    @property
-    def cirs_to_tirs_coefficients(self):
-        self.__cirs_to_tirs_coefficients = (
-            CIRSCoefficients(cirs_to_tirs_dict=get_cirs_to_tirs_coefficients(self.__model)))
-        return self.__cirs_to_tirs_coefficients
-
-    def set_cirs_to_tirs_coefficients(self, cirs_to_tirs_coefficients: CIRSCoefficients):
-        self.__cirs_to_tirs_coefficients = cirs_to_tirs_coefficients
-        set_cirs_to_tirs_coefficients(self.__model, cirs_to_tirs_coefficients.c_cirs_to_tirs_coefficients())

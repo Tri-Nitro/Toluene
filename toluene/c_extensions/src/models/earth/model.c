@@ -91,14 +91,14 @@ static PyObject* set_ellipsoid(PyObject* self, PyObject* args) {
 }
 
 
-static PyObject* get_cirs_to_tirs_coefficients(PyObject* self, PyObject* args) {
+static PyObject* get_cirs_coefficients(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
 
     EarthModel* earth_model;
 
     if(!PyArg_ParseTuple(args, "O", &capsule)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. cirs_to_tirs_coefficients(EarthModel)");
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. cirs_coefficients(EarthModel)");
         return PyErr_Occurred();
     }
 
@@ -108,20 +108,20 @@ static PyObject* get_cirs_to_tirs_coefficients(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    return PyCapsule_New(earth_model->cirs_to_tirs_coefficients, "CIRSCoefficients", NULL);
+    return PyCapsule_New(earth_model->cirs_coefficients, "CIRSCoefficients", NULL);
 }
 
 
-static PyObject* set_cirs_to_tirs_coefficients(PyObject* self, PyObject* args) {
+static PyObject* set_cirs_coefficients(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
-    PyObject* cirs_to_tirs_coefficients_capsule;
+    PyObject* cirs_coefficients_capsule;
 
     EarthModel* earth_model;
-    CIRSCoefficients* cirs_to_tirs_coefficients;
+    CIRSCoefficients* cirs_coefficients;
 
-    if(!PyArg_ParseTuple(args, "OO", &capsule, &cirs_to_tirs_coefficients_capsule)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. set_cirs_to_tirs_coefficients(EarthModel, CIRSCoefficients)");
+    if(!PyArg_ParseTuple(args, "OO", &capsule, &cirs_coefficients_capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. set_cirs_coefficients(EarthModel, CIRSCoefficients)");
         return PyErr_Occurred();
     }
 
@@ -131,13 +131,65 @@ static PyObject* set_cirs_to_tirs_coefficients(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    cirs_to_tirs_coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(cirs_to_tirs_coefficients_capsule, "CIRSCoefficients");
-    if(!cirs_to_tirs_coefficients) {
+    cirs_coefficients = (CIRSCoefficients*)PyCapsule_GetPointer(cirs_coefficients_capsule, "CIRSCoefficients");
+    if(!cirs_coefficients) {
         PyErr_SetString(PyExc_MemoryError, "Unable to get the CIRSCoefficients from capsule.");
         return PyErr_Occurred();
     }
 
-    earth_model->cirs_to_tirs_coefficients = cirs_to_tirs_coefficients;
+    earth_model->cirs_coefficients = cirs_coefficients;
+
+    Py_RETURN_NONE;
+}
+
+
+static PyObject* get_eop_table(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+
+    EarthModel* earth_model;
+
+    if(!PyArg_ParseTuple(args, "O", &capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. eop_table(EarthModel)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model && earth_model->ellipsoid) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule. Or the ellipsoid is NULL.");
+        return PyErr_Occurred();
+    }
+
+    return PyCapsule_New(earth_model->eop_table, "EOPTable", NULL);
+}
+
+
+static PyObject* set_eop_table(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    PyObject* eop_table_capsule;
+
+    EarthModel* earth_model;
+    EOPTable* eop_table;
+
+    if(!PyArg_ParseTuple(args, "OO", &capsule, &eop_table_capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. set_eop_table(EarthModel, EOPTable)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
+        return PyErr_Occurred();
+    }
+
+    eop_table = (EOPTable*)PyCapsule_GetPointer(eop_table_capsule, "EOPTable");
+    if(!eop_table) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EOPTable from capsule.");
+        return PyErr_Occurred();
+    }
+
+    earth_model->eop_table = eop_table;
 
     Py_RETURN_NONE;
 }
@@ -152,8 +204,10 @@ static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    model->cirs_to_tirs_coefficients = NULL;
     model->ellipsoid = NULL;
+    model->geoid = NULL;
+    model->cirs_coefficients = NULL;
+    model->eop_table = NULL;
 
     return PyCapsule_New(model, "EarthModel", delete_EarthModel);
 }
@@ -163,141 +217,7 @@ static void delete_EarthModel(PyObject* obj) {
 
     EarthModel* pointer = (EarthModel*)PyCapsule_GetPointer(obj, "EarthModel");
 
-    if(pointer) {
-
-        if(pointer->cirs_to_tirs_coefficients) {
-
-            if(pointer->cirs_to_tirs_coefficients->zeta_a) {
-                if(pointer->cirs_to_tirs_coefficients->zeta_a->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->zeta_a->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->zeta_a);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->z_a) {
-                if(pointer->cirs_to_tirs_coefficients->z_a->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->z_a->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->z_a);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->theta_a) {
-                if(pointer->cirs_to_tirs_coefficients->theta_a->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->theta_a->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->theta_a);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->psi_a) {
-                if(pointer->cirs_to_tirs_coefficients->psi_a->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->psi_a->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->psi_a);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->omega_a) {
-                if(pointer->cirs_to_tirs_coefficients->omega_a->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->omega_a->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->omega_a);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->epsilon_a) {
-                if(pointer->cirs_to_tirs_coefficients->epsilon_a->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->epsilon_a->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->epsilon_a);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->chi_a) {
-                if(pointer->cirs_to_tirs_coefficients->chi_a->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->chi_a->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->chi_a);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->l) {
-                if(pointer->cirs_to_tirs_coefficients->l->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->l->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->l);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->l_prime) {
-                if(pointer->cirs_to_tirs_coefficients->l_prime->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->l_prime->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->l_prime);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->F) {
-                if(pointer->cirs_to_tirs_coefficients->F->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->F->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->F);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->D) {
-                if(pointer->cirs_to_tirs_coefficients->D->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->D->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->D);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->Omega) {
-                if(pointer->cirs_to_tirs_coefficients->Omega->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->Omega->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->Omega);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->l_me) {
-                if(pointer->cirs_to_tirs_coefficients->l_me->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->l_me->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->l_me);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->l_v) {
-                if(pointer->cirs_to_tirs_coefficients->l_v->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->l_v->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->l_v);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->l_e) {
-                if(pointer->cirs_to_tirs_coefficients->l_e->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->l_e->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->l_e);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->l_ma) {
-                if(pointer->cirs_to_tirs_coefficients->l_ma->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->l_ma->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->l_ma);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->l_j) {
-                if(pointer->cirs_to_tirs_coefficients->l_j->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->l_j->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->l_j);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->l_s) {
-                if(pointer->cirs_to_tirs_coefficients->l_s->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->l_s->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->l_s);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->l_u) {
-                if(pointer->cirs_to_tirs_coefficients->l_u->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->l_u->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->l_u);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->l_n) {
-                if(pointer->cirs_to_tirs_coefficients->l_n->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->l_n->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->l_n);
-            }
-
-            if(pointer->cirs_to_tirs_coefficients->p) {
-                if(pointer->cirs_to_tirs_coefficients->p->coefficients)
-                    free(pointer->cirs_to_tirs_coefficients->p->coefficients);
-                free(pointer->cirs_to_tirs_coefficients->p);
-            }
-
-            free(pointer->cirs_to_tirs_coefficients);
-        }
-
-        free(pointer);
-    }
+    if(pointer) free(pointer);
 
 }
 
@@ -305,6 +225,10 @@ static void delete_EarthModel(PyObject* obj) {
 static PyMethodDef tolueneModelsEarthModelMethods[] = {
     {"get_ellipsoid", get_ellipsoid, METH_VARARGS, "Get the ellipsoid of the EarthModel"},
     {"set_ellipsoid", set_ellipsoid, METH_VARARGS, "Set the ellipsoid of the EarthModel"},
+    {"get_cirs_coefficients", get_cirs_coefficients, METH_VARARGS, "Get the CIRSCoefficients of the EarthModel"},
+    {"set_cirs_coefficients", set_cirs_coefficients, METH_VARARGS, "Set the CIRSCoefficients of the EarthModel"},
+    {"get_eop_table", get_eop_table, METH_VARARGS, "Get the EOPTable of the EarthModel"},
+    {"set_eop_table", set_eop_table, METH_VARARGS, "Set the EOPTable of the EarthModel"},
     {"new_EarthModel", new_EarthModel, METH_VARARGS, "Create a new EarthModel object"},
     {NULL, NULL, 0, NULL}
 };
