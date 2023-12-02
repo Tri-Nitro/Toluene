@@ -35,12 +35,15 @@ typedef struct {
     double b;   /* Semi-minor axis */
 } Ellipsoid;
 
+#ifdef __compile_models_earth_ellipsoid
+
 static PyObject* set_axes(PyObject* self, PyObject* args);
 static PyObject* get_axes(PyObject* self, PyObject* args);
 
 static PyObject* new_Ellipsoid(PyObject* self, PyObject* args);
 static void delete_Ellipsoid(PyObject* obj);
 
+#endif /* __compile_models_earth_ellipsoid */
 
 #ifdef __cplusplus
 }   /* extern "C" */

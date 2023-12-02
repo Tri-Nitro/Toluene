@@ -51,6 +51,9 @@ typedef struct {
 
 } EarthModel;
 
+
+#ifdef __compile_models_earth_model
+
 static PyObject* get_ellipsoid(PyObject* self, PyObject* args);
 static PyObject* set_ellipsoid(PyObject* self, PyObject* args);
 
@@ -62,6 +65,8 @@ static PyObject* set_eop_table(PyObject* self, PyObject* args);
 
 static PyObject* new_EarthModel(PyObject* self, PyObject* args);
 static void delete_EarthModel(PyObject* obj);
+
+#endif /* __compile_models_earth_model */
 
 
 #ifdef __cplusplus

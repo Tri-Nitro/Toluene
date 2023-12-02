@@ -63,6 +63,8 @@ typedef struct {
     EOPTableRecord* records;
 } EOPTable;
 
+#ifdef __compile_models_earth_polar_motion
+
 void itrs_to_tirs_polar_motion_approximation(double tt, EOPTable* table, Matrix* matrix);
 void itrs_to_tirs_polar_motion_exact(double tt, EOPTable* table, Matrix* matrix);
 
@@ -71,6 +73,7 @@ static PyObject* add_record(PyObject* self, PyObject* args);
 static PyObject* new_EOPTable(PyObject* self, PyObject* args);
 static void delete_EOPTable(PyObject* obj);
 
+#endif /* __compile_models_earth_polar_motion */
 
 #ifdef __cplusplus
 }   /* extern "C" */

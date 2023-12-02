@@ -34,9 +34,13 @@ typedef enum {
     EARTH_NUTATION_MODEL_IAU_2000A
 } EarthNutationModel;
 
+#ifdef __compile_models_earth_nutation
+
 static PyObject* earth_nutation_transform_matrix_iau_2000a(
     double tt_seconds, Vector* model_coefficients, Matrix* matrix
     );
+
+#endif /* __compile_models_earth_nutation */
 
 #ifdef __cplusplus
 }   /* extern "C" */

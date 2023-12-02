@@ -24,6 +24,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#define __compile_models_earth_model
 #include "models/earth/model.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
