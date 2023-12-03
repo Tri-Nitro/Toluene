@@ -25,12 +25,15 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 from toluene.models.earth.earth_orientation_table import EarthOrientationTable
 
+from toluene.math.algebra import Polynomial
 from toluene.models.earth.cirs_coefficients import CIRSCoefficients
 from toluene.models.earth.ellipsoid import Ellipsoid
 from toluene.models.earth.geoid import Geoid
+from toluene.util.time import DeltaTTable
 
 from toluene_extensions.models.earth.model import new_EarthModel, get_ellipsoid, set_ellipsoid, \
-    get_cirs_coefficients, set_cirs_coefficients, get_eop_table, set_eop_table
+    get_cirs_coefficients, set_cirs_coefficients, get_eop_table, set_eop_table, get_delta_t_table, set_delta_t_table, \
+    get_gmst_polynomial, set_gmst_polynomial
 
 
 class EarthModel:
@@ -42,6 +45,7 @@ class EarthModel:
         self.__cirs_coefficients = None
         self.__eop_table = None
         self.__epoch = None
+        self.__gmst_polynomial = None
 
     @property
     def model(self):
@@ -83,8 +87,25 @@ class EarthModel:
         set_eop_table(self.__model, eop_table.table)
 
     @property
+    def delta_t_table(self) -> DeltaTTable:
+        self.__delta_t_table = EarthOrientationTable(get_eop_table(self.__model))
+        return self.__delta_t_table
+
+    def set_delta_t_table(self, delta_t_table: DeltaTTable):
+        self.__delta_t_table = delta_t_table
+        set_delta_t_table(self.__model, delta_t_table.table)
+
+    @property
     def epoch(self) -> float:
         return self.__epoch
 
     def set_epoch(self, epoch: float):
         pass
+
+    @property
+    def gmst_polynomial(self) -> Polynomial:
+        return self.__gmst_polynomial
+
+    def set_gmst_polynomial(self, gmst_du: Polynomial):
+        self.__gmst_polynomial = gmst_du
+        set_gmst_polynomial(self.__model, gmst_du.coefficients)

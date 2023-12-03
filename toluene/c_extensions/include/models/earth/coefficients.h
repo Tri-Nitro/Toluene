@@ -30,6 +30,7 @@
 extern "C" {
 #endif
 
+
 typedef struct {
 
     double eta_0;
@@ -62,6 +63,7 @@ typedef struct {
     double s_prime;
 
 } CIRSCoefficients;
+
 
 #ifdef __compile_models_earth_coefficients
 

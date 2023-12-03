@@ -13,10 +13,12 @@ setup_args = dict(
         Extension(
             'toluene_extensions.models.earth.coordinates',
             [
+                'toluene/c_extensions/src/math/algebra.c',
                 'toluene/c_extensions/src/math/linear_algebra.c',
                 'toluene/c_extensions/src/models/earth/bias.c',
                 'toluene/c_extensions/src/models/earth/coordinates.c',
                 'toluene/c_extensions/src/models/earth/earth_orientation.c',
+                'toluene/c_extensions/src/models/earth/earth_rotation.c',
                 'toluene/c_extensions/src/models/earth/polar_motion.c',
             ],
             include_dirs=['toluene/c_extensions/include'],
@@ -50,6 +52,14 @@ setup_args = dict(
             'toluene_extensions.util.config',
             [
                 'toluene/c_extensions/src/util/config.c'
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=True
+        ),
+        Extension(
+            'toluene_extensions.util.time',
+            [
+                'toluene/c_extensions/src/util/time.c'
             ],
             include_dirs=['toluene/c_extensions/include'],
             py_limited_api=True

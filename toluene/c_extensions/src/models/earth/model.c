@@ -196,6 +196,112 @@ static PyObject* set_eop_table(PyObject* self, PyObject* args) {
 }
 
 
+static PyObject* get_delta_t_table(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+
+    EarthModel* earth_model;
+
+    if(!PyArg_ParseTuple(args, "O", &capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. delta_t_table(EarthModel)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model && earth_model->ellipsoid) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule. Or the ellipsoid is NULL.");
+        return PyErr_Occurred();
+    }
+
+    return PyCapsule_New(earth_model->delta_t_table, "DeltaTTable", NULL);
+}
+
+
+static PyObject* set_delta_t_table(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    PyObject* delta_t_table_capsule;
+
+    EarthModel* earth_model;
+    DeltaTTable* delta_t_table;
+
+    if(!PyArg_ParseTuple(args, "OO", &capsule, &delta_t_table_capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. set_delta_t_table(EarthModel, DeltaTTable)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
+        return PyErr_Occurred();
+    }
+
+    delta_t_table = (DeltaTTable*)PyCapsule_GetPointer(delta_t_table_capsule, "DeltaTTable");
+    if(!delta_t_table) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the DeltaTTable from capsule.");
+        return PyErr_Occurred();
+    }
+
+    earth_model->delta_t_table = delta_t_table;
+
+    Py_RETURN_NONE;
+}
+
+
+static PyObject* get_gmst_polynomial(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+
+    EarthModel* earth_model;
+
+    if(!PyArg_ParseTuple(args, "O", &capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. delta_t_table(EarthModel)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model && earth_model->ellipsoid) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule. Or the ellipsoid is NULL.");
+        return PyErr_Occurred();
+    }
+
+    return PyCapsule_New(earth_model->greenwich_mean_sidereal_time_polynomial, "Polynomial", NULL);
+}
+
+
+static PyObject* set_gmst_polynomial(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    PyObject* greenwich_mean_sidereal_time_polynomial_capsule;
+
+    EarthModel* earth_model;
+    Polynomial* greenwich_mean_sidereal_time_polynomial;
+
+    if(!PyArg_ParseTuple(args, "OO", &capsule, &greenwich_mean_sidereal_time_polynomial_capsule)) {
+        PyErr_SetString(PyExc_TypeError,
+            "Unable to parse arguments. set_greenwich_mean_sidereal_time_polynomial(EarthModel, Polynomial)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
+        return PyErr_Occurred();
+    }
+
+    greenwich_mean_sidereal_time_polynomial = (Polynomial*)PyCapsule_GetPointer(
+        greenwich_mean_sidereal_time_polynomial_capsule, "Polynomial");
+    if(!greenwich_mean_sidereal_time_polynomial) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the Polynomial from capsule.");
+        return PyErr_Occurred();
+    }
+
+    earth_model->greenwich_mean_sidereal_time_polynomial = greenwich_mean_sidereal_time_polynomial;
+
+    Py_RETURN_NONE;
+}
+
+
 static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
 
     EarthModel* model = (EarthModel*)malloc(sizeof(EarthModel));
@@ -209,6 +315,8 @@ static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
     model->geoid = NULL;
     model->cirs_coefficients = NULL;
     model->eop_table = NULL;
+    model->delta_t_table = NULL;
+    model->greenwich_mean_sidereal_time_polynomial = NULL;
 
     return PyCapsule_New(model, "EarthModel", delete_EarthModel);
 }
@@ -230,6 +338,10 @@ static PyMethodDef tolueneModelsEarthModelMethods[] = {
     {"set_cirs_coefficients", set_cirs_coefficients, METH_VARARGS, "Set the CIRSCoefficients of the EarthModel"},
     {"get_eop_table", get_eop_table, METH_VARARGS, "Get the EOPTable of the EarthModel"},
     {"set_eop_table", set_eop_table, METH_VARARGS, "Set the EOPTable of the EarthModel"},
+    {"get_delta_t_table", get_delta_t_table, METH_VARARGS, "Get the Delta T Table of the EarthModel"},
+    {"set_delta_t_table", set_delta_t_table, METH_VARARGS, "Set the Delta T Table of the EarthModel"},
+    {"get_gmst_polynomial", get_gmst_polynomial, METH_VARARGS, "Get the GMST Polynomial of the EarthModel"},
+    {"set_gmst_polynomial", set_gmst_polynomial, METH_VARARGS, "Set the GMST Polynomial of the EarthModel"},
     {"new_EarthModel", new_EarthModel, METH_VARARGS, "Create a new EarthModel object"},
     {NULL, NULL, 0, NULL}
 };

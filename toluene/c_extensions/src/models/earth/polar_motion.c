@@ -26,7 +26,6 @@
 
 #define __compile_models_earth_earth_orientation
 #define __compile_models_earth_polar_motion
-#include "math/constants.h"
 #include "models/earth/earth_orientation.h"
 #include "models/earth/polar_motion.h"
 #include "util/time.h"
@@ -46,13 +45,11 @@ extern "C"
 
 void itrs_to_tirs_polar_motion_approximation(double tt, EarthModel* model, Matrix* matrix) {
 
-    double julian_centuries = (tt - model->epoch) / SECONDS_PER_JULIAN_CENTURY;
-    double s_prime = (model->cirs_coefficients->s_prime)*julian_centuries*ARCSECONDS_PER_RADIAN;
+    double julian_centuries = (tt - model->epoch) / 3155760000.0;
+    double s_prime = (model->cirs_coefficients->s_prime)*julian_centuries * M_PI / 648000;
     EOPTableRecord record;
     record_lookup(model->eop_table, tt, &record);
-    double x = record.bulletin_a_PM_x*ARCSECONDS_PER_RADIAN, y = record.bulletin_a_PM_y*ARCSECONDS_PER_RADIAN;
-
-    printf("Dut1: %f\n", record.bulletin_a_dut1);
+    double x = record.bulletin_a_PM_x*M_PI / 648000, y = record.bulletin_a_PM_y * M_PI / 648000;
 
     if(matrix && matrix->ncols == 3 && matrix->nrows == 3) {
 
@@ -73,11 +70,11 @@ void itrs_to_tirs_polar_motion_approximation(double tt, EarthModel* model, Matri
 
 void itrs_to_tirs_polar_motion_exact(double tt, EarthModel* model, Matrix* matrix) {
 
-    double julian_centuries = (tt - model->epoch) / SECONDS_PER_JULIAN_CENTURY;
-    double s_prime = (model->cirs_coefficients->s_prime)*julian_centuries*ARCSECONDS_PER_RADIAN;
+    double julian_centuries = (tt - model->epoch) / 3155760000.0;
+    double s_prime = (model->cirs_coefficients->s_prime)*julian_centuries*M_PI / 648000;
     EOPTableRecord record;
     record_lookup(model->eop_table, tt, &record);
-    double x = record.bulletin_a_PM_x*ARCSECONDS_PER_RADIAN, y = record.bulletin_a_PM_y*ARCSECONDS_PER_RADIAN;
+    double x = record.bulletin_a_PM_x*M_PI / 648000, y = record.bulletin_a_PM_y*M_PI / 648000;
 
     printf("Dut1: %f\n", record.bulletin_a_dut1);
 

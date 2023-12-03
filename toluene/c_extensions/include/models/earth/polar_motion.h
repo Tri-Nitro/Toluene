@@ -27,8 +27,6 @@
 #include "math/linear_algebra.h"
 #include "models/earth/model.h"
 
-#include <stdbool.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif

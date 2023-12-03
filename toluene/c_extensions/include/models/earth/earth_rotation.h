@@ -21,24 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MATH_CONSTANTS_H__
-#define __MATH_CONSTANTS_H__
+#ifndef __MODELS_EARTH_EARTH_ROTATION_H__
+#define __MODELS_EARTH_EARTH_ROTATION_H__
+
+#include "models/earth/model.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+#ifdef __compile_models_earth_earth_rotation
 
-#endif
+void greenwich_mean_sidereal_time(double tt, EarthModel* model, double* gmst_rad);
+void greenwich_apparent_sidereal_time(double tt, EarthModel* model, double* gast_rad);
 
-const double ARCSECONDS_PER_RADIAN = M_PI/648000;
+void tirs_to_true_equinox_equator_earth_rotation(double tt, EarthModel* model, Matrix* matrix);
+
+#endif /* __compile_models_earth_earth_rotation */
+
 
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif
 
-#endif /* __MATH_CONSTANTS_H__ */
+#endif /* __MODELS_EARTH_EARTH_ROTATION_H__ */

@@ -28,19 +28,21 @@ from __future__ import annotations
 from datetime import datetime, timezone
 import yaml
 
+from toluene.math.algebra import Polynomial
 from toluene.models.earth.cirs_coefficients import CIRSCoefficients
 from toluene.models.earth.earth_orientation_table import EarthOrientationTable
 from toluene.models.earth.ellipsoid import Ellipsoid
 from toluene.models.earth.geoid import Geoid
 from toluene.models.earth.model import EarthModel
 from toluene.util.file import configdir, datadir
+from toluene.util.time import DeltaTTable
 
 from toluene_extensions.models.earth.coordinates import eci_to_ecef, ecef_to_eci, ecef_to_lla, lla_to_ecef
 
 default_earth_model = None
 
 
-def use_default_model():
+def use_default_model() -> EarthModel:
     global default_earth_model
     default_earth_model = EarthModel()
 
@@ -51,15 +53,20 @@ def use_default_model():
     default_cirs_coefficients = CIRSCoefficients(yaml_config['cirs_coefficients'])
     default_ellipsoid = Ellipsoid(yaml_config['ellipsoid']['a'], yaml_config['ellipsoid']['b'])
     default_geoid = Geoid()
-    default_epoch = (datetime.strptime(yaml_config['epoch'], "%Y-%m-%d %H:%M:%S.%f")
+    default_epoch = (datetime.strptime(yaml_config['time']['epoch'], "%Y-%m-%d %H:%M:%S.%f")
                      .replace(tzinfo=timezone.utc).timestamp())
     default_eop_table = EarthOrientationTable(datadir + '/finals2000A.all')
+    default_delta_t_table = DeltaTTable(datadir + '/deltat.data')
+    default_gmst_polynomial = Polynomial(yaml_config['time']['gmst_du'])
 
     default_earth_model.set_cirs_coefficients(default_cirs_coefficients)
     default_earth_model.set_ellipsoid(default_ellipsoid)
     default_earth_model.set_geoid(default_geoid)
     default_earth_model.set_epoch(default_epoch)
     default_earth_model.set_eop_table(default_eop_table)
+    default_earth_model.set_delta_t_table(default_delta_t_table)
+    default_earth_model.set_gmst_polynomial(default_gmst_polynomial)
+    return default_earth_model
 
 
 class EarthCoordinates:

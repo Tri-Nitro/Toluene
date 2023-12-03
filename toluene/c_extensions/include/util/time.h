@@ -28,8 +28,31 @@
 extern "C" {
 #endif
 
+typedef struct {
 
-const double SECONDS_PER_JULIAN_CENTURY = 3155760000.0;
+    double timestamp;
+    double deltaT;
+
+} DeltaTTableRecord;
+
+
+typedef struct {
+    int nrecords;
+    int nrecords_allocated;
+    DeltaTTableRecord* records;
+} DeltaTTable;
+
+
+#ifdef __compile_util_time
+
+void record_lookup(DeltaTTable* table, double timestamp, DeltaTTableRecord* record);
+
+static PyObject* add_record(PyObject* self, PyObject* args);
+
+static PyObject* new_DeltaTTable(PyObject* self, PyObject* args);
+static void delete_DeltaTTable(PyObject* obj);
+
+#endif /* __compile_util_time */
 
 
 #ifdef __cplusplus

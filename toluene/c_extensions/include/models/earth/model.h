@@ -28,6 +28,7 @@
 #include "models/earth/earth_orientation.h"
 #include "models/earth/ellipsoid.h"
 #include "models/earth/geoid.h"
+#include "util/time.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,7 +48,8 @@ typedef struct {
     EOPTable* eop_table;
 
     /* Time Models */
-
+    DeltaTTable* delta_t_table;
+    Polynomial* greenwich_mean_sidereal_time_polynomial;
     double epoch;
 
 } EarthModel;
@@ -63,6 +65,12 @@ static PyObject* set_cirs_coefficients(PyObject* self, PyObject* args);
 
 static PyObject* get_eop_table(PyObject* self, PyObject* args);
 static PyObject* set_eop_table(PyObject* self, PyObject* args);
+
+static PyObject* get_delta_t_table(PyObject* self, PyObject* args);
+static PyObject* set_delta_t_table(PyObject* self, PyObject* args);
+
+static PyObject* get_gmst_polynomial(PyObject* self, PyObject* args);
+static PyObject* set_gmst_polynomial(PyObject* self, PyObject* args);
 
 static PyObject* new_EarthModel(PyObject* self, PyObject* args);
 static void delete_EarthModel(PyObject* obj);
