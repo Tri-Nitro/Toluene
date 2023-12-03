@@ -24,6 +24,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#define __compile_models_earth_polar_motion
 #include "models/earth/bias.h"
 #include "models/earth/coefficients.h"
 #include "models/earth/coordinates.h"
