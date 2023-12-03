@@ -29,6 +29,7 @@
 #include "models/earth/coordinates.h"
 #include "models/earth/ellipsoid.h"
 #include "models/earth/model.h"
+#include "models/earth/polar_motion.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
 
