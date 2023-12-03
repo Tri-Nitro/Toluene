@@ -24,6 +24,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#define __compile_models_earth_earth_orientation
 #define __compile_models_earth_polar_motion
 #include "math/constants.h"
 #include "models/earth/earth_orientation.h"
