@@ -34,7 +34,7 @@ from toluene.models.earth.earth_orientation_table import EarthOrientationTable
 from toluene.models.earth.ellipsoid import Ellipsoid
 from toluene.models.earth.geoid import Geoid
 from toluene.models.earth.model import EarthModel
-from toluene.util.file import configdir, datadir
+from toluene.util.file import datadir, configdir
 from toluene.util.time import DeltaTTable
 
 from toluene_extensions.models.earth.coordinates import eci_to_ecef, ecef_to_eci, ecef_to_lla, lla_to_ecef

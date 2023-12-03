@@ -75,6 +75,8 @@ static PyObject* new_Polynomial(PyObject* self, PyObject* args) {
         polynomial->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
 
+    polynomial->order -= 1;
+
     return PyCapsule_New(polynomial, "Polynomial", delete_Polynomial);
 }
 

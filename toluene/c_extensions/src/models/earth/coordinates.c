@@ -115,6 +115,8 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
 
+    tt = tt - model->epoch;
+
     itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
     dot_product(&vecx, &matrix, &vecx_prime);
 

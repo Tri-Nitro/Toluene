@@ -302,6 +302,52 @@ static PyObject* set_gmst_polynomial(PyObject* self, PyObject* args) {
 }
 
 
+static PyObject* get_epoch(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+
+    EarthModel* earth_model;
+
+    if(!PyArg_ParseTuple(args, "O", &capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. delta_t_table(EarthModel)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model && earth_model->ellipsoid) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule. Or the ellipsoid is NULL.");
+        return PyErr_Occurred();
+    }
+
+    return Py_BuildValue("d", earth_model->epoch);
+}
+
+
+static PyObject* set_epoch(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    double epoch;
+
+    EarthModel* earth_model;
+
+    if(!PyArg_ParseTuple(args, "Od", &capsule, &epoch)) {
+        PyErr_SetString(PyExc_TypeError,
+            "Unable to parse arguments. set_epoch(EarthModel, double)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
+        return PyErr_Occurred();
+    }
+
+    earth_model->epoch = epoch;
+
+    Py_RETURN_NONE;
+}
+
+
 static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
 
     EarthModel* model = (EarthModel*)malloc(sizeof(EarthModel));
@@ -317,6 +363,7 @@ static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
     model->eop_table = NULL;
     model->delta_t_table = NULL;
     model->greenwich_mean_sidereal_time_polynomial = NULL;
+    model->epoch = 0.0;
 
     return PyCapsule_New(model, "EarthModel", delete_EarthModel);
 }
@@ -342,6 +389,8 @@ static PyMethodDef tolueneModelsEarthModelMethods[] = {
     {"set_delta_t_table", set_delta_t_table, METH_VARARGS, "Set the Delta T Table of the EarthModel"},
     {"get_gmst_polynomial", get_gmst_polynomial, METH_VARARGS, "Get the GMST Polynomial of the EarthModel"},
     {"set_gmst_polynomial", set_gmst_polynomial, METH_VARARGS, "Set the GMST Polynomial of the EarthModel"},
+    {"get_epoch", get_epoch, METH_VARARGS, "Get the epoch of the EarthModel"},
+    {"set_epoch", set_epoch, METH_VARARGS, "Set the epoch of the EarthModel"},
     {"new_EarthModel", new_EarthModel, METH_VARARGS, "Create a new EarthModel object"},
     {NULL, NULL, 0, NULL}
 };

@@ -21,28 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_NUTATION_H__
-#define __MODELS_EARTH_NUTATION_H__
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
 
-#include "models/earth/model.h"
+#include "models/earth/nutation.h"
+
+#if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+#endif /* _WIN32 */
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-typedef enum {
-    EARTH_NUTATION_MODEL_IAU_2000A
-} EarthNutationModel;
-
-#ifdef __compile_models_earth_nutation
 
 void nutation_longitude_obliquity_and_equation_of_equinoxes(double tt, EarthModel* model, double* delta_psi,
-    double* delta_epsilon, double* epsilon, double* eq_e);
+    double* delta_epsilon, double* epsilon, double* eq_e) {
 
-#endif /* __compile_models_earth_nutation */
+    return;
+}
+
 
 #ifdef __cplusplus
-}   /* extern "C" */
+} /* extern "C" */
 #endif
-
-#endif /* __MODELS_EARTH_NUTATION_H__ */

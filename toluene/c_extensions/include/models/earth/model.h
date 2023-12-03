@@ -72,6 +72,9 @@ static PyObject* set_delta_t_table(PyObject* self, PyObject* args);
 static PyObject* get_gmst_polynomial(PyObject* self, PyObject* args);
 static PyObject* set_gmst_polynomial(PyObject* self, PyObject* args);
 
+static PyObject* get_epoch(PyObject* self, PyObject* args);
+static PyObject* set_epoch(PyObject* self, PyObject* args);
+
 static PyObject* new_EarthModel(PyObject* self, PyObject* args);
 static void delete_EarthModel(PyObject* obj);
 

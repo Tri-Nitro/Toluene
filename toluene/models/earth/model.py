@@ -33,7 +33,7 @@ from toluene.util.time import DeltaTTable
 
 from toluene_extensions.models.earth.model import new_EarthModel, get_ellipsoid, set_ellipsoid, \
     get_cirs_coefficients, set_cirs_coefficients, get_eop_table, set_eop_table, get_delta_t_table, set_delta_t_table, \
-    get_gmst_polynomial, set_gmst_polynomial
+    get_gmst_polynomial, set_gmst_polynomial, get_epoch, set_epoch
 
 
 class EarthModel:
@@ -44,8 +44,9 @@ class EarthModel:
         self.__geoid = None
         self.__cirs_coefficients = None
         self.__eop_table = None
-        self.__epoch = None
         self.__gmst_polynomial = None
+        self.__epoch = None
+
 
     @property
     def model(self):
@@ -97,10 +98,12 @@ class EarthModel:
 
     @property
     def epoch(self) -> float:
+        self.__epoch = get_epoch(self.__model)
         return self.__epoch
 
     def set_epoch(self, epoch: float):
-        pass
+        self.__epoch = epoch
+        set_epoch(self.__model, epoch)
 
     @property
     def gmst_polynomial(self) -> Polynomial:

@@ -24,20 +24,15 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
-#define __compile_math_algebra
-#define __compile_models_earth_earth_orientation
-#define __compile_models_earth_polar_motion
-#include "math/algebra.h"
-#include "models/earth/earth_orientation.h"
-#include "models/earth/polar_motion.h"
-#include "util/time.h"
-
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 
 #endif /* _WIN32 */
+
+#include "math/algebra.h"
+#include "models/earth/earth_rotation.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -52,12 +47,13 @@ void greenwich_mean_sidereal_time(double tt, EarthModel* model, double* gmst_rad
     record_lookup(model->eop_table, tt, &record);
     record_lookup(model->delta_t_table, tt, &delta_t_record);
 
-    double du = tt + record.bulletin_a_dut1 / 86400.0;
+    double du = (tt + record.bulletin_a_dut1) / 86400.0;
     Polynomial* gmst_poly = model->greenwich_mean_sidereal_time_polynomial;
 
     solve(gmst_poly, du, gmst_rad);
     *gmst_rad += 0.008418264265 * delta_t_record.deltaT / 86400.0;
     *gmst_rad = fmod(*gmst_rad, 86400.0);
+    printf("%2d:%2d:%2d\n", (int)(*gmst_rad / 3600.0), (int)((*gmst_rad / 60.0) - (int)(*gmst_rad / 3600.0) * 60.0), (int)(*gmst_rad - (int)(*gmst_rad / 60.0) * 60.0));
     *gmst_rad = *gmst_rad * 2.0 * M_PI / 86400.0;
 
 }
@@ -67,7 +63,6 @@ void tirs_to_true_equinox_equator_earth_rotation(double tt, EarthModel* model, M
 
     double gmst_rad = 0.0;
     greenwich_mean_sidereal_time(tt, model, &gmst_rad);
-    printf("GMST: %f\n", gmst_rad);
 
     double cos_gmst = cos(gmst_rad);
     double sin_gmst = sin(gmst_rad);
