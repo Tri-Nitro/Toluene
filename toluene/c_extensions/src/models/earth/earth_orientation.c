@@ -40,7 +40,7 @@ extern "C"
 #endif
 
 
-void record_lookup(EOPTable* table, double timestamp, EOPTableRecord* record) {
+void eop_table_record_lookup(EOPTable* table, double timestamp, EOPTableRecord* record) {
 
     int lower = 0, upper = (table->nrecords)-1, pointer = upper;
 
@@ -57,7 +57,7 @@ void record_lookup(EOPTable* table, double timestamp, EOPTableRecord* record) {
 }
 
 
-static PyObject* add_record(PyObject* self, PyObject* args) {
+static PyObject* eop_table_add_record(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
     EOPTable* table;
@@ -151,7 +151,7 @@ static void delete_EOPTable(PyObject* obj) {
 
 
 static PyMethodDef tolueneModelsEarthEarthOrientationMethods[] = {
-    {"add_record", add_record, METH_VARARGS, "Add a record to the EOPTable"},
+    {"add_record", eop_table_add_record, METH_VARARGS, "Add a record to the EOPTable"},
     {"new_EOPTable", new_EOPTable, METH_VARARGS, "Create a new EOPTable"},
     {NULL, NULL, 0, NULL}
 };

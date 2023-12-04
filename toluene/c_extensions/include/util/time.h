@@ -45,9 +45,9 @@ typedef struct {
 
 #ifdef __compile_util_time
 
-void record_lookup(DeltaTTable* table, double timestamp, DeltaTTableRecord* record);
+void delta_t_record_lookup(DeltaTTable* table, double timestamp, DeltaTTableRecord* record);
 
-static PyObject* add_record(PyObject* self, PyObject* args);
+static PyObject* delta_t_add_record(PyObject* self, PyObject* args);
 
 static PyObject* new_DeltaTTable(PyObject* self, PyObject* args);
 static void delete_DeltaTTable(PyObject* obj);

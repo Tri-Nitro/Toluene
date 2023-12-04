@@ -40,7 +40,7 @@ extern "C"
 #endif
 
 
-void record_lookup(DeltaTTable* table, double timestamp, DeltaTTableRecord* record) {
+void delta_t_record_lookup(DeltaTTable* table, double timestamp, DeltaTTableRecord* record) {
 
     int lower = 0, upper = (table->nrecords)-1, pointer = upper;
 
@@ -57,7 +57,7 @@ void record_lookup(DeltaTTable* table, double timestamp, DeltaTTableRecord* reco
 }
 
 
-static PyObject* add_record(PyObject* self, PyObject* args) {
+static PyObject* delta_t_add_record(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
     DeltaTTable* table;
@@ -127,7 +127,7 @@ static void delete_DeltaTTable(PyObject* obj) {
 
 
 static PyMethodDef tolueneUtilTimeMethods[] = {
-    {"add_record", add_record, METH_VARARGS, "Add a record to the DeltaTTable"},
+    {"add_record", delta_t_add_record, METH_VARARGS, "Add a record to the DeltaTTable"},
     {"new_DeltaTTable", new_DeltaTTable, METH_VARARGS, "Create a new DeltaTTable"},
     {NULL, NULL, 0, NULL}
 };

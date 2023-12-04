@@ -49,8 +49,8 @@ void greenwich_mean_sidereal_time(double tt, EarthModel* model, double* gmst_rad
 
     EOPTableRecord record;
     DeltaTTableRecord delta_t_record;
-    record_lookup(model->eop_table, tt, &record);
-    record_lookup(model->delta_t_table, tt, &delta_t_record);
+    eop_table_record_lookup(model->eop_table, tt, &record);
+    delta_t_record_lookup(model->delta_t_table, tt, &delta_t_record);
 
     double du = (tt + record.bulletin_a_dut1) / 86400.0;
     Polynomial* gmst_poly = model->greenwich_mean_sidereal_time_polynomial;

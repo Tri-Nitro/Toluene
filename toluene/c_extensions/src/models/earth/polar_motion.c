@@ -48,7 +48,7 @@ void itrs_to_tirs_polar_motion_approximation(double tt, EarthModel* model, Matri
     double julian_centuries = (tt - model->epoch) / 3155760000.0;
     double s_prime = (model->cirs_coefficients->s_prime)*julian_centuries * M_PI / 648000;
     EOPTableRecord record;
-    record_lookup(model->eop_table, tt, &record);
+    eop_table_record_lookup(model->eop_table, tt, &record);
     double x = record.bulletin_a_PM_x*M_PI / 648000, y = record.bulletin_a_PM_y * M_PI / 648000;
 
     if(matrix && matrix->ncols == 3 && matrix->nrows == 3) {
@@ -73,7 +73,7 @@ void itrs_to_tirs_polar_motion_exact(double tt, EarthModel* model, Matrix* matri
     double julian_centuries = (tt - model->epoch) / 3155760000.0;
     double s_prime = (model->cirs_coefficients->s_prime)*julian_centuries*M_PI / 648000;
     EOPTableRecord record;
-    record_lookup(model->eop_table, tt, &record);
+    eop_table_record_lookup(model->eop_table, tt, &record);
     double x = record.bulletin_a_PM_x*M_PI / 648000, y = record.bulletin_a_PM_y*M_PI / 648000;
 
     printf("Dut1: %f\n", record.bulletin_a_dut1);

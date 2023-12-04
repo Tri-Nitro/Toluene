@@ -66,9 +66,9 @@ typedef struct {
 
 #ifdef __compile_models_earth_earth_orientation
 
-void record_lookup(EOPTable* table, double timestamp, EOPTableRecord* record);
+void eop_table_record_lookup(EOPTable* table, double timestamp, EOPTableRecord* record);
 
-static PyObject* add_record(PyObject* self, PyObject* args);
+static PyObject* eop_table_add_record(PyObject* self, PyObject* args);
 
 static PyObject* new_EOPTable(PyObject* self, PyObject* args);
 static void delete_EOPTable(PyObject* obj);
