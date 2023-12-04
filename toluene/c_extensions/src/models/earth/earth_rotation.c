@@ -31,8 +31,13 @@
 
 #endif /* _WIN32 */
 
+#define __compile_math_algebra
+#define __compile_models_earth_earth_orientation
+#define __compile_util_time
 #include "math/algebra.h"
+#include "models/earth/earth_orientation.h"
 #include "models/earth/earth_rotation.h"
+#include "util/time.h"
 
 #ifdef __cplusplus
 extern "C"

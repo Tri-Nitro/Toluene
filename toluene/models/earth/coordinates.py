@@ -34,6 +34,7 @@ from toluene.models.earth.earth_orientation_table import EarthOrientationTable
 from toluene.models.earth.ellipsoid import Ellipsoid
 from toluene.models.earth.geoid import Geoid
 from toluene.models.earth.model import EarthModel
+from toluene.models.earth.nutation import NutationSeries
 from toluene.util.file import datadir, configdir
 from toluene.util.time import DeltaTTable
 
@@ -58,6 +59,7 @@ def use_default_model() -> EarthModel:
     default_eop_table = EarthOrientationTable(datadir + '/finals2000A.all')
     default_delta_t_table = DeltaTTable(datadir + '/deltat.data')
     default_gmst_polynomial = Polynomial(yaml_config['time']['gmst_du'])
+    default_nutation_series = NutationSeries(yaml_config['nutation']['series'])
 
     default_earth_model.set_cirs_coefficients(default_cirs_coefficients)
     default_earth_model.set_ellipsoid(default_ellipsoid)
@@ -66,6 +68,7 @@ def use_default_model() -> EarthModel:
     default_earth_model.set_eop_table(default_eop_table)
     default_earth_model.set_delta_t_table(default_delta_t_table)
     default_earth_model.set_gmst_polynomial(default_gmst_polynomial)
+    default_earth_model.set_nutation_series(default_nutation_series)
     return default_earth_model
 
 

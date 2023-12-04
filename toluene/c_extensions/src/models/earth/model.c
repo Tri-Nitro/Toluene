@@ -144,6 +144,58 @@ static PyObject* set_cirs_coefficients(PyObject* self, PyObject* args) {
 }
 
 
+static PyObject* get_nutation_series(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+
+    EarthModel* earth_model;
+
+    if(!PyArg_ParseTuple(args, "O", &capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. nutation_series(EarthModel)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model && earth_model->ellipsoid) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule. Or the ellipsoid is NULL.");
+        return PyErr_Occurred();
+    }
+
+    return PyCapsule_New(earth_model->nutation_series, "NutationSeries", NULL);
+}
+
+
+static PyObject* set_nutation_series(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    PyObject* nutation_series_capsule;
+
+    EarthModel* earth_model;
+    NutationSeries* nutation_series;
+
+    if(!PyArg_ParseTuple(args, "OO", &capsule, &nutation_series_capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. set_nutation_series(EarthModel, NutationSeries)");
+        return PyErr_Occurred();
+    }
+
+    earth_model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    if(!earth_model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
+        return PyErr_Occurred();
+    }
+
+    nutation_series = (NutationSeries*)PyCapsule_GetPointer(nutation_series_capsule, "NutationSeries");
+    if(!nutation_series) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the NutationSeries from capsule.");
+        return PyErr_Occurred();
+    }
+
+    earth_model->nutation_series = nutation_series;
+
+    Py_RETURN_NONE;
+}
+
+
 static PyObject* get_eop_table(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
@@ -383,6 +435,8 @@ static PyMethodDef tolueneModelsEarthModelMethods[] = {
     {"set_ellipsoid", set_ellipsoid, METH_VARARGS, "Set the ellipsoid of the EarthModel"},
     {"get_cirs_coefficients", get_cirs_coefficients, METH_VARARGS, "Get the CIRSCoefficients of the EarthModel"},
     {"set_cirs_coefficients", set_cirs_coefficients, METH_VARARGS, "Set the CIRSCoefficients of the EarthModel"},
+    {"get_nutation_series", get_nutation_series, METH_VARARGS, "Get the NutationSeries of the EarthModel"},
+    {"set_nutation_series", set_nutation_series, METH_VARARGS, "Set the NutationSeries of the EarthModel"},
     {"get_eop_table", get_eop_table, METH_VARARGS, "Get the EOPTable of the EarthModel"},
     {"set_eop_table", set_eop_table, METH_VARARGS, "Set the EOPTable of the EarthModel"},
     {"get_delta_t_table", get_delta_t_table, METH_VARARGS, "Get the Delta T Table of the EarthModel"},

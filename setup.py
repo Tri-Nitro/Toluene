@@ -49,6 +49,14 @@ setup_args = dict(
             py_limited_api=True
         ),
         Extension(
+            'toluene_extensions.models.earth.nutation',
+            [
+                'toluene/c_extensions/src/models/earth/nutation.c'
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=True
+        ),
+        Extension(
             'toluene_extensions.util.config',
             [
                 'toluene/c_extensions/src/util/config.c'

@@ -24,20 +24,29 @@
 #ifndef __MODELS_EARTH_NUTATION_H__
 #define __MODELS_EARTH_NUTATION_H__
 
-#include "models/earth/model.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef enum {
-    EARTH_NUTATION_MODEL_IAU_2000A
-} EarthNutationModel;
+
+typedef struct {
+    double a, b, c, d, e, f, g, h, j, k, m, n, o, r;
+    double S, S_dot, C_prime, C, C_dot, S_prime;
+} NutationSeriesRecord;
+
+
+typedef struct {
+    int nrecords;
+    int nrecords_allocated;
+    NutationSeriesRecord* records;
+} NutationSeries;
 
 #ifdef __compile_models_earth_nutation
 
-void nutation_longitude_obliquity_and_equation_of_equinoxes(double tt, EarthModel* model, double* delta_psi,
-    double* delta_epsilon, double* epsilon, double* eq_e);
+static PyObject* add_record(PyObject* self, PyObject* args);
+
+static PyObject* new_NutationSeries(PyObject* self, PyObject* args);
+static void delete_NutationSeries(PyObject* obj);
 
 #endif /* __compile_models_earth_nutation */
 

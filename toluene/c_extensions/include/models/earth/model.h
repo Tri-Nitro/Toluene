@@ -28,6 +28,7 @@
 #include "models/earth/earth_orientation.h"
 #include "models/earth/ellipsoid.h"
 #include "models/earth/geoid.h"
+#include "models/earth/nutation.h"
 #include "util/time.h"
 
 #ifdef __cplusplus
@@ -45,6 +46,7 @@ typedef struct {
 
     /* Rotation Models */
     CIRSCoefficients* cirs_coefficients;
+    NutationSeries* nutation_series;
     EOPTable* eop_table;
 
     /* Time Models */
@@ -62,6 +64,9 @@ static PyObject* set_ellipsoid(PyObject* self, PyObject* args);
 
 static PyObject* get_cirs_coefficients(PyObject* self, PyObject* args);
 static PyObject* set_cirs_coefficients(PyObject* self, PyObject* args);
+
+static PyObject* get_nutation_series(PyObject* self, PyObject* args);
+static PyObject* set_nutation_series(PyObject* self, PyObject* args);
 
 static PyObject* get_eop_table(PyObject* self, PyObject* args);
 static PyObject* set_eop_table(PyObject* self, PyObject* args);
