@@ -64,10 +64,11 @@ void greenwich_mean_sidereal_time(double tt, EarthModel* model, double* gmst_rad
 }
 
 
-void tirs_to_true_equinox_equator_earth_rotation(double tt, EarthModel* model, Matrix* matrix) {
+void tirs_to_true_equinox_equator_earth_rotation(double tt, double eq_eq, EarthModel* model, Matrix* matrix) {
 
     double gmst_rad = 0.0;
     greenwich_mean_sidereal_time(tt, model, &gmst_rad);
+    gmst_rad += eq_eq * M_PI / 86400.0;
 
     double cos_gmst = cos(gmst_rad);
     double sin_gmst = sin(gmst_rad);
@@ -75,9 +76,9 @@ void tirs_to_true_equinox_equator_earth_rotation(double tt, EarthModel* model, M
     if(matrix && matrix->ncols == 3 && matrix->nrows == 3) {
 
         matrix->elements[0] = cos_gmst;
-        matrix->elements[1] = sin_gmst;
+        matrix->elements[1] = -1.0 * sin_gmst;
         matrix->elements[2] = 0.0;
-        matrix->elements[3] = -1.0 * sin_gmst;
+        matrix->elements[3] = sin_gmst;
         matrix->elements[4] = cos_gmst;
         matrix->elements[5] = 0.0;
         matrix->elements[6] = 0.0;

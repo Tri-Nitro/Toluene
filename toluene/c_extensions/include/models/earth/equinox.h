@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_EARTH_ROTATION_H__
-#define __MODELS_EARTH_EARTH_ROTATION_H__
+#ifndef __MODELS_EARTH_EQUINOX_H__
+#define __MODELS_EARTH_EQUINOX_H__
 
 #include "models/earth/model.h"
 
@@ -31,18 +31,12 @@ extern "C" {
 #endif
 
 
-#ifdef __compile_models_earth_earth_rotation
-
-void greenwich_mean_sidereal_time(double tt, EarthModel* model, double* gmst_rad);
-void greenwich_apparent_sidereal_time(double tt, EarthModel* model, double* gast_rad);
-
-void tirs_to_true_equinox_equator_earth_rotation(double tt, double eq_eq, EarthModel* model, Matrix* matrix);
-
-#endif /* __compile_models_earth_earth_rotation */
+void get_delta_psi_delta_epsilon_epsilon_eq_eq(double t, EarthModel* model, double* delta_psi, double* delta_epsilon,
+    double* epsilon, double* eq_eq);
 
 
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif
 
-#endif /* __MODELS_EARTH_EARTH_ROTATION_H__ */
+#endif /* __MODELS_EARTH_EQUINOX_H__ */

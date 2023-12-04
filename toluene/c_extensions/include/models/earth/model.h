@@ -90,4 +90,4 @@ static void delete_EarthModel(PyObject* obj);
 }   /* extern "C" */
 #endif
 
-#endif /* __MODELS_EARTH_NUTATION_H__ */
+#endif /* __MODELS_EARTH_MODEL_H__ */

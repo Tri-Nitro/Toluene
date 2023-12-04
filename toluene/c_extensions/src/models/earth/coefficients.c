@@ -148,6 +148,8 @@ static PyObject* load_zeta_a(PyObject* self, PyObject* args) {
         coefficients->zeta_a->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
 
+    coefficients->zeta_a->order -= 1;
+
     Py_RETURN_NONE;
 }
 
@@ -190,6 +192,8 @@ static PyObject* load_z_a(PyObject* self, PyObject* args) {
     for(int i = 0; i < coefficients->z_a->order; i++) {
         coefficients->z_a->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
+
+    coefficients->z_a->order -= 1;
 
     Py_RETURN_NONE;
 }
@@ -234,6 +238,8 @@ static PyObject* load_theta_a(PyObject* self, PyObject* args) {
         coefficients->theta_a->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
 
+    coefficients->theta_a->order -= 1;
+
     Py_RETURN_NONE;
 }
 
@@ -276,6 +282,8 @@ static PyObject* load_psi_a(PyObject* self, PyObject* args) {
     for(int i = 0; i < coefficients->psi_a->order; i++) {
         coefficients->psi_a->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
+
+    coefficients->psi_a->order -= 1;
 
     Py_RETURN_NONE;
 }
@@ -320,6 +328,8 @@ static PyObject* load_omega_a(PyObject* self, PyObject* args) {
         coefficients->omega_a->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
 
+    coefficients->omega_a->order -= 1;
+
     Py_RETURN_NONE;
 }
 
@@ -362,6 +372,8 @@ static PyObject* load_epsilon_a(PyObject* self, PyObject* args) {
     for(int i = 0; i < coefficients->epsilon_a->order; i++) {
         coefficients->epsilon_a->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
+
+    coefficients->epsilon_a->order -= 1;
 
     Py_RETURN_NONE;
 }
@@ -406,6 +418,8 @@ static PyObject* load_chi_a(PyObject* self, PyObject* args) {
         coefficients->chi_a->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
 
+    coefficients->chi_a->order -= 1;
+
     Py_RETURN_NONE;
 }
 
@@ -448,6 +462,8 @@ static PyObject* load_l(PyObject* self, PyObject* args) {
     for(int i = 0; i < coefficients->l->order; i++) {
         coefficients->l->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
+
+    coefficients->l->order -= 1;
 
     Py_RETURN_NONE;
 }
@@ -492,6 +508,8 @@ static PyObject* load_l_prime(PyObject* self, PyObject* args) {
         coefficients->l_prime->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
 
+    coefficients->l_prime->order -= 1;
+
     Py_RETURN_NONE;
 }
 
@@ -534,6 +552,8 @@ static PyObject* load_F(PyObject* self, PyObject* args) {
     for(int i = 0; i < coefficients->F->order; i++) {
         coefficients->F->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
+
+    coefficients->F->order -= 1;
 
     Py_RETURN_NONE;
 }
@@ -578,6 +598,8 @@ static PyObject* load_D(PyObject* self, PyObject* args) {
         coefficients->D->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
 
+    coefficients->D->order -= 1;
+
     Py_RETURN_NONE;
 }
 
@@ -620,6 +642,8 @@ static PyObject* load_Omega(PyObject* self, PyObject* args) {
     for(int i = 0; i < coefficients->Omega->order; i++) {
         coefficients->Omega->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
+
+    coefficients->Omega->order -= 1;
 
     Py_RETURN_NONE;
 }
@@ -664,6 +688,8 @@ static PyObject* load_l_me(PyObject* self, PyObject* args) {
         coefficients->l_me->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
 
+    coefficients->l_me->order -= 1;
+
     Py_RETURN_NONE;
 }
 
@@ -706,6 +732,8 @@ static PyObject* load_l_v(PyObject* self, PyObject* args) {
     for(int i = 0; i < coefficients->l_v->order; i++) {
         coefficients->l_v->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
+
+    coefficients->l_v->order -= 1;
 
     Py_RETURN_NONE;
 }
@@ -750,6 +778,8 @@ static PyObject* load_l_e(PyObject* self, PyObject* args) {
         coefficients->l_e->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
 
+    coefficients->l_e->order -= 1;
+
     Py_RETURN_NONE;
 }
 
@@ -792,6 +822,8 @@ static PyObject* load_l_ma(PyObject* self, PyObject* args) {
     for(int i = 0; i < coefficients->l_ma->order; i++) {
         coefficients->l_ma->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
+
+    coefficients->l_ma->order -= 1;
 
     Py_RETURN_NONE;
 }
@@ -836,6 +868,8 @@ static PyObject* load_l_j(PyObject* self, PyObject* args) {
         coefficients->l_j->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
 
+    coefficients->l_j->order -= 1;
+
     Py_RETURN_NONE;
 }
 
@@ -878,6 +912,8 @@ static PyObject* load_l_s(PyObject* self, PyObject* args) {
     for(int i = 0; i < coefficients->l_s->order; i++) {
         coefficients->l_s->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
+
+    coefficients->l_s->order -= 1;
 
     Py_RETURN_NONE;
 }
@@ -922,6 +958,8 @@ static PyObject* load_l_u(PyObject* self, PyObject* args) {
         coefficients->l_u->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
 
+    coefficients->l_u->order -= 1;
+
     Py_RETURN_NONE;
 }
 
@@ -965,6 +1003,8 @@ static PyObject* load_l_n(PyObject* self, PyObject* args) {
         coefficients->l_n->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
 
+    coefficients->l_n->order -= 1;
+
     Py_RETURN_NONE;
 }
 
@@ -1007,6 +1047,8 @@ static PyObject* load_p(PyObject* self, PyObject* args) {
     for(int i = 0; i < coefficients->p->order; i++) {
         coefficients->p->coefficients[i] = PyFloat_AsDouble(PyList_GetItem(list, i));
     }
+
+    coefficients->p->order -= 1;
 
     Py_RETURN_NONE;
 }

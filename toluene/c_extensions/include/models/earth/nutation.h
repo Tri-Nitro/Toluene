@@ -41,9 +41,10 @@ typedef struct {
     NutationSeriesRecord* records;
 } NutationSeries;
 
+
 #ifdef __compile_models_earth_nutation
 
-static PyObject* add_record(PyObject* self, PyObject* args);
+static PyObject* nutation_series_add_record(PyObject* self, PyObject* args);
 
 static PyObject* new_NutationSeries(PyObject* self, PyObject* args);
 static void delete_NutationSeries(PyObject* obj);

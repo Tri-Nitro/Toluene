@@ -25,12 +25,14 @@
 #include <Python.h>
 
 #define __compile_models_earth_earth_rotation
+#define __compile_models_earth_nutation
 #define __compile_models_earth_polar_motion
 #include "models/earth/bias.h"
 #include "models/earth/coefficients.h"
 #include "models/earth/coordinates.h"
 #include "models/earth/earth_rotation.h"
 #include "models/earth/ellipsoid.h"
+#include "models/earth/equinox.h"
 #include "models/earth/model.h"
 #include "models/earth/polar_motion.h"
 
@@ -116,11 +118,15 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     }
 
     tt = tt - model->epoch;
+    double delta_psi, delta_epsilon, epsilon, eq_eq;
+    get_delta_psi_delta_epsilon_epsilon_eq_eq(tt, model, &delta_psi, &delta_epsilon, &epsilon, &eq_eq);
+
+    printf("delta_psi: %f, delta_epsilon: %f, epsilon: %f, eq_eq: %f\n", delta_psi, delta_epsilon, epsilon, eq_eq);
 
     itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
     dot_product(&vecx, &matrix, &vecx_prime);
 
-    tirs_to_true_equinox_equator_earth_rotation(tt, model, &matrix);
+    tirs_to_true_equinox_equator_earth_rotation(tt, eq_eq, model, &matrix);
     dot_product(&vecx_prime, &matrix, &vecx);
 
     printf("x: %f, y: %f, z: %f\n", vecx.elements[0], vecx.elements[1], vecx.elements[2]);

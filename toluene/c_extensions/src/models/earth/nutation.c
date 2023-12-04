@@ -40,7 +40,7 @@ extern "C"
 #endif
 
 
-static PyObject* add_record(PyObject* self, PyObject* args) {
+static PyObject* nutation_series_add_record(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
     NutationSeries* table;
@@ -91,7 +91,7 @@ static PyObject* add_record(PyObject* self, PyObject* args) {
     table->records[table->nrecords].C_prime = C_prime;
     table->records[table->nrecords].C = C;
     table->records[table->nrecords].C_dot = C_dot;
-    table->records[table->nrecords].S_prime = S_prime;
+    table->records[table->nrecords++].S_prime = S_prime;
 
     return Py_BuildValue("i", 0);
 }
@@ -129,7 +129,7 @@ static void delete_NutationSeries(PyObject* obj) {
 
 
 static PyMethodDef tolueneModelsEarthNutationMethods[] = {
-    {"add_record", add_record, METH_VARARGS, "Add a record to the NutationSeries"},
+    {"add_record", nutation_series_add_record, METH_VARARGS, "Add a record to the NutationSeries"},
     {"new_NutationSeries", new_NutationSeries, METH_VARARGS, "Create a new NutationSeries"},
     {NULL, NULL, 0, NULL}
 };

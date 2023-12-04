@@ -89,7 +89,7 @@ static PyObject* delta_t_add_record(PyObject* self, PyObject* args) {
     }
 
     table->records[table->nrecords].timestamp = timestamp;
-    table->records[table->nrecords].deltaT = deltaT;
+    table->records[table->nrecords++].deltaT = deltaT;
 
     return Py_BuildValue("i", table->records[table->nrecords].timestamp);
 }

@@ -19,6 +19,7 @@ setup_args = dict(
                 'toluene/c_extensions/src/models/earth/coordinates.c',
                 'toluene/c_extensions/src/models/earth/earth_orientation.c',
                 'toluene/c_extensions/src/models/earth/earth_rotation.c',
+                'toluene/c_extensions/src/models/earth/equinox.c',
                 'toluene/c_extensions/src/models/earth/polar_motion.c',
                 'toluene/c_extensions/src/util/time.c',
             ],
