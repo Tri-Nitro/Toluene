@@ -88,9 +88,9 @@ void iau_2000a_precession(double t, EarthModel* model, Matrix* matrix) {
     double sin_epsilon_0 = sin(epsilon_0 * M_PI/648000);
     double cos_epsilon_0 = cos(epsilon_0 * M_PI/648000);
     double sin_psi_a = sin(-1 * psi_a * M_PI/648000);
-    double cos_psi_a = cos(-1 * psi_a * M_PI/648000);
+    double cos_psi_a = cos(psi_a * M_PI/648000);
     double sin_omega_a = sin(-1 * omega_a * M_PI/648000);
-    double cos_omega_a = cos(-1 * omega_a * M_PI/648000);
+    double cos_omega_a = cos(omega_a * M_PI/648000);
     double sin_chi_a = sin(chi_a * M_PI/648000);
     double cos_chi_a = cos(chi_a * M_PI/648000);
 
