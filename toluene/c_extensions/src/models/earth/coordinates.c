@@ -163,6 +163,7 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
         PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for vector.");
         return PyErr_Occurred();
     }
+    double x_prime = x, y_prime = y, z_prime = z;
     vecx.elements[0] = x;
     vecx.elements[1] = y;
     vecx.elements[2] = z;
@@ -197,6 +198,27 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     x = vecx_prime.elements[0];
     y = vecx_prime.elements[1];
     z = vecx_prime.elements[2];
+
+    vecx.elements[0] = x_prime;
+    vecx.elements[1] = y_prime;
+    vecx.elements[2] = z_prime;
+
+    itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
+    dot_product(&vecx, &matrix, &vecx_prime);
+
+    tirs_to_true_equinox_equator_earth_rotation_rate(tt, eq_eq, model, &matrix);
+    dot_product(&vecx_prime, &matrix, &vecx);
+
+    iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
+    dot_product(&vecx, &matrix, &vecx_prime);
+
+    iau_2000a_precession(tt, model, &matrix);
+    dot_product(&vecx_prime, &matrix, &vecx);
+
+    icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
+    dot_product(&vecx, &matrix, &vecx_prime);
+
+    printf("x: %f, y: %f, z: %f\n", vecx_prime.elements[0], vecx_prime.elements[1], vecx_prime.elements[2]);
 
     free(matrix.elements);
     free(vecx.elements);
