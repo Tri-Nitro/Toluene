@@ -10,11 +10,15 @@ exclude = ["docs*", "scratch*", "tests*", "wheelhouse*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.yml"]
+toluene = [
+    "data/deltat.data",
+    "data/finals2000A.all",
+]
 
 [project]
 name = "toluene"
 dynamic = ['version']
-description = "Python library for geospatial and image processing functions"
+description = "Python library for geospatial, orbital, and image processing functions"
 readme = "README.md"
 requires-python = ">=3.8"
 license = { file = "LICENSE" }
@@ -29,6 +33,12 @@ classifiers=[
     'Typing :: Typed'
 ]
 dependencies = [
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+update-data = [
+    "requests",
 ]
 
 [tool.setuptools.dynamic]

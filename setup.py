@@ -3,19 +3,87 @@ from setuptools import setup, Extension
 setup_args = dict(
     ext_modules=[
         Extension(
-            'toluene_extensions.core_extensions',
+            'toluene_extensions.math.algebra',
             [
-             'toluene/c_extensions/src/earth_gravitational_model.c',
-             'toluene/c_extensions/src/egm84.c',
-             'toluene/c_extensions/src/interpolation.c',
-             'toluene/c_extensions/src/matrix.c',
-             'toluene/c_extensions/src/polynomial.c',
-             'toluene/c_extensions/src/rotation_matrices.c',
-             'toluene/c_extensions/src/core.c',
-             ],
+                'toluene/c_extensions/src/math/algebra.c'
+            ],
             include_dirs=['toluene/c_extensions/include'],
             py_limited_api=True
-        )
+        ),
+        Extension(
+            'toluene_extensions.models.earth.coefficients',
+            [
+                'toluene/c_extensions/src/models/earth/coefficients.c'
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=True
+        ),
+        Extension(
+            'toluene_extensions.models.earth.coordinates',
+            [
+                'toluene/c_extensions/src/math/algebra.c',
+                'toluene/c_extensions/src/math/linear_algebra.c',
+                'toluene/c_extensions/src/models/earth/bias.c',
+                'toluene/c_extensions/src/models/earth/coordinates.c',
+                'toluene/c_extensions/src/models/earth/earth_orientation.c',
+                'toluene/c_extensions/src/models/earth/earth_rotation.c',
+                'toluene/c_extensions/src/models/earth/equinox.c',
+                'toluene/c_extensions/src/models/earth/nutation.c',
+                'toluene/c_extensions/src/models/earth/polar_motion.c',
+                'toluene/c_extensions/src/models/earth/precession.c',
+                'toluene/c_extensions/src/util/time.c',
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=True
+        ),
+        Extension(
+            'toluene_extensions.models.earth.earth_orientation',
+            [
+                'toluene/c_extensions/src/models/earth/earth_orientation.c'
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=True
+        ),
+        Extension(
+            'toluene_extensions.models.earth.ellipsoid',
+            [
+                'toluene/c_extensions/src/models/earth/ellipsoid.c'
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=True
+        ),
+        Extension(
+            'toluene_extensions.models.earth.model',
+            [
+                'toluene/c_extensions/src/models/earth/model.c'
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=True
+        ),
+        Extension(
+            'toluene_extensions.models.earth.nutation',
+            [
+                'toluene/c_extensions/src/models/earth/nutation.c'
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=True
+        ),
+        Extension(
+            'toluene_extensions.util.config',
+            [
+                'toluene/c_extensions/src/util/config.c'
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=True
+        ),
+        Extension(
+            'toluene_extensions.util.time',
+            [
+                'toluene/c_extensions/src/util/time.c'
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=True
+        ),
     ],
 )
 setup(**setup_args)
