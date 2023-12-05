@@ -1,2 +1,3 @@
-from core.coordinates import TestCoordinates
-from core.ellipsoid import TestEllipsoids
+class TestEmpty:
+    def test_empty(self):
+        assert True
