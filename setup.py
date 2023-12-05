@@ -3,6 +3,14 @@ from setuptools import setup, Extension
 setup_args = dict(
     ext_modules=[
         Extension(
+            'toluene_extensions.math.algebra',
+            [
+                'toluene/c_extensions/src/math/algebra.c'
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=True
+        ),
+        Extension(
             'toluene_extensions.models.earth.coefficients',
             [
                 'toluene/c_extensions/src/models/earth/coefficients.c'

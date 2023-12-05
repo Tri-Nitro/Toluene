@@ -64,17 +64,17 @@ static PyObject* eop_table_add_record(PyObject* self, PyObject* args) {
 
     double timestamp;
 
-    bool is_bulletin_a_PM_predicted;
+    int is_bulletin_a_PM_predicted;
     double bulletin_a_PM_x, bulletin_a_PM_x_error, bulletin_a_PM_y, bulletin_a_PM_y_error;
 
-    bool is_bulletin_a_dut1_predicted;
+    int is_bulletin_a_dut1_predicted;
     double bulletin_a_dut1, bulletin_a_dut1_error;
 
     double bulletin_a_lod, bulletin_a_lod_error;
 
     double bulletin_b_PM_x, bulletin_b_PM_y, bulletin_b_dut1;
 
-    if(!PyArg_ParseTuple(args, "Odpddddpddddddd", &capsule, &timestamp, &is_bulletin_a_PM_predicted, &bulletin_a_PM_x,
+    if(!PyArg_ParseTuple(args, "Odiddddiddddddd", &capsule, &timestamp, &is_bulletin_a_PM_predicted, &bulletin_a_PM_x,
                             &bulletin_a_PM_x_error, &bulletin_a_PM_y, &bulletin_a_PM_y_error,
                             &is_bulletin_a_dut1_predicted, &bulletin_a_dut1, &bulletin_a_dut1_error, &bulletin_a_lod,
                             &bulletin_a_lod_error, &bulletin_b_PM_x, &bulletin_b_PM_y, &bulletin_b_dut1)) {

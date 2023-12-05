@@ -26,8 +26,6 @@
 
 #include "math/linear_algebra.h"
 
-#include <stdbool.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -37,13 +35,13 @@ typedef struct {
 
     double timestamp;
 
-    bool is_bulletin_a_PM_predicted;
+    int is_bulletin_a_PM_predicted;
     double bulletin_a_PM_x;
     double bulletin_a_PM_x_error;
     double bulletin_a_PM_y;
     double bulletin_a_PM_y_error;
 
-    bool is_bulletin_a_dut1_predicted;
+    int is_bulletin_a_dut1_predicted;
     double bulletin_a_dut1;
     double bulletin_a_dut1_error;
 
