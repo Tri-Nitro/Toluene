@@ -35,7 +35,9 @@
 #include "models/earth/ellipsoid.h"
 #include "models/earth/equinox.h"
 #include "models/earth/model.h"
+#include "models/earth/nutation.h"
 #include "models/earth/polar_motion.h"
+#include "models/earth/precession.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
 
