@@ -24,6 +24,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#define __compile_math_algebra
 #define __compile_models_earth_precession
 #include "math/algebra.h"
 #include "models/earth/precession.h"
