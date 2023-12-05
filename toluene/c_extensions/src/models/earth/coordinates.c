@@ -105,7 +105,7 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
     dot_product_matrix_transpose(&vecx, &matrix, &vecx_prime);
 
-    iau_76_precession(tt, model, &matrix);
+    iau_2000a_precession(tt, model, &matrix);
     dot_product_matrix_transpose(&vecx_prime, &matrix, &vecx);
 
     iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
@@ -188,7 +188,7 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
     dot_product(&vecx, &matrix, &vecx_prime);
 
-    iau_76_precession(tt, model, &matrix);
+    iau_2000a_precession(tt, model, &matrix);
     dot_product(&vecx_prime, &matrix, &vecx);
 
     icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
