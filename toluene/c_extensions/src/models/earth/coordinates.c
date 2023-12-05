@@ -58,8 +58,10 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     EarthModel* model;
 
     double x, y, z, tt;
+    double v_x, v_y, v_z;
+    double a_x, a_y, a_z;
 
-    if(!PyArg_ParseTuple(args, "ddddO", &x, &y, &z, &tt, &capsule)) {
+    if(!PyArg_ParseTuple(args, "ddddddddddO", &x, &y, &z, &v_x, &v_y, &v_z, &a_x, &a_y, &a_z, &tt, &capsule)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ecef_to_eci()");
         return PyErr_Occurred();
     }
@@ -79,22 +81,53 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
 
-    Vector vecx;
-    vecx.nelements = 3;
-    vecx.elements = (double*)malloc(sizeof(double)*3);
-    if(!vecx.elements) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for vector.");
+    Vector vec_r, vec_v, vec_a;
+    vec_r.nelements = 3;
+    vec_v.nelements = 3;
+    vec_a.nelements = 3;
+    vec_r.elements = (double*)malloc(sizeof(double)*3);
+    vec_v.elements = (double*)malloc(sizeof(double)*3);
+    vec_a.elements = (double*)malloc(sizeof(double)*3);
+    if(!vec_r.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for position vector.");
         return PyErr_Occurred();
     }
-    vecx.elements[0] = x;
-    vecx.elements[1] = y;
-    vecx.elements[2] = z;
+    if(!vec_v.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for velocity vector.");
+        return PyErr_Occurred();
+    }
+    if(!vec_a.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for acceleration vector.");
+        return PyErr_Occurred();
+    }
 
-    Vector vecx_prime;
-    vecx_prime.nelements = 3;
-    vecx_prime.elements = (double*)malloc(sizeof(double)*3);
-    if(!vecx_prime.elements) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for vector.");
+    vec_r.elements[0] = x;
+    vec_r.elements[1] = y;
+    vec_r.elements[2] = z;
+    vec_v.elements[0] = x;
+    vec_v.elements[1] = y;
+    vec_v.elements[2] = z;
+    vec_a.elements[0] = x;
+    vec_a.elements[1] = y;
+    vec_a.elements[2] = z;
+
+    Vector vec_r_prime, vec_v_prime, vec_a_prime;
+    vec_r_prime.nelements = 3;
+    vec_v_prime.nelements = 3;
+    vec_a_prime.nelements = 3;
+    vec_r_prime.elements = (double*)malloc(sizeof(double)*3);
+    vec_v_prime.elements = (double*)malloc(sizeof(double)*3);
+    vec_a_prime.elements = (double*)malloc(sizeof(double)*3);
+    if(!vec_r_prime.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for position prime vector.");
+        return PyErr_Occurred();
+    }
+    if(!vec_v_prime.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for velocity prime vector.");
+        return PyErr_Occurred();
+    }
+    if(!vec_a_prime.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for acceleration prime vector.");
         return PyErr_Occurred();
     }
 
@@ -103,29 +136,50 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     get_delta_psi_delta_epsilon_epsilon_eq_eq(tt, model, &delta_psi, &delta_epsilon, &epsilon, &eq_eq);
 
     icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
-    dot_product_matrix_transpose(&vecx, &matrix, &vecx_prime);
+    dot_product_matrix_transpose(&vec_r, &matrix, &vec_r_prime);
+    dot_product_matrix_transpose(&vec_v, &matrix, &vec_v_prime);
+    dot_product_matrix_transpose(&vec_a, &matrix, &vec_a_prime);
 
     iau_2000a_precession(tt, model, &matrix);
-    dot_product_matrix_transpose(&vecx_prime, &matrix, &vecx);
+    dot_product_matrix_transpose(&vec_r_prime, &matrix, &vec_r);
+    dot_product_matrix_transpose(&vec_v_prime, &matrix, &vec_v);
+    dot_product_matrix_transpose(&vec_a_prime, &matrix, &vec_a);
 
     iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
-    dot_product_matrix_transpose(&vecx, &matrix, &vecx_prime);
+    dot_product_matrix_transpose(&vec_r, &matrix, &vec_r_prime);
+    dot_product_matrix_transpose(&vec_v, &matrix, &vec_v_prime);
+    dot_product_matrix_transpose(&vec_a, &matrix, &vec_a_prime);
 
     tirs_to_true_equinox_equator_earth_rotation(tt, eq_eq, model, &matrix);
-    dot_product_matrix_transpose(&vecx_prime, &matrix, &vecx);
+    dot_product_matrix_transpose(&vec_r_prime, &matrix, &vec_r);
+
+    tirs_to_true_equinox_equator_earth_rotation_rate(tt, eq_eq, model, &matrix);
+    dot_product_matrix_transpose(&vec_v_prime, &matrix, &vec_v);
 
     itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
-    dot_product_matrix_transpose(&vecx, &matrix, &vecx_prime);
+    dot_product_matrix_transpose(&vec_r, &matrix, &vec_r_prime);
+    dot_product_matrix_transpose(&vec_v, &matrix, &vec_v_prime);
+    dot_product_matrix_transpose(&vec_a, &matrix, &vec_a_prime);
 
-    x = vecx_prime.elements[0];
-    y = vecx_prime.elements[1];
-    z = vecx_prime.elements[2];
+    x = vec_r_prime.elements[0];
+    y = vec_r_prime.elements[1];
+    z = vec_r_prime.elements[2];
+    v_x += vec_v_prime.elements[0];
+    v_y += vec_v_prime.elements[1];
+    v_z += vec_v_prime.elements[2];
+    a_x = vec_a_prime.elements[0];
+    a_y = vec_a_prime.elements[1];
+    a_z = vec_a_prime.elements[2];
 
     free(matrix.elements);
-    free(vecx.elements);
-    free(vecx_prime.elements);
+    free(vec_r.elements);
+    free(vec_r_prime.elements);
+    free(vec_v.elements);
+    free(vec_v_prime.elements);
+    free(vec_a.elements);
+    free(vec_a_prime.elements);
 
-    return Py_BuildValue("(ddd)", x, y, z);
+    return Py_BuildValue("(ddddddddd)", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z);
 }
 
 
@@ -135,8 +189,10 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     EarthModel* model;
 
     double x, y, z, tt;
+    double v_x, v_y, v_z;
+    double a_x, a_y, a_z;
 
-    if(!PyArg_ParseTuple(args, "ddddO", &x, &y, &z, &tt, &capsule)) {
+    if(!PyArg_ParseTuple(args, "ddddddddddO", &x, &y, &z, &v_x, &v_y, &v_z, &a_x, &a_y, &a_z, &tt, &capsule)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ecef_to_eci()");
         return PyErr_Occurred();
     }
@@ -156,23 +212,53 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
 
-    Vector vecx;
-    vecx.nelements = 3;
-    vecx.elements = (double*)malloc(sizeof(double)*3);
-    if(!vecx.elements) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for vector.");
+    Vector vec_r, vec_v, vec_a;
+    vec_r.nelements = 3;
+    vec_v.nelements = 3;
+    vec_a.nelements = 3;
+    vec_r.elements = (double*)malloc(sizeof(double)*3);
+    vec_v.elements = (double*)malloc(sizeof(double)*3);
+    vec_a.elements = (double*)malloc(sizeof(double)*3);
+    if(!vec_r.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for position vector.");
         return PyErr_Occurred();
     }
-    double x_prime = x, y_prime = y, z_prime = z;
-    vecx.elements[0] = x;
-    vecx.elements[1] = y;
-    vecx.elements[2] = z;
+    if(!vec_v.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for velocity vector.");
+        return PyErr_Occurred();
+    }
+    if(!vec_a.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for acceleration vector.");
+        return PyErr_Occurred();
+    }
 
-    Vector vecx_prime;
-    vecx_prime.nelements = 3;
-    vecx_prime.elements = (double*)malloc(sizeof(double)*3);
-    if(!vecx_prime.elements) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for vector.");
+    vec_r.elements[0] = x;
+    vec_r.elements[1] = y;
+    vec_r.elements[2] = z;
+    vec_v.elements[0] = x;
+    vec_v.elements[1] = y;
+    vec_v.elements[2] = z;
+    vec_a.elements[0] = x;
+    vec_a.elements[1] = y;
+    vec_a.elements[2] = z;
+
+    Vector vec_r_prime, vec_v_prime, vec_a_prime;
+    vec_r_prime.nelements = 3;
+    vec_v_prime.nelements = 3;
+    vec_a_prime.nelements = 3;
+    vec_r_prime.elements = (double*)malloc(sizeof(double)*3);
+    vec_v_prime.elements = (double*)malloc(sizeof(double)*3);
+    vec_a_prime.elements = (double*)malloc(sizeof(double)*3);
+    if(!vec_r_prime.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for position prime vector.");
+        return PyErr_Occurred();
+    }
+    if(!vec_v_prime.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for velocity prime vector.");
+        return PyErr_Occurred();
+    }
+    if(!vec_a_prime.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for acceleration prime vector.");
         return PyErr_Occurred();
     }
 
@@ -181,50 +267,50 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     get_delta_psi_delta_epsilon_epsilon_eq_eq(tt, model, &delta_psi, &delta_epsilon, &epsilon, &eq_eq);
 
     itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
-    dot_product(&vecx, &matrix, &vecx_prime);
+    dot_product(&vec_r, &matrix, &vec_r_prime);
+    dot_product(&vec_v, &matrix, &vec_v_prime);
+    dot_product(&vec_a, &matrix, &vec_a_prime);
 
     tirs_to_true_equinox_equator_earth_rotation(tt, eq_eq, model, &matrix);
-    dot_product(&vecx_prime, &matrix, &vecx);
-
-    iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
-    dot_product(&vecx, &matrix, &vecx_prime);
-
-    iau_2000a_precession(tt, model, &matrix);
-    dot_product(&vecx_prime, &matrix, &vecx);
-
-    icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
-    dot_product(&vecx, &matrix, &vecx_prime);
-
-    x = vecx_prime.elements[0];
-    y = vecx_prime.elements[1];
-    z = vecx_prime.elements[2];
-
-    vecx.elements[0] = x_prime;
-    vecx.elements[1] = y_prime;
-    vecx.elements[2] = z_prime;
-
-    itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
-    dot_product(&vecx, &matrix, &vecx_prime);
+    dot_product(&vec_r_prime, &matrix, &vec_r);
 
     tirs_to_true_equinox_equator_earth_rotation_rate(tt, eq_eq, model, &matrix);
-    dot_product(&vecx_prime, &matrix, &vecx);
+    dot_product(&vec_v_prime, &matrix, &vec_v);
 
     iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
-    dot_product(&vecx, &matrix, &vecx_prime);
+    dot_product(&vec_r, &matrix, &vec_r_prime);
+    dot_product(&vec_v, &matrix, &vec_v_prime);
+    dot_product(&vec_a, &matrix, &vec_a_prime);
 
     iau_2000a_precession(tt, model, &matrix);
-    dot_product(&vecx_prime, &matrix, &vecx);
+    dot_product(&vec_r_prime, &matrix, &vec_r);
+    dot_product(&vec_v_prime, &matrix, &vec_v);
+    dot_product(&vec_a_prime, &matrix, &vec_a);
 
     icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
-    dot_product(&vecx, &matrix, &vecx_prime);
+    dot_product(&vec_r, &matrix, &vec_r_prime);
+    dot_product(&vec_v, &matrix, &vec_v_prime);
+    dot_product(&vec_a, &matrix, &vec_a_prime);
 
-    printf("x: %f, y: %f, z: %f\n", vecx_prime.elements[0], vecx_prime.elements[1], vecx_prime.elements[2]);
+    x = vec_r_prime.elements[0];
+    y = vec_r_prime.elements[1];
+    z = vec_r_prime.elements[2];
+    v_x += vec_v_prime.elements[0];
+    v_y += vec_v_prime.elements[1];
+    v_z += vec_v_prime.elements[2];
+    a_x = vec_a_prime.elements[0];
+    a_y = vec_a_prime.elements[1];
+    a_z = vec_a_prime.elements[2];
 
     free(matrix.elements);
-    free(vecx.elements);
-    free(vecx_prime.elements);
+    free(vec_r.elements);
+    free(vec_r_prime.elements);
+    free(vec_v.elements);
+    free(vec_v_prime.elements);
+    free(vec_a.elements);
+    free(vec_a_prime.elements);
 
-    return Py_BuildValue("(ddd)", x, y, z);
+    return Py_BuildValue("(ddddddddd)", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z);
 }
 
 
