@@ -101,6 +101,10 @@ class EarthCoordinates:
     def lla(self) -> Lla:
         raise NotImplementedError
 
+    @property
+    def magnitude(self) -> float:
+        raise NotImplementedError
+
 
 class Ecef(EarthCoordinates):
 
@@ -139,6 +143,10 @@ class Ecef(EarthCoordinates):
         latitude, longitude, altitude = ecef_to_lla(self.__x, self.__y, self.__z, self.model.model)
         return Lla(latitude, longitude, altitude, self.time, self.model)
 
+    @property
+    def magnitude(self) -> float:
+        return (self.__x**2 + self.__y**2 + self.__z**2)**0.5
+
 
 class Eci(EarthCoordinates):
 
@@ -174,6 +182,10 @@ class Eci(EarthCoordinates):
     @property
     def lla(self) -> Lla:
         pass
+
+    @property
+    def magnitude(self) -> float:
+        return (self.__x**2 + self.__y**2 + self.__z**2)**0.5
 
 
 class Lla(EarthCoordinates):

@@ -125,7 +125,7 @@ void dot_product_matrix_transpose(Vector* vector, Matrix* matrix, Vector* produc
         for(int i = 0; i < vector->nelements; i++) {
             product->elements[i] = 0;
             for(int j = 0; j < matrix->nrows; j++) {
-                product->elements[i] += vector->elements[j] * matrix->elements[i*matrix->nrows+j];
+                product->elements[i] += vector->elements[j] * matrix->elements[j*matrix->nrows+i];
             }
         }
     }

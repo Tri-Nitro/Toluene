@@ -44,6 +44,9 @@ typedef struct {
 
 #ifdef __compile_models_earth_nutation
 
+#include "math/linear_algebra.h"
+void iau_2006_nutation(double delta_psi, double delta_epsilon, double epsilon, Matrix* matrix);
+
 static PyObject* nutation_series_add_record(PyObject* self, PyObject* args);
 
 static PyObject* new_NutationSeries(PyObject* self, PyObject* args);

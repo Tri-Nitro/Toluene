@@ -33,6 +33,7 @@
 
 #define __compile_math_algebra
 #define __compile_models_earth_earth_orientation
+#define __compile_models_earth_earth_rotation
 #define __compile_util_time
 #include "math/algebra.h"
 #include "models/earth/earth_orientation.h"
@@ -58,7 +59,6 @@ void greenwich_mean_sidereal_time(double tt, EarthModel* model, double* gmst_rad
     solve(gmst_poly, du, gmst_rad);
     *gmst_rad += 0.008418264265 * delta_t_record.deltaT / 86400.0;
     *gmst_rad = fmod(*gmst_rad, 86400.0);
-    printf("%2d:%2d:%2d\n", (int)(*gmst_rad / 3600.0), (int)((*gmst_rad / 60.0) - (int)(*gmst_rad / 3600.0) * 60.0), (int)(*gmst_rad - (int)(*gmst_rad / 60.0) * 60.0));
     *gmst_rad = *gmst_rad * 2.0 * M_PI / 86400.0;
 
 }

@@ -24,7 +24,6 @@
 #ifndef __MODELS_EARTH_EARTH_ROTATION_H__
 #define __MODELS_EARTH_EARTH_ROTATION_H__
 
-#include "models/earth/model.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,6 +31,8 @@ extern "C" {
 
 
 #ifdef __compile_models_earth_earth_rotation
+
+#include "models/earth/model.h"
 
 void greenwich_mean_sidereal_time(double tt, EarthModel* model, double* gmst_rad);
 void greenwich_apparent_sidereal_time(double tt, EarthModel* model, double* gast_rad);

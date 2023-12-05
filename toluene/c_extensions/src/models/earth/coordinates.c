@@ -27,6 +27,7 @@
 #define __compile_models_earth_earth_rotation
 #define __compile_models_earth_nutation
 #define __compile_models_earth_polar_motion
+#define __compile_models_earth_precession
 #include "models/earth/bias.h"
 #include "models/earth/coefficients.h"
 #include "models/earth/coordinates.h"
@@ -66,6 +67,61 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
         PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
         return PyErr_Occurred();
     }
+
+    Matrix matrix;
+    matrix.nrows = 3;
+    matrix.ncols = 3;
+    matrix.elements = (double*)malloc(sizeof(double)*9);
+    if(!matrix.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for matrix.");
+        return PyErr_Occurred();
+    }
+
+    Vector vecx;
+    vecx.nelements = 3;
+    vecx.elements = (double*)malloc(sizeof(double)*3);
+    if(!vecx.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for vector.");
+        return PyErr_Occurred();
+    }
+    vecx.elements[0] = x;
+    vecx.elements[1] = y;
+    vecx.elements[2] = z;
+
+    Vector vecx_prime;
+    vecx_prime.nelements = 3;
+    vecx_prime.elements = (double*)malloc(sizeof(double)*3);
+    if(!vecx_prime.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for vector.");
+        return PyErr_Occurred();
+    }
+
+    tt = tt - model->epoch;
+    double delta_psi, delta_epsilon, epsilon, eq_eq;
+    get_delta_psi_delta_epsilon_epsilon_eq_eq(tt, model, &delta_psi, &delta_epsilon, &epsilon, &eq_eq);
+
+    icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
+    dot_product_matrix_transpose(&vecx, &matrix, &vecx_prime);
+
+    iau_76_precession(tt, model, &matrix);
+    dot_product_matrix_transpose(&vecx_prime, &matrix, &vecx);
+
+    iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
+    dot_product_matrix_transpose(&vecx, &matrix, &vecx_prime);
+
+    tirs_to_true_equinox_equator_earth_rotation(tt, eq_eq, model, &matrix);
+    dot_product_matrix_transpose(&vecx_prime, &matrix, &vecx);
+
+    itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
+    dot_product_matrix_transpose(&vecx, &matrix, &vecx_prime);
+
+    x = vecx_prime.elements[0];
+    y = vecx_prime.elements[1];
+    z = vecx_prime.elements[2];
+
+    free(matrix.elements);
+    free(vecx.elements);
+    free(vecx_prime.elements);
 
     return Py_BuildValue("(ddd)", x, y, z);
 }
@@ -121,16 +177,24 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     double delta_psi, delta_epsilon, epsilon, eq_eq;
     get_delta_psi_delta_epsilon_epsilon_eq_eq(tt, model, &delta_psi, &delta_epsilon, &epsilon, &eq_eq);
 
-    printf("delta_psi: %f, delta_epsilon: %f, epsilon: %f, eq_eq: %f\n", delta_psi, delta_epsilon, epsilon, eq_eq);
-
     itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
     dot_product(&vecx, &matrix, &vecx_prime);
 
     tirs_to_true_equinox_equator_earth_rotation(tt, eq_eq, model, &matrix);
     dot_product(&vecx_prime, &matrix, &vecx);
 
-    printf("x: %f, y: %f, z: %f\n", vecx.elements[0], vecx.elements[1], vecx.elements[2]);
-    printf("x: %f, y: %f, z: %f\n", vecx_prime.elements[0], vecx_prime.elements[1], vecx_prime.elements[2]);
+    iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
+    dot_product(&vecx, &matrix, &vecx_prime);
+
+    iau_76_precession(tt, model, &matrix);
+    dot_product(&vecx_prime, &matrix, &vecx);
+
+    icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
+    dot_product(&vecx, &matrix, &vecx_prime);
+
+    x = vecx_prime.elements[0];
+    y = vecx_prime.elements[1];
+    z = vecx_prime.elements[2];
 
     free(matrix.elements);
     free(vecx.elements);

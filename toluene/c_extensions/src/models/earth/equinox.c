@@ -67,8 +67,6 @@ void get_delta_psi_delta_epsilon_epsilon_eq_eq(double t, EarthModel* model, doub
 
     double ai, sin_ai, cos_ai;
 
-    printf("Nutation Series: %d\n", n_series);
-
     for(size_t i = 0; i < n_series; ++i) {
         ai = nutation_series->records[i].a * nutation_critical_arguments[0] +
              nutation_series->records[i].b * nutation_critical_arguments[1] +

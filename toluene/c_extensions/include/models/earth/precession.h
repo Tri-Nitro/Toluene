@@ -24,20 +24,18 @@
 #ifndef __MODELS_EARTH_PRECESSION_H__
 #define __MODELS_EARTH_PRECESSION_H__
 
-#include "math/linear_algebra.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef enum {
-    EARTH_PRECESSION_MODEL_IAU_2000A
-} EarthPrecessionModel;
-
 
 #ifdef __compile_models_earth_precession
 
-void earth_precession_transform_matrix_iau_2000a(double tt_seconds, CIRSCoefficients* coefficients, Matrix* matrix);
+#include "math/linear_algebra.h"
+#include "models/earth/model.h"
+
+void iau_76_precession(double t, EarthModel* model, Matrix* matrix);
+void iau_2000a_precession(double t, EarthModel* model, Matrix* matrix);
 
 #endif /* __compile_models_earth_precession */
 
