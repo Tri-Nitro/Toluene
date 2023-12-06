@@ -8,7 +8,7 @@ setup_args = dict(
                 'toluene/c_extensions/src/math/algebra.c'
             ],
             include_dirs=['toluene/c_extensions/include'],
-            py_limited_api=True
+            py_limited_api=False
         ),
         Extension(
             'toluene_extensions.models.earth.coefficients',
@@ -16,7 +16,7 @@ setup_args = dict(
                 'toluene/c_extensions/src/models/earth/coefficients.c'
             ],
             include_dirs=['toluene/c_extensions/include'],
-            py_limited_api=True
+            py_limited_api=False
         ),
         Extension(
             'toluene_extensions.models.earth.coordinates',
@@ -34,7 +34,7 @@ setup_args = dict(
                 'toluene/c_extensions/src/util/time.c',
             ],
             include_dirs=['toluene/c_extensions/include'],
-            py_limited_api=True
+            py_limited_api=False
         ),
         Extension(
             'toluene_extensions.models.earth.earth_orientation',
@@ -42,7 +42,7 @@ setup_args = dict(
                 'toluene/c_extensions/src/models/earth/earth_orientation.c'
             ],
             include_dirs=['toluene/c_extensions/include'],
-            py_limited_api=True
+            py_limited_api=False
         ),
         Extension(
             'toluene_extensions.models.earth.ellipsoid',
@@ -50,7 +50,7 @@ setup_args = dict(
                 'toluene/c_extensions/src/models/earth/ellipsoid.c'
             ],
             include_dirs=['toluene/c_extensions/include'],
-            py_limited_api=True
+            py_limited_api=False
         ),
         Extension(
             'toluene_extensions.models.earth.model',
@@ -58,7 +58,7 @@ setup_args = dict(
                 'toluene/c_extensions/src/models/earth/model.c'
             ],
             include_dirs=['toluene/c_extensions/include'],
-            py_limited_api=True
+            py_limited_api=False
         ),
         Extension(
             'toluene_extensions.models.earth.nutation',
@@ -66,7 +66,7 @@ setup_args = dict(
                 'toluene/c_extensions/src/models/earth/nutation.c'
             ],
             include_dirs=['toluene/c_extensions/include'],
-            py_limited_api=True
+            py_limited_api=False
         ),
         Extension(
             'toluene_extensions.util.config',
@@ -74,7 +74,7 @@ setup_args = dict(
                 'toluene/c_extensions/src/util/config.c'
             ],
             include_dirs=['toluene/c_extensions/include'],
-            py_limited_api=True
+            py_limited_api=False
         ),
         Extension(
             'toluene_extensions.util.time',
@@ -82,7 +82,7 @@ setup_args = dict(
                 'toluene/c_extensions/src/util/time.c'
             ],
             include_dirs=['toluene/c_extensions/include'],
-            py_limited_api=True
+            py_limited_api=False
         ),
     ],
 )
