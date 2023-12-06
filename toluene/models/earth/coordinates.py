@@ -25,7 +25,9 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 from __future__ import annotations
 
+
 from datetime import datetime, timezone
+import sys
 import yaml
 
 from toluene.math.algebra import Polynomial
@@ -187,7 +189,7 @@ class Eci(EarthCoordinates):
     def lla(self) -> Lla:
         x, y, z, _, _, _, _, _, _ = eci_to_ecef(self.__x, self.__y, self.__z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                                 self.time, self.model.model)
-        tmp = Ecef(x, y, z)  # TODO: Remove this for some reason it fixes the bug I believe it has to do with C.
+        sys.stdout.flush()  # TODO: Remove this for some reason it fixes the bug I believe it has to do with C.
         latitude, longitude, altitude = ecef_to_lla(tmp.x, tmp.y, tmp.z, self.model.model)
         return Lla(latitude, longitude, altitude, self.time, self.model)
 
@@ -228,8 +230,8 @@ class Lla(EarthCoordinates):
     @property
     def eci(self) -> Eci:
         x, y, z = lla_to_ecef(self.__latitude, self.__longitude, self.__altitude, self.model.model)
-        tmp = Ecef(x, y, z)
-        x, y, z, _, _, _, _, _, _ = ecef_to_eci(tmp.x, tmp.y, tmp.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        sys.stdout.flush()
+        x, y, z, _, _, _, _, _, _ = ecef_to_eci(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                                 self.time, self.model.model)
         return Eci(x, y, z, self.time, self.model)
 
