@@ -92,6 +92,7 @@ class TestCoordinates:
 
         for index in range(len(eci_test_points)):
             ecef_test = eci_test_points[index].ecef
+            print(ecef_test, ecef_test_points[index])
             assert ecef_test.x == pytest.approx(ecef_test_points[index].x, abs=5)
             assert ecef_test.y == pytest.approx(ecef_test_points[index].y, abs=6)
             assert ecef_test.z == pytest.approx(ecef_test_points[index].z, abs=4)
@@ -100,6 +101,7 @@ class TestCoordinates:
 
         for index in range(len(eci_test_points)):
             lla_test = eci_test_points[index].lla
+            print(lla_test, lla_test_points[index])
             assert lla_test.latitude == pytest.approx(lla_test_points[index].latitude, abs=5)
             assert lla_test.longitude == pytest.approx(lla_test_points[index].longitude, abs=3)
             assert lla_test.altitude == pytest.approx(lla_test_points[index].altitude, abs=5)
@@ -108,6 +110,7 @@ class TestCoordinates:
 
         for index in range(len(eci_test_points)):
             eci_test = ecef_test_points[index].eci
+            print(eci_test, eci_test_points[index])
             assert eci_test.x == pytest.approx(eci_test_points[index].x, abs=1)
             assert eci_test.y == pytest.approx(eci_test_points[index].y, abs=1)
             assert eci_test.z == pytest.approx(eci_test_points[index].z, abs=1)
@@ -116,6 +119,7 @@ class TestCoordinates:
 
             for index in range(len(ecef_test_points)):
                 lla_test = ecef_test_points[index].lla
+                print(lla_test, lla_test_points[index])
                 assert lla_test.latitude == pytest.approx(lla_test_points[index].latitude, abs=1e-3)
                 assert lla_test.longitude == pytest.approx(lla_test_points[index].longitude, abs=1e-3)
                 assert lla_test.altitude == pytest.approx(lla_test_points[index].altitude, abs=1e-3)
@@ -124,6 +128,7 @@ class TestCoordinates:
 
         for index in range(len(eci_test_points)):
             eci_test = lla_test_points[index].eci
+            print(eci_test, eci_test_points[index])
             assert eci_test.x == pytest.approx(eci_test_points[index].x, abs=1e-3)
             assert eci_test.y == pytest.approx(eci_test_points[index].y, abs=1e-3)
             assert eci_test.z == pytest.approx(eci_test_points[index].z, abs=1e-3)
@@ -132,6 +137,7 @@ class TestCoordinates:
 
         for index in range(len(lla_test_points)):
             ecef_test = lla_test_points[index].ecef
+            print(ecef_test, ecef_test_points[index])
             assert ecef_test.x == pytest.approx(ecef_test_points[index].x, abs=1e-3)
             assert ecef_test.y == pytest.approx(ecef_test_points[index].y, abs=1e-3)
             assert ecef_test.z == pytest.approx(ecef_test_points[index].z, abs=1e-3)
