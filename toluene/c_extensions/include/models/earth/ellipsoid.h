@@ -40,6 +40,8 @@ typedef struct {
 static PyObject* set_axes(PyObject* self, PyObject* args);
 static PyObject* get_axes(PyObject* self, PyObject* args);
 
+static PyObject* ellipsoid_radius(PyObject *self, PyObject *args);
+
 static PyObject* new_Ellipsoid(PyObject* self, PyObject* args);
 static void delete_Ellipsoid(PyObject* obj);
 

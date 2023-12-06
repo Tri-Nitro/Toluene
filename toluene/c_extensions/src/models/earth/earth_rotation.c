@@ -91,6 +91,47 @@ void tirs_to_true_equinox_equator_earth_rotation(double tt, double eq_eq, EarthM
 }
 
 
+void rate_of_earth_rotation(double tt, EarthModel* model, double* rate) {
+
+    EOPTableRecord record;
+    eop_table_record_lookup(model->eop_table, tt, &record);
+
+    *rate = 2.0 * M_PI / (86400.0 + record.bulletin_a_lod/1000.0);
+
+}
+
+
+void tirs_to_true_equinox_equator_earth_rotation_rate(double tt, double eq_eq, EarthModel* model, Matrix* matrix) {
+
+    double rate = 0.0;
+    rate_of_earth_rotation(tt, model, &rate);
+
+    double gmst_rad = 0.0;
+    greenwich_mean_sidereal_time(tt, model, &gmst_rad);
+    gmst_rad += eq_eq * M_PI / 86400.0;
+
+    double cos_gmst = cos(gmst_rad);
+    double sin_gmst = sin(gmst_rad);
+
+
+    if(matrix && matrix->ncols == 3 && matrix->nrows == 3) {
+
+        matrix->elements[0] = -1.0 * rate * sin_gmst;
+        matrix->elements[1] = -1.0 * rate * cos_gmst;
+        matrix->elements[2] = 0.0;
+        matrix->elements[3] = rate * cos_gmst;
+        matrix->elements[4] = -1.0 * rate * sin_gmst;
+        matrix->elements[5] = 0.0;
+        matrix->elements[6] = 0.0;
+        matrix->elements[7] = 0.0;
+        matrix->elements[8] = 0.0;
+
+    }
+
+    return;
+}
+
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

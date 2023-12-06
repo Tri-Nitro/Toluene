@@ -90,6 +90,7 @@ class Ellipsoid:
         """
         return ellipsoid_radius(self.__ellipsoid, latitude)
 
+    @property
     def c_ellipsoid(self):
         """
         :return: The C ellipsoid object.
