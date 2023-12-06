@@ -1,3 +1,1 @@
-class TestEmpty:
-    def test_empty(self):
-        assert True
+from models.earth.coordinates import TestCoordinates
