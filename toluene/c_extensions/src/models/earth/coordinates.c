@@ -179,7 +179,8 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     free(vec_a.elements);
     free(vec_a_prime.elements);
 
-    return Py_BuildValue("(ddddddddd)", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z);
+    PyObject* retval = Py_BuildValue("(ddddddddd)", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z);
+    return retval;
 }
 
 
@@ -310,7 +311,8 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     free(vec_a.elements);
     free(vec_a_prime.elements);
 
-    return Py_BuildValue("(ddddddddd)", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z);
+    PyObject* retval = Py_BuildValue("(ddddddddd)", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z);
+    return retval;
 }
 
 
@@ -366,7 +368,8 @@ static PyObject* ecef_to_lla(PyObject *self, PyObject *args) {
     double longitude = atan2(y,x) * 180/M_PI;
     double altitude = big_u * (1-(ellipsoid->b*ellipsoid->b)/(ellipsoid->a*big_v));
 
-    return Py_BuildValue("(ddd)", latitude, longitude, altitude);
+    PyObject* retval = Py_BuildValue("(ddd)", latitude, longitude, altitude);
+    return retval;
 }
 
 
@@ -402,7 +405,8 @@ static PyObject* lla_to_ecef(PyObject *self, PyObject *args) {
     double y = (n_phi + altitude) * cos(latitude * M_PI/180) * sin(longitude * M_PI/180);
     double z = ((1 - e_2) * n_phi + altitude) * sin(latitude * M_PI/180);
 
-    return Py_BuildValue("(ddd)", x, y, z);
+    PyObject* retval = Py_BuildValue("(ddd)", x, y, z);
+    return retval;
 }
 
 
