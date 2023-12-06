@@ -140,7 +140,7 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     dot_product_matrix_transpose(&vec_v, &matrix, &vec_v_prime);
     dot_product_matrix_transpose(&vec_a, &matrix, &vec_a_prime);
 
-    iau_2000a_precession(tt, model, &matrix);
+    iau_76_precession(tt, model, &matrix);
     dot_product_matrix_transpose(&vec_r_prime, &matrix, &vec_r);
     dot_product_matrix_transpose(&vec_v_prime, &matrix, &vec_v);
     dot_product_matrix_transpose(&vec_a_prime, &matrix, &vec_a);
@@ -283,7 +283,7 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     dot_product(&vec_v, &matrix, &vec_v_prime);
     dot_product(&vec_a, &matrix, &vec_a_prime);
 
-    iau_2000a_precession(tt, model, &matrix);
+    iau_76_precession(tt, model, &matrix);
     dot_product(&vec_r_prime, &matrix, &vec_r);
     dot_product(&vec_v_prime, &matrix, &vec_v);
     dot_product(&vec_a_prime, &matrix, &vec_a);
