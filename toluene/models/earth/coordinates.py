@@ -147,7 +147,7 @@ class Ecef(EarthCoordinates):
 
     @property
     def magnitude(self) -> float:
-        return (self.__x**2 + self.__y**2 + self.__z**2)**0.5
+        return (self.__x ** 2 + self.__y ** 2 + self.__z ** 2) ** 0.5
 
 
 class Eci(EarthCoordinates):
@@ -175,7 +175,7 @@ class Eci(EarthCoordinates):
 
     @property
     def ecef(self) -> Ecef:
-        x, y, z, _, _, _, _, _, _ = eci_to_ecef(self.__x, self.__y, self.__z,  0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        x, y, z, _, _, _, _, _, _ = eci_to_ecef(self.__x, self.__y, self.__z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                                 self.time, self.model.model)
         return Ecef(x, y, z, self.time, self.model)
 
@@ -185,14 +185,15 @@ class Eci(EarthCoordinates):
 
     @property
     def lla(self) -> Lla:
-        x, y, z, _, _, _, _, _, _ = eci_to_ecef(self.__x, self.__y, self.__z,  0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        x, y, z, _, _, _, _, _, _ = eci_to_ecef(self.__x, self.__y, self.__z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                                 self.time, self.model.model)
-        latitude, longitude, altitude = ecef_to_lla(x, y, z, self.model.model)
+        tmp = Ecef(x, y, z)  # TODO: Remove this for some reason it fixes the bug I believe it has to do with C.
+        latitude, longitude, altitude = ecef_to_lla(tmp.x, tmp.y, tmp.z, self.model.model)
         return Lla(latitude, longitude, altitude, self.time, self.model)
 
     @property
     def magnitude(self) -> float:
-        return (self.__x**2 + self.__y**2 + self.__z**2)**0.5
+        return (self.__x ** 2 + self.__y ** 2 + self.__z ** 2) ** 0.5
 
 
 class Lla(EarthCoordinates):
@@ -227,7 +228,8 @@ class Lla(EarthCoordinates):
     @property
     def eci(self) -> Eci:
         x, y, z = lla_to_ecef(self.__latitude, self.__longitude, self.__altitude, self.model.model)
-        x, y, z, _, _, _, _, _, _ = ecef_to_eci(x, y, z,  0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        tmp = Ecef(x, y, z)
+        x, y, z, _, _, _, _, _, _ = ecef_to_eci(tmp.x, tmp.y, tmp.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                                 self.time, self.model.model)
         return Eci(x, y, z, self.time, self.model)
 
