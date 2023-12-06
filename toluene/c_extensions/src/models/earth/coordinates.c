@@ -200,7 +200,10 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
 
+    printf("x: %f, y: %f, z: %f, v_x: %f, v_y: %f, v_z: %f, a_x: %f, a_y: %f, a_z: %f, tt: %f\n", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z, tt);
+
     model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+    printf("model: %p\n", model);
     if(!model) {
         PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from capsule.");
         return PyErr_Occurred();
