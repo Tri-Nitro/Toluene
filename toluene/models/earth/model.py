@@ -60,7 +60,7 @@ class EarthModel:
 
     def set_ellipsoid(self, ellipsoid: Ellipsoid):
         self.__ellipsoid = ellipsoid
-        set_ellipsoid(self.__model, ellipsoid.c_ellipsoid())
+        set_ellipsoid(self.__model, ellipsoid.c_ellipsoid)
 
     @property
     def geoid(self) -> Geoid:

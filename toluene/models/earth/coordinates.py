@@ -39,6 +39,7 @@ from toluene.util.file import datadir, configdir
 from toluene.util.time import DeltaTTable
 
 from toluene_extensions.models.earth.coordinates import eci_to_ecef, ecef_to_eci, ecef_to_lla, lla_to_ecef
+from toluene_extensions.models.earth.ellipsoid import ellipsoid_radius
 
 default_earth_model = None
 
@@ -233,3 +234,7 @@ class Lla(EarthCoordinates):
     @property
     def lla(self) -> Lla:
         return self
+
+    @property
+    def magnitude(self) -> float:
+        return ellipsoid_radius(self.model.ellipsoid.c_ellipsoid, self.__latitude) + self.__altitude

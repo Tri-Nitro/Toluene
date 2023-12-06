@@ -1,2 +1,1 @@
-from core.coordinates import TestCoordinates
-from core.ellipsoid import TestEllipsoids
+from models.earth.coordinates import TestCoordinates
