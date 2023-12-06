@@ -115,7 +115,6 @@ class TestCoordinates:
     def test_lla_to_eci(self):
         for index in range(len(eci_test_points)):
             eci_test = lla_test_points[index].eci
-            print(((eci_test.x-eci_test_points[index].x)**2 + (eci_test.y-eci_test_points[index].y)**2 + (eci_test.z-eci_test_points[index].z)**2)**0.5)
             assert ((eci_test.x - eci_test_points[index].x)**2 + (eci_test.y - eci_test_points[index].y)**2 + (eci_test.z - eci_test_points[index].z)**2)**0.5 == pytest.approx(0, abs=5)
 
     def test_lla_to_ecef(self):

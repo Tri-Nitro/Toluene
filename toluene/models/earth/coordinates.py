@@ -186,8 +186,7 @@ class Eci(EarthCoordinates):
 
     @property
     def lla(self) -> Lla:
-        ecef = self.ecef
-        return ecef.lla
+        return self.ecef.lla
 
     @property
     def magnitude(self) -> float:
@@ -225,8 +224,7 @@ class Lla(EarthCoordinates):
 
     @property
     def eci(self) -> Eci:
-        ecef = self.ecef
-        return ecef.eci
+        return self.ecef.eci
 
     @property
     def lla(self) -> Lla:
