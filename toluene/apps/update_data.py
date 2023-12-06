@@ -28,7 +28,7 @@ def create_arg_parser() -> argparse.ArgumentParser:
 def save_data(config: yaml, output_dir: str):
 
     with open("{}/deltat.data".format(output_dir), 'w') as deltat_data:
-        response = requests.get(config['delta_t']['url'])
+        response = requests.get(config['time']['delta_t']['url'])
         deltat_data.write(response.text)
 
     with open("{}/finals2000A.all".format(output_dir), 'w') as finals2000A_all:

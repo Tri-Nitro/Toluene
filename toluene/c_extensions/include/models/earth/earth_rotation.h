@@ -39,6 +39,9 @@ void greenwich_apparent_sidereal_time(double tt, EarthModel* model, double* gast
 
 void tirs_to_true_equinox_equator_earth_rotation(double tt, double eq_eq, EarthModel* model, Matrix* matrix);
 
+void rate_of_earth_rotation(double tt, EarthModel* model, double* rate);
+void tirs_to_true_equinox_equator_earth_rotation_rate(double tt, double eq_eq, EarthModel* model, Matrix* matrix);
+
 #endif /* __compile_models_earth_earth_rotation */
 
 
