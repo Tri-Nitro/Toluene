@@ -179,8 +179,28 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     free(vec_a.elements);
     free(vec_a_prime.elements);
 
-    PyObject* retval = Py_BuildValue("(ddddddddd)", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z);
-    return retval;
+    PyObject* x_p = PyFloat_FromDouble(x);
+    PyObject* y_p = PyFloat_FromDouble(y);
+    PyObject* z_p = PyFloat_FromDouble(z);
+    PyObject* v_x_p = PyFloat_FromDouble(v_x);
+    PyObject* v_y_p = PyFloat_FromDouble(v_y);
+    PyObject* v_z_p = PyFloat_FromDouble(v_z);
+    PyObject* a_x_p = PyFloat_FromDouble(a_x);
+    PyObject* a_y_p = PyFloat_FromDouble(a_y);
+    PyObject* a_z_p = PyFloat_FromDouble(a_z);
+
+    PyObject* ret = Py_BuildValue("(OOOOOOOOO)", x_p, y_p, z_p, v_x_p, v_y_p, v_z_p, a_x_p, a_y_p, a_z_p);
+    Py_DECREF(x_p);
+    Py_DECREF(y_p);
+    Py_DECREF(z_p);
+    Py_DECREF(v_x_p);
+    Py_DECREF(v_y_p);
+    Py_DECREF(v_z_p);
+    Py_DECREF(a_x_p);
+    Py_DECREF(a_y_p);
+    Py_DECREF(a_z_p);
+
+    return ret;
 }
 
 
@@ -311,8 +331,28 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     free(vec_a.elements);
     free(vec_a_prime.elements);
 
-    PyObject* retval = Py_BuildValue("(ddddddddd)", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z);
-    return retval;
+    PyObject* x_p = PyFloat_FromDouble(x);
+    PyObject* y_p = PyFloat_FromDouble(y);
+    PyObject* z_p = PyFloat_FromDouble(z);
+    PyObject* v_x_p = PyFloat_FromDouble(v_x);
+    PyObject* v_y_p = PyFloat_FromDouble(v_y);
+    PyObject* v_z_p = PyFloat_FromDouble(v_z);
+    PyObject* a_x_p = PyFloat_FromDouble(a_x);
+    PyObject* a_y_p = PyFloat_FromDouble(a_y);
+    PyObject* a_z_p = PyFloat_FromDouble(a_z);
+
+    PyObject* ret = Py_BuildValue("(OOOOOOOOO)", x_p, y_p, z_p, v_x_p, v_y_p, v_z_p, a_x_p, a_y_p, a_z_p);
+    Py_DECREF(x_p);
+    Py_DECREF(y_p);
+    Py_DECREF(z_p);
+    Py_DECREF(v_x_p);
+    Py_DECREF(v_y_p);
+    Py_DECREF(v_z_p);
+    Py_DECREF(a_x_p);
+    Py_DECREF(a_y_p);
+    Py_DECREF(a_z_p);
+
+    return ret;
 }
 
 
@@ -364,12 +404,16 @@ static PyObject* ecef_to_lla(PyObject *self, PyObject *args) {
     double big_v = sqrt(p_e_2_r_0*p_e_2_r_0+(1-e_2)*z*z);
     double z_0 = (ellipsoid->b*ellipsoid->b*z)/(ellipsoid->a*big_v);
 
-    double latitude = atan((z+(e_r2*z_0))/p) * 180/M_PI;
-    double longitude = atan2(y,x) * 180/M_PI;
-    double altitude = big_u * (1-(ellipsoid->b*ellipsoid->b)/(ellipsoid->a*big_v));
+    PyObject* latitude = PyFloat_FromDouble(atan((z+(e_r2*z_0))/p) * 180/M_PI);
+    PyObject* longitude = PyFloat_FromDouble(atan2(y,x) * 180/M_PI);
+    PyObject* altitude = PyFloat_FromDouble(big_u * (1-(ellipsoid->b*ellipsoid->b)/(ellipsoid->a*big_v)));
 
-    PyObject* retval = Py_BuildValue("(ddd)", latitude, longitude, altitude);
-    return retval;
+    PyObject* ret = Py_BuildValue("(OOO)", latitude, longitude, altitude);
+    Py_DECREF(latitude);
+    Py_DECREF(longitude);
+    Py_DECREF(altitude);
+
+    return ret;
 }
 
 
@@ -401,12 +445,16 @@ static PyObject* lla_to_ecef(PyObject *self, PyObject *args) {
     double sin_of_latitude = sin((latitude * M_PI/180));
     double n_phi = ellipsoid->a/(sqrt(1-(e_2 * (sin_of_latitude*sin_of_latitude))));
 
-    double x = (n_phi + altitude) * cos(latitude * M_PI/180) * cos(longitude * M_PI/180);
-    double y = (n_phi + altitude) * cos(latitude * M_PI/180) * sin(longitude * M_PI/180);
-    double z = ((1 - e_2) * n_phi + altitude) * sin(latitude * M_PI/180);
+    PyObject* x = PyFloat_FromDouble((n_phi + altitude) * cos(latitude * M_PI/180) * cos(longitude * M_PI/180));
+    PyObject* y = PyFloat_FromDouble((n_phi + altitude) * cos(latitude * M_PI/180) * sin(longitude * M_PI/180));
+    PyObject* z = PyFloat_FromDouble(((1 - e_2) * n_phi + altitude) * sin(latitude * M_PI/180));
 
-    PyObject* retval = Py_BuildValue("(ddd)", x, y, z);
-    return retval;
+    PyObject* ret = Py_BuildValue("(OOO)", x, y, z);
+    Py_DECREF(x);
+    Py_DECREF(y);
+    Py_DECREF(z);
+
+    return ret;
 }
 
 

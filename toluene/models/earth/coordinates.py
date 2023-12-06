@@ -177,7 +177,7 @@ class Eci(EarthCoordinates):
 
     @property
     def ecef(self) -> Ecef:
-        x, y, z, _, _, _, _, _, _ = eci_to_ecef(self.__x, self.__y, self.__z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        x, y, z,  _, _, _, _, _, _ = eci_to_ecef(self.__x, self.__y, self.__z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                                 self.time, self.model.model)
         return Ecef(x, y, z, self.time, self.model)
 
@@ -189,7 +189,6 @@ class Eci(EarthCoordinates):
     def lla(self) -> Lla:
         x, y, z, _, _, _, _, _, _ = eci_to_ecef(self.__x, self.__y, self.__z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                                 self.time, self.model.model)
-        # sys.stdout.flush()  # TODO: Remove this for some reason it fixes the bug I believe it has to do with C.
         latitude, longitude, altitude = ecef_to_lla(x, y, z, self.model.model)
         return Lla(latitude, longitude, altitude, self.time, self.model)
 
@@ -230,8 +229,7 @@ class Lla(EarthCoordinates):
     @property
     def eci(self) -> Eci:
         x, y, z = lla_to_ecef(self.__latitude, self.__longitude, self.__altitude, self.model.model)
-        sys.stdout.flush()
-        x, y, z, _, _, _, _, _, _ = ecef_to_eci(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        x, y, z, vx, vy, vz, ax, ay, az = ecef_to_eci(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                                 self.time, self.model.model)
         return Eci(x, y, z, self.time, self.model)
 
