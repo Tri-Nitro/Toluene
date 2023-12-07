@@ -186,7 +186,10 @@ class Eci(EarthCoordinates):
 
     @property
     def lla(self) -> Lla:
-        return self.ecef.lla
+        x, y, z, _, _, _, _, _, _ = eci_to_ecef(self.__x, self.__y, self.__z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                                self.time, self.model.model)
+        latitude, longitude, altitude = ecef_to_lla(x, y, z, self.model.model)
+        return Lla(latitude, longitude, altitude, self.time, self.model)
 
     @property
     def magnitude(self) -> float:
@@ -224,7 +227,9 @@ class Lla(EarthCoordinates):
 
     @property
     def eci(self) -> Eci:
-        return self.ecef.eci
+        x, y, z = lla_to_ecef(self.__latitude, self.__longitude, self.__altitude, self.model.model)
+        x, y, z, _, _, _, _, _, _ = ecef_to_eci(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, self.time, self.model.model)
+        return Eci(x, y, z, self.time, self.model)
 
     @property
     def lla(self) -> Lla:
