@@ -101,7 +101,7 @@ void rate_of_earth_rotation(double tt, EarthModel* model, double* rate) {
 }
 
 
-void tirs_to_true_equinox_equator_earth_rotation_rate(double tt, double eq_eq, EarthModel* model, Matrix* matrix) {
+void tirs_coriolis_velocity(double tt, double eq_eq, EarthModel* model, Matrix* matrix) {
 
     double rate = 0.0;
     rate_of_earth_rotation(tt, model, &rate);
