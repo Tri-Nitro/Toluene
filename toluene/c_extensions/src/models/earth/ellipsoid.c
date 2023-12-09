@@ -101,9 +101,6 @@ static PyObject* ellipsoid_radius(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
 
-    printf("latitude: %f\n", latitude);
-    printf("a: %f, b: %f\n", ellipsoid->a, ellipsoid->b);
-
     double f1 = 0.0, f2 = 0.0, f3 = 0.0, f4 = 0.0;
 
     f3 = ellipsoid->a * cos(latitude * M_PI/180);
@@ -114,10 +111,6 @@ static PyObject* ellipsoid_radius(PyObject *self, PyObject *args) {
     f2 = ellipsoid->b * f4;
     f2 = f2 * f2;
     f4 = f4 * f4;
-
-    printf("f1: %f, f2: %f, f3: %f, f4: %f\n", f1, f2, f3, f4);
-    printf("f1 + f2: %f, f3 + f4: %f\n", f1 + f2, f3 + f4);
-    printf("sqrt((f1 + f2) / (f3 + f4)): %f\n", sqrt((f1 + f2) / (f3 + f4)));
 
     double retval = sqrt((f1 + f2) / (f3 + f4));
     return Py_BuildValue("d", retval);
