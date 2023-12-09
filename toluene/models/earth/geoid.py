@@ -24,6 +24,11 @@
 #                                                                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+from toluene_extensions.models.earth.geoid import new_Geoid, add_grid_point
+
 class Geoid:
     def __init__(self):
-        pass
+        self.__geoid = new_Geoid()
+
+    def add_grid_point(self, latitude: float, longitude: float, height: float):
+        add_grid_point(self.__geoid, latitude, longitude, height)

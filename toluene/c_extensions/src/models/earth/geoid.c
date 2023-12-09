@@ -40,6 +40,84 @@ extern "C"
 #endif
 
 
+static PyObject* add_grid_point(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    Geoid* geoid;
+
+    double lat;
+    double lon;
+    double height;
+
+    if(!PyArg_ParseTuple(args, "Oddd", &capsule, &lat, &lon, &height)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. add_grid_point()");
+        return PyErr_Occurred();
+    }
+
+    geoid = (Geoid*)PyCapsule_GetPointer(capsule, "Geoid");
+    if(!geoid) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the Geoid from capsule.");
+        return PyErr_Occurred();
+    }
+
+    if (!geoid->points){
+        geoid->points = (GeoidPoint*)malloc(360 * sizeof(GeoidPoint));
+        if(!geoid->points) {
+            PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for Geoid points.");
+            return PyErr_Occurred();
+        }
+        geoid->npoints_allocated = 360;
+    }
+
+    if (geoid->npoints_allocated < geoid->npoints+1) {
+        geoid->npoints_allocated += 360;
+        GeoidPoint* new_geoid_points = (GeoidPoint*)malloc(geoid->npoints_allocated * sizeof(GeoidPoint));
+        if(!new_geoid_points) {
+            PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for Geoid points.");
+            return PyErr_Occurred();
+        }
+        memcpy(new_geoid_points, geoid->points, geoid->npoints * sizeof(GeoidPoint));
+        free(geoid->points);
+        geoid->points = new_geoid_points;
+    }
+
+    int i = 0;
+    for(i = geoid->npoints-1; i >= 0; --i) {
+        if(geoid->points[i].lat == lat && geoid->points[i].lon == lon) {
+            geoid->points[i].height = height;
+            break;
+        }
+        if (geoid->points[i].lat < lat) {
+            geoid->points[i+1].lat = geoid->points[i].lat;
+            geoid->points[i+1].lon = geoid->points[i].lon;
+            geoid->points[i+1].height = geoid->points[i].height;
+        } else if (geoid->points[i].lat == lat && geoid->points[i].lon > lon) {
+            geoid->points[i+1].lat = geoid->points[i].lat;
+            geoid->points[i+1].lon = geoid->points[i].lon;
+            geoid->points[i+1].height = geoid->points[i].height;
+        } else {
+            geoid->points[i].lat = lat;
+            geoid->points[i].lon = lon;
+            geoid->points[i].height = height;
+            break;
+        }
+    }
+    if(i <= 0) {
+        geoid->points[0].lat = lat;
+        geoid->points[0].lon = lon;
+        geoid->points[0].height = height;
+        geoid->npoints++;
+    }
+
+    return Py_BuildValue("i", 0);
+}
+
+
+static PyObject* add_harmonic(PyObject* self, PyObject* args) {
+
+}
+
+
 static PyObject* new_Geoid(PyObject* self, PyObject* args) {
 
     Geoid* geoid = (Geoid*)malloc(sizeof(Geoid));
@@ -49,44 +127,53 @@ static PyObject* new_Geoid(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
+    geoid->nharmonics = 0;
+    geoid->npoints = 0;
+    geoid->nharmonics_allocated = 0;
+    geoid->npoints_allocated = 0;
     geoid->harmonics = NULL;
-    geoid->grid = NULL;
+    geoid->points = NULL;
 
     return PyCapsule_New(geoid, "Geoid", delete_Geoid);
 }
 
 
-static void delete_Ellipsoid(PyObject* obj) {
+static void delete_Geoid(PyObject* obj) {
 
-    Ellipsoid* ellipsoid = (Ellipsoid*)PyCapsule_GetPointer(obj, "Ellipsoid");
+    Geoid* geoid = (Geoid*)PyCapsule_GetPointer(obj, "Geoid");
 
-    if(ellipsoid) {
-        free(ellipsoid);
+    if(geoid) {
+        if(geoid->harmonics) {
+            free(geoid->harmonics);
+        }
+        if(geoid->points) {
+            free(geoid->points);
+        }
+        free(geoid);
     }
 
 }
 
 
-static PyMethodDef tolueneModelsEarthEllipsoidMethods[] = {
-    {"set_axes", set_axes, METH_VARARGS, "Sets the ellipsoid axes."},
-    {"get_axes", get_axes, METH_VARARGS, "Gets the ellipsoid axes."},
-    {"ellipsoid_radius", ellipsoid_radius, METH_VARARGS, "Gets the ellipsoid radius at a given latitude."},
-    {"new_Ellipsoid", new_Ellipsoid, METH_VARARGS, "Create a new Ellipsoid object"},
+static PyMethodDef tolueneModelsEarthGeoidMethods[] = {
+    {"add_grid_point", add_grid_point, METH_VARARGS, "Add a grid point to a Geoid object"},
+    {"add_harmonic", add_harmonic, METH_VARARGS, "Add a harmonic to a Geoid object"},
+    {"new_Geoid", new_Geoid, METH_VARARGS, "Create a new Geoid object"},
     {NULL, NULL, 0, NULL}
 };
 
 
-static struct PyModuleDef models_earth_ellipsoid = {
+static struct PyModuleDef models_earth_geoid = {
     PyModuleDef_HEAD_INIT,
-    "models.earth.ellipsoid",
-    "C Extensions to toluene models ellipsoid functions",
+    "models.earth.geoid",
+    "C Extensions to toluene models geoid functions",
     -1,
-    tolueneModelsEarthEllipsoidMethods
+    tolueneModelsEarthGeoidMethods
 };
 
 
-PyMODINIT_FUNC PyInit_ellipsoid(void) {
-    return PyModule_Create(&models_earth_ellipsoid);
+PyMODINIT_FUNC PyInit_geoid(void) {
+    return PyModule_Create(&models_earth_geoid);
 }
 
 

@@ -46,8 +46,8 @@ typedef struct {
 typedef struct {
     int nharmonics;
     int npoints;
-    int harmonics_allocated;
-    int points_allocated;
+    int nharmonics_allocated;
+    int npoints_allocated;
     Harmonic* harmonics;
     GeoidPoint* points;
 } Geoid;
@@ -56,6 +56,7 @@ typedef struct {
 #ifdef __compile_models_earth_geoid
 
 static PyObject* add_grid_point(PyObject* self, PyObject* args);
+static PyObject* add_harmonic(PyObject* self, PyObject* args);
 
 static PyObject* new_Geoid(PyObject* self, PyObject* args);
 static void delete_Geoid(PyObject* obj);
