@@ -101,6 +101,9 @@ static PyObject* ellipsoid_radius(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
 
+    printf("latitude: %f\n", latitude);
+    printf("a: %f, b: %f\n", ellipsoid->a, ellipsoid->b);
+
     double f1 = 0.0, f2 = 0.0, f3 = 0.0, f4 = 0.0;
 
     f3 = ellipsoid->a * cos(latitude * M_PI/180);
