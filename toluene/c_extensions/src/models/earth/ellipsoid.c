@@ -86,9 +86,9 @@ static PyObject* get_axes(PyObject* self, PyObject* args) {
 
 static PyObject* ellipsoid_radius(PyObject *self, PyObject *args) {
 
-    PyObject* capsule;
-    Ellipsoid* ellipsoid;
-    double latitude;
+    PyObject* capsule = NULL;
+    Ellipsoid* ellipsoid = NULL;
+    double latitude = 0.0;
 
     if(!PyArg_ParseTuple(args, "Od", &capsule, &latitude)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ellipsoid_radius(Ellipsoid, latitude).");
@@ -101,12 +101,14 @@ static PyObject* ellipsoid_radius(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
 
-    double f3 = ellipsoid->a * cos(latitude * M_PI/180);
-    double f4 = ellipsoid->b * sin(latitude * M_PI/180);
-    double f1 = ellipsoid->a * f3;
+    double f1 = 0.0, f2 = 0.0, f3 = 0.0, f4 = 0.0;
+
+    f3 = ellipsoid->a * cos(latitude * M_PI/180);
+    f4 = ellipsoid->b * sin(latitude * M_PI/180);
+    f1 = ellipsoid->a * f3;
     f1 = f1 * f1;
     f3 = f3 * f3;
-    double f2 = ellipsoid->b * f4;
+    f2 = ellipsoid->b * f4;
     f2 = f2 * f2;
     f4 = f4 * f4;
 
