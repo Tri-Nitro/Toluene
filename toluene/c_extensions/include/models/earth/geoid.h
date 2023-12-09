@@ -31,10 +31,10 @@ extern "C" {
 #endif
 
 typedef struct {
+    int degree;
+    int order;
     double C;
     double S;
-    double C_dot;
-    double S_dot;
 } Harmonic;
 
 typedef struct {

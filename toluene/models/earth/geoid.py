@@ -24,7 +24,7 @@
 #                                                                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-from toluene_extensions.models.earth.geoid import new_Geoid, add_grid_point
+from toluene_extensions.models.earth.geoid import new_Geoid, add_grid_point, add_harmonic
 
 class Geoid:
     def __init__(self):
@@ -32,3 +32,6 @@ class Geoid:
 
     def add_grid_point(self, latitude: float, longitude: float, height: float):
         add_grid_point(self.__geoid, latitude, longitude, height)
+
+    def add_harmonic_coefficient(self, order, degree, c, s):
+        add_harmonic(self.__geoid, order, degree, c, s)

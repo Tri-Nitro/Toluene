@@ -95,14 +95,19 @@ static PyObject* add_grid_point(PyObject* self, PyObject* args) {
             geoid->points[i+1].lat = geoid->points[i].lat;
             geoid->points[i+1].lon = geoid->points[i].lon;
             geoid->points[i+1].height = geoid->points[i].height;
+        } else if (geoid->points[i].lat >= lat && geoid->points[i].lon < lon) {
+            geoid->points[i+1].lat = geoid->points[i].lat;
+            geoid->points[i+1].lon = geoid->points[i].lon;
+            geoid->points[i+1].height = geoid->points[i].height;
         } else {
-            geoid->points[i].lat = lat;
-            geoid->points[i].lon = lon;
-            geoid->points[i].height = height;
+            geoid->points[i+1].lat = lat;
+            geoid->points[i+1].lon = lon;
+            geoid->points[i+1].height = height;
+            geoid->npoints++;
             break;
         }
     }
-    if(i <= 0) {
+    if(i < 0) {
         geoid->points[0].lat = lat;
         geoid->points[0].lon = lon;
         geoid->points[0].height = height;
@@ -115,6 +120,74 @@ static PyObject* add_grid_point(PyObject* self, PyObject* args) {
 
 static PyObject* add_harmonic(PyObject* self, PyObject* args) {
 
+    PyObject* capsule;
+    Geoid* geoid;
+
+    int order, degree;
+    double C, S;
+
+    if(!PyArg_ParseTuple(args, "Oiidd", &capsule, &order, &degree, &C, &S)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. add_harmonic()");
+        return PyErr_Occurred();
+    }
+
+    geoid = (Geoid*)PyCapsule_GetPointer(capsule, "Geoid");
+    if(!geoid) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the Geoid from capsule.");
+        return PyErr_Occurred();
+    }
+
+    if (!geoid->harmonics){
+        geoid->harmonics = (Harmonic*)malloc(41 * sizeof(Harmonic));
+        if(!geoid->harmonics) {
+            PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for Geoid harmonics.");
+            return PyErr_Occurred();
+        }
+        geoid->nharmonics_allocated = 360;
+    }
+
+    if (geoid->nharmonics_allocated < geoid->nharmonics+1) {
+        geoid->nharmonics_allocated += order*order;
+        Harmonic* new_geoid_harmonics = (Harmonic*)malloc(geoid->nharmonics_allocated * sizeof(Harmonic));
+        if(!new_geoid_harmonics) {
+            PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for Geoid harmonics.");
+            return PyErr_Occurred();
+        }
+        memcpy(new_geoid_harmonics, geoid->harmonics, geoid->nharmonics * sizeof(Harmonic));
+        free(geoid->harmonics);
+        geoid->harmonics = new_geoid_harmonics;
+    }
+
+    int i = 0;
+    for(i = geoid->nharmonics-1; i >= 0; --i) {
+        if (geoid->harmonics[i].order > order) {
+            geoid->harmonics[i+1].order = geoid->harmonics[i].order;
+            geoid->harmonics[i+1].degree = geoid->harmonics[i].degree;
+            geoid->harmonics[i+1].C = geoid->harmonics[i].C;
+            geoid->harmonics[i+1].S = geoid->harmonics[i].S;
+        } else if (geoid->harmonics[i].order == order && geoid->harmonics[i].degree > degree) {
+            geoid->harmonics[i+1].order = geoid->harmonics[i].order;
+            geoid->harmonics[i+1].degree = geoid->harmonics[i].degree;
+            geoid->harmonics[i+1].C = geoid->harmonics[i].C;
+            geoid->harmonics[i+1].S = geoid->harmonics[i].S;
+        } else {
+            geoid->harmonics[i+1].order = order;
+            geoid->harmonics[i+1].degree = degree;
+            geoid->harmonics[i+1].C = C;
+            geoid->harmonics[i+1].S = S;
+            geoid->nharmonics++;
+            break;
+        }
+    }
+    if(i < 0) {
+        geoid->harmonics[0].order = order;
+        geoid->harmonics[0].degree = degree;
+        geoid->harmonics[0].C = C;
+        geoid->harmonics[0].S = S;
+        geoid->nharmonics++;
+    }
+
+    return Py_BuildValue("i", 0);
 }
 
 
