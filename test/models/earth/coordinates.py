@@ -91,34 +91,34 @@ class TestCoordinates:
     def test_eci_to_ecef(self):
         for index in range(len(eci_test_points)):
             ecef_test = eci_test_points[index].ecef
-            assert ((ecef_test.x - ecef_test_points[index].x)**2 + (ecef_test.y - ecef_test_points[index].y)**2 + (ecef_test.z - ecef_test_points[index].z)**2)**0.5 == pytest.approx(0, abs=5)
+            assert ((ecef_test.x - ecef_test_points[index].x)**2 + (ecef_test.y - ecef_test_points[index].y)**2 + (ecef_test.z - ecef_test_points[index].z)**2)**0.5 == pytest.approx(0, abs=3)
 
     def test_eci_to_lla(self):
         for index in range(len(eci_test_points)):
             lla_test = eci_test_points[index].lla
-            assert lla_test.latitude == pytest.approx(lla_test_points[index].latitude, abs=0.1)
-            assert lla_test.longitude == pytest.approx(lla_test_points[index].longitude, abs=0.1)
-            assert lla_test.altitude == pytest.approx(lla_test_points[index].altitude, abs=5)
+            assert lla_test.latitude == pytest.approx(lla_test_points[index].latitude, abs=1e-4)
+            assert lla_test.longitude == pytest.approx(lla_test_points[index].longitude, abs=1e-4)
+            assert lla_test.altitude == pytest.approx(lla_test_points[index].altitude, abs=2.3)
 
     def test_ecef_to_eci(self):
         for index in range(len(eci_test_points)):
             eci_test = ecef_test_points[index].eci
-            assert ((eci_test.x - eci_test_points[index].x)**2 + (eci_test.y - eci_test_points[index].y)**2 + (eci_test.z - eci_test_points[index].z)**2)**0.5 == pytest.approx(0, abs=5)
+            assert ((eci_test.x - eci_test_points[index].x)**2 + (eci_test.y - eci_test_points[index].y)**2 + (eci_test.z - eci_test_points[index].z)**2)**0.5 == pytest.approx(0, abs=3)
 
     def test_ecef_to_lla(self):
         for index in range(len(ecef_test_points)):
             lla_test = ecef_test_points[index].lla
-            assert lla_test.latitude == pytest.approx(lla_test_points[index].latitude, abs=1e-3)
-            assert lla_test.longitude == pytest.approx(lla_test_points[index].longitude, abs=1e-3)
-            assert lla_test.altitude == pytest.approx(lla_test_points[index].altitude, abs=5)
+            assert lla_test.latitude == pytest.approx(lla_test_points[index].latitude, abs=1e-5)
+            assert lla_test.longitude == pytest.approx(lla_test_points[index].longitude, abs=1e-5)
+            assert lla_test.altitude == pytest.approx(lla_test_points[index].altitude, abs=1e-8)
 
     # BROKEN TEST
     def test_lla_to_eci(self):
         for index in range(len(eci_test_points)):
             eci_test = lla_test_points[index].eci
-            assert ((eci_test.x - eci_test_points[index].x)**2 + (eci_test.y - eci_test_points[index].y)**2 + (eci_test.z - eci_test_points[index].z)**2)**0.5 == pytest.approx(0, abs=5)
+            assert ((eci_test.x - eci_test_points[index].x)**2 + (eci_test.y - eci_test_points[index].y)**2 + (eci_test.z - eci_test_points[index].z)**2)**0.5 == pytest.approx(0, abs=3)
 
     def test_lla_to_ecef(self):
         for index in range(len(lla_test_points)):
             ecef_test = lla_test_points[index].ecef
-            assert ((ecef_test.x - ecef_test_points[index].x)**2 + (ecef_test.y - ecef_test_points[index].y)**2 + (ecef_test.z - ecef_test_points[index].z)**2)**0.5 == pytest.approx(0, abs=1)
+            assert ((ecef_test.x - ecef_test_points[index].x)**2 + (ecef_test.y - ecef_test_points[index].y)**2 + (ecef_test.z - ecef_test_points[index].z)**2)**0.5 == pytest.approx(0, abs=1e-9)
