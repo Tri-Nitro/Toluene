@@ -38,8 +38,30 @@ typedef struct {
 } Harmonic;
 
 typedef struct {
-    Harmonic *harmonics;
+    double lat;
+    double lon;
+    double height;
+} GeoidPoint;
+
+typedef struct {
+    int nharmonics;
+    int npoints;
+    int harmonics_allocated;
+    int points_allocated;
+    Harmonic* harmonics;
+    GeoidPoint* points;
 } Geoid;
+
+
+#ifdef __compile_models_earth_geoid
+
+static PyObject* add_grid_point(PyObject* self, PyObject* args);
+
+static PyObject* new_Geoid(PyObject* self, PyObject* args);
+static void delete_Geoid(PyObject* obj);
+
+#endif /* __compile_models_earth_geoid */
+
 
 #ifdef __cplusplus
 }   /* extern "C" */

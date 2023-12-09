@@ -124,6 +124,9 @@ static PyObject* new_Ellipsoid(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
+    ellipsoid->a = 0;
+    ellipsoid->b = 0;
+
     return PyCapsule_New(ellipsoid, "Ellipsoid", delete_Ellipsoid);
 }
 
