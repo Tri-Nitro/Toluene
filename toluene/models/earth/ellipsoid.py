@@ -42,6 +42,7 @@ class Ellipsoid:
             self.__ellipsoid = c_ellipsoid
         else:
             self.__ellipsoid = new_Ellipsoid()
+        print("SETTING ELLIPSOID: ", a, b)
         if a is not None and b is not None:
             self.set_axes(a, b)
 
