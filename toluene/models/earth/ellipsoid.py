@@ -57,6 +57,7 @@ class Ellipsoid:
         """
         set_axes(self.__ellipsoid, a, b)
 
+    @property
     def axes(self) -> (float, float):
         """
         Gets the semi-major and semi-minor axes of the ellipsoid.
@@ -66,19 +67,21 @@ class Ellipsoid:
         """
         return get_axes(self.__ellipsoid)
 
+    @property
     def a(self) -> float:
         """
         :return: The semi-major axis of the ellipsoid in meters.
         :rtype: float
         """
-        return self.axes()[0]
+        return self.axes[0]
 
+    @property
     def b(self) -> float:
         """
         :return: The semi-minor axis of the ellipsoid in meters.
         :rtype: float
         """
-        return self.axes()[1]
+        return self.axes[1]
 
     def radius(self, latitude: float) -> float:
         """
