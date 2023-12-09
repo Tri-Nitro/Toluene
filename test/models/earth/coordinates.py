@@ -155,12 +155,14 @@ class TestCoordinates:
 
     def test_lla_and_ecef_magnitude(self):
         for index in range(len(lla_test_points)):
+            print(lla_test_points[index].magnitude, ecef_test_points[index].magnitude)
             assert lla_test_points[index].magnitude == pytest.approx(ecef_test_points[index].magnitude, abs=0.01)
 
     def test_eci_and_ecef_magnitude(self):
         for index in range(len(eci_test_points)):
-            assert eci_test_points[index].magnitude == pytest.approx(ecef_test_points[index].magnitude, abs=5)
+            assert eci_test_points[index].magnitude == pytest.approx(ecef_test_points[index].magnitude, abs=2.5)
 
     def test_lla_and_eci_magnitude(self):
         for index in range(len(eci_test_points)):
-            assert lla_test_points[index].magnitude == pytest.approx(eci_test_points[index].magnitude, abs=5)
+            print(lla_test_points[index].magnitude, eci_test_points[index].magnitude)
+            assert lla_test_points[index].magnitude == pytest.approx(eci_test_points[index].magnitude, abs=2.75)
