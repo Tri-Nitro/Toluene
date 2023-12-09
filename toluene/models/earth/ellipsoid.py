@@ -40,9 +40,9 @@ class Ellipsoid:
     def __init__(self, a: float = None, b: float = None, c_ellipsoid=None):
         if c_ellipsoid is not None:
             self.__ellipsoid = c_ellipsoid
+            a, b = get_axes(self.__ellipsoid)
         else:
             self.__ellipsoid = new_Ellipsoid()
-        print("SETTING ELLIPSOID: ", a, b)
         if a is not None and b is not None:
             self.set_axes(a, b)
 
