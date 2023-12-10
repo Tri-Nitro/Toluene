@@ -180,23 +180,7 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     double delta_psi = 0.0, delta_epsilon = 0.0, epsilon = 0.0, eq_eq = 0.0;
     get_delta_psi_delta_epsilon_epsilon_eq_eq(tt, model, &delta_psi, &delta_epsilon, &epsilon, &eq_eq);
 
-    icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
-    dot_product_matrix_transpose(&vec_r, &matrix, &vec_r_prime);
-    dot_product_matrix_transpose(&vec_v, &matrix, &vec_v_prime);
-    dot_product_matrix_transpose(&vec_a, &matrix, &vec_a_prime);
-    dot_product_matrix_transpose(&vec_v_coriolis, &matrix, &vec_v_coriolis_prime);
-    dot_product_matrix_transpose(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
-    dot_product_matrix_transpose(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
-
-    iau_76_precession(tt, model, &matrix);
-    dot_product_matrix_transpose(&vec_r_prime, &matrix, &vec_r);
-    dot_product_matrix_transpose(&vec_v_prime, &matrix, &vec_v);
-    dot_product_matrix_transpose(&vec_a_prime, &matrix, &vec_a);
-    dot_product_matrix_transpose(&vec_v_coriolis_prime, &matrix, &vec_v_coriolis);
-    dot_product_matrix_transpose(&vec_a_coriolis_prime, &matrix, &vec_a_coriolis);
-    dot_product_matrix_transpose(&vec_a_centrifugal_prime, &matrix, &vec_a_centrifugal);
-
-    iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
+    itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
     dot_product_matrix_transpose(&vec_r, &matrix, &vec_r_prime);
     dot_product_matrix_transpose(&vec_v, &matrix, &vec_v_prime);
     dot_product_matrix_transpose(&vec_a, &matrix, &vec_a_prime);
@@ -212,7 +196,23 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     tirs_coriolis_velocity(tt, eq_eq, model, &matrix);
     dot_product_matrix_transpose(&vec_v_coriolis_prime, &matrix, &vec_v_coriolis);
 
-    itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
+    iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
+    dot_product_matrix_transpose(&vec_r, &matrix, &vec_r_prime);
+    dot_product_matrix_transpose(&vec_v, &matrix, &vec_v_prime);
+    dot_product_matrix_transpose(&vec_a, &matrix, &vec_a_prime);
+    dot_product_matrix_transpose(&vec_v_coriolis, &matrix, &vec_v_coriolis_prime);
+    dot_product_matrix_transpose(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
+    dot_product_matrix_transpose(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
+
+    iau_2000a_precession(tt, model, &matrix);
+    dot_product_matrix_transpose(&vec_r_prime, &matrix, &vec_r);
+    dot_product_matrix_transpose(&vec_v_prime, &matrix, &vec_v);
+    dot_product_matrix_transpose(&vec_a_prime, &matrix, &vec_a);
+    dot_product_matrix_transpose(&vec_v_coriolis_prime, &matrix, &vec_v_coriolis);
+    dot_product_matrix_transpose(&vec_a_coriolis_prime, &matrix, &vec_a_coriolis);
+    dot_product_matrix_transpose(&vec_a_centrifugal_prime, &matrix, &vec_a_centrifugal);
+
+    icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
     dot_product_matrix_transpose(&vec_r, &matrix, &vec_r_prime);
     dot_product_matrix_transpose(&vec_v, &matrix, &vec_v_prime);
     dot_product_matrix_transpose(&vec_a, &matrix, &vec_a_prime);
@@ -243,6 +243,8 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     free(vec_a_coriolis_prime.elements);
     free(vec_a_centrifugal.elements);
     free(vec_a_centrifugal_prime.elements);
+
+    printf("x: %f, y: %f, z: %f, v_x: %f, v_y: %f, v_z: %f, a_x: %f, a_y: %f, a_z: %f\n", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z);
 
     return Py_BuildValue("(ddddddddd)", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z);
 }
@@ -376,7 +378,23 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     double delta_psi = 0.0, delta_epsilon = 0.0, epsilon = 0.0, eq_eq = 0.0;
     get_delta_psi_delta_epsilon_epsilon_eq_eq(tt, model, &delta_psi, &delta_epsilon, &epsilon, &eq_eq);
 
-    itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
+    icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
+    dot_product(&vec_r, &matrix, &vec_r_prime);
+    dot_product(&vec_v, &matrix, &vec_v_prime);
+    dot_product(&vec_a, &matrix, &vec_a_prime);
+    dot_product(&vec_v_coriolis, &matrix, &vec_v_coriolis_prime);
+    dot_product(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
+    dot_product(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
+
+    iau_2000a_precession(tt, model, &matrix);
+    dot_product(&vec_r_prime, &matrix, &vec_r);
+    dot_product(&vec_v_prime, &matrix, &vec_v);
+    dot_product(&vec_a_prime, &matrix, &vec_a);
+    dot_product(&vec_v_coriolis_prime, &matrix, &vec_v_coriolis);
+    dot_product(&vec_a_coriolis_prime, &matrix, &vec_a_coriolis);
+    dot_product(&vec_a_centrifugal_prime, &matrix, &vec_a_centrifugal);
+
+    iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
     dot_product(&vec_r, &matrix, &vec_r_prime);
     dot_product(&vec_v, &matrix, &vec_v_prime);
     dot_product(&vec_a, &matrix, &vec_a_prime);
@@ -392,23 +410,7 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     tirs_coriolis_velocity(tt, eq_eq, model, &matrix);
     dot_product(&vec_v_coriolis_prime, &matrix, &vec_v_coriolis);
 
-    iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
-    dot_product(&vec_r, &matrix, &vec_r_prime);
-    dot_product(&vec_v, &matrix, &vec_v_prime);
-    dot_product(&vec_a, &matrix, &vec_a_prime);
-    dot_product(&vec_v_coriolis, &matrix, &vec_v_coriolis_prime);
-    dot_product(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
-    dot_product(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
-
-    iau_76_precession(tt, model, &matrix);
-    dot_product(&vec_r_prime, &matrix, &vec_r);
-    dot_product(&vec_v_prime, &matrix, &vec_v);
-    dot_product(&vec_a_prime, &matrix, &vec_a);
-    dot_product(&vec_v_coriolis_prime, &matrix, &vec_v_coriolis);
-    dot_product(&vec_a_coriolis_prime, &matrix, &vec_a_coriolis);
-    dot_product(&vec_a_centrifugal_prime, &matrix, &vec_a_centrifugal);
-
-    icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
+    itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
     dot_product(&vec_r, &matrix, &vec_r_prime);
     dot_product(&vec_v, &matrix, &vec_v_prime);
     dot_product(&vec_a, &matrix, &vec_a_prime);
@@ -439,6 +441,8 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     free(vec_a_coriolis_prime.elements);
     free(vec_a_centrifugal.elements);
     free(vec_a_centrifugal_prime.elements);
+
+    printf("x: %f, y: %f, z: %f, v_x: %f, v_y: %f, v_z: %f, a_x: %f, a_y: %f, a_z: %f\n", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z);
 
     return Py_BuildValue("(ddddddddd)", x, y, z, v_x, v_y, v_z, a_x, a_y, a_z);
 }
