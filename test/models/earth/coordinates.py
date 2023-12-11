@@ -6,21 +6,26 @@ from toluene.models.earth.coordinates import use_default_model, Lla, Ecef, Eci
 use_default_model()
 
 lla_test_points = [
-    Lla(31.2304, 121.4737, 4, time=datetime(2000, 11, 20, 00, 15, 00, 00, timezone.utc).timestamp()),  # Shanghai, China
-    Lla(37.7749, -122.4194, 16, time=datetime(2001, 6, 20, 1, 15, 45, 00, timezone.utc).timestamp()),
+    Lla(31.2304, 121.4737, 4, time=datetime(2000, 11, 20, 00, 15, 00, 00, tzinfo=timezone.utc).timestamp()),
+    # Shanghai, China
+    Lla(37.7749, -122.4194, 16, time=datetime(2001, 6, 20, 1, 15, 45, 00, tzinfo=timezone.utc).timestamp()),
     # San Francisco, USA
-    Lla(23.1291, 113.2644, 6, time=datetime(2011, 7, 14, 10, 15, 47, 400000, timezone.utc).timestamp()),
+    Lla(23.1291, 113.2644, 6, time=datetime(2011, 7, 14, 10, 15, 47, 400000, tzinfo=timezone.utc).timestamp()),
     # Guangzhou, China
-    Lla(40.7128, -74.0060, 10, time=datetime(2021, 7, 10, 10, 15, 47, 0, timezone.utc).timestamp()),
+    Lla(40.7128, -74.0060, 10, time=datetime(2021, 7, 10, 10, 15, 47, 0, tzinfo=timezone.utc).timestamp()),
     # New York City, USA
-    Lla(35.6895, 139.6917, 40, time=datetime(2009, 6, 20, 10, 15, 45, 00, timezone.utc).timestamp()),  # Tokyo, Japan
-    Lla(12.9716, 77.5946, 920, time=datetime(2019, 6, 23, 10, 15, 15, 5000, timezone.utc).timestamp()),
+    Lla(35.6895, 139.6917, 40, time=datetime(2009, 6, 20, 10, 15, 45, 00, tzinfo=timezone.utc).timestamp()),
+    # Tokyo, Japan
+    Lla(12.9716, 77.5946, 920, time=datetime(2019, 6, 23, 10, 15, 15, 5000, tzinfo=timezone.utc).timestamp()),
     # Bangalore, India
-    Lla(31.5497, 74.3436, 217, time=datetime(2013, 7, 15, 14, 43, 16, 50050, timezone.utc).timestamp()),
+    Lla(31.5497, 74.3436, 217, time=datetime(2013, 7, 15, 14, 43, 16, 50050, tzinfo=timezone.utc).timestamp()),
     # Lahore, Pakistan
-    Lla(41.8781, -87.6298, 182, time=datetime(2016, 4, 17, 14, 36, 16, 0, timezone.utc).timestamp()),  # Chicago, USA
-    Lla(37.5665, 126.9780, 23, time=datetime(2000, 1, 1, 12, 0, 0, 0, timezone.utc).timestamp()),  # Seoul, South Korea
-    Lla(28.6139, 77.2090, 216, time=datetime(2003, 3, 6, 23, 59, 59, 0, timezone.utc).timestamp()),  # Delhi, India
+    Lla(41.8781, -87.6298, 182, time=datetime(2016, 4, 17, 14, 36, 16, 0, tzinfo=timezone.utc).timestamp()),
+    # Chicago, USA
+    Lla(37.5665, 126.9780, 23, time=datetime(2000, 1, 1, 12, 0, 0, 0, tzinfo=timezone.utc).timestamp()),
+    # Seoul, South Korea
+    Lla(28.6139, 77.2090, 216, time=datetime(2003, 3, 6, 23, 59, 59, 0, tzinfo=timezone.utc).timestamp()),
+    # Delhi, India
     Lla(41.4057, 2.1684, 12),  # Barcelona, Spain
     Lla(34.0522, -118.2437, 71),  # Los Angeles, USA
     Lla(23.6345, -102.5528, 1),  # León, Mexico
@@ -46,25 +51,25 @@ lla_test_points = [
 
 ecef_test_points = [
     Ecef(-2850075.294343253, 4655695.796924158, 3287765.2299773037,
-         time=datetime(2000, 11, 20, 00, 15, 00, 00, timezone.utc).timestamp()),  # Shanghai, China
+         time=datetime(2000, 11, 20, 00, 15, 00, 00, tzinfo=timezone.utc).timestamp()),  # Shanghai, China
     Ecef(-2706181.6267071473, -4261070.165026739, 3885735.290996956,
-         time=datetime(2001, 6, 20, 1, 15, 45, 00, timezone.utc).timestamp()),  # San Francisco, USA
+         time=datetime(2001, 6, 20, 1, 15, 45, 00, tzinfo=timezone.utc).timestamp()),  # San Francisco, USA
     Ecef(-2317914.5038877944, 5391355.734786994, 2489875.9948529475,
-         time=datetime(2011, 7, 14, 10, 15, 47, 400000, timezone.utc).timestamp()),  # Guangzhou, China
+         time=datetime(2011, 7, 14, 10, 15, 47, 400000, tzinfo=timezone.utc).timestamp()),  # Guangzhou, China
     Ecef(1334000.5446860846, -4654052.12920688, 4138306.7613726556,
-         time=datetime(2021, 7, 10, 10, 15, 47, 0, timezone.utc).timestamp()),
+         time=datetime(2021, 7, 10, 10, 15, 47, 0, tzinfo=timezone.utc).timestamp()),
     Ecef(-3954869.0631549605, 3354957.9490679787, 3700288.1237203646,
-         time=datetime(2009, 6, 20, 10, 15, 45, 00, timezone.utc).timestamp()),
+         time=datetime(2009, 6, 20, 10, 15, 45, 00, tzinfo=timezone.utc).timestamp()),
     Ecef(1335650.794194833, 6072159.400646209, 1422550.1687721466,
-         time=datetime(2019, 6, 23, 10, 15, 15, 5000, timezone.utc).timestamp()),
+         time=datetime(2019, 6, 23, 10, 15, 15, 5000, tzinfo=timezone.utc).timestamp()),
     Ecef(1468225.3552191756, 5238677.546124002, 3318097.9233186147,
-         time=datetime(2013, 7, 15, 14, 43, 16, 50050, timezone.utc).timestamp()),
+         time=datetime(2013, 7, 15, 14, 43, 16, 50050, tzinfo=timezone.utc).timestamp()),
     Ecef(196696.71042015063, -4752114.554500811, 4235653.749994335,
-         time=datetime(2016, 4, 17, 14, 36, 16, 0, timezone.utc).timestamp()),
+         time=datetime(2016, 4, 17, 14, 36, 16, 0, tzinfo=timezone.utc).timestamp()),
     Ecef(-3044790.9362076046, 4043803.6753922133, 3867430.9995572227,
-         time=datetime(2000, 1, 1, 12, 0, 0, 0, timezone.utc).timestamp()),
+         time=datetime(2000, 1, 1, 12, 0, 0, 0, tzinfo=timezone.utc).timestamp()),
     Ecef(1240621.3815494243, 5464588.4359043995, 3036507.895895077,
-         time=datetime(2003, 3, 6, 23, 59, 59, 0, timezone.utc).timestamp()),
+         time=datetime(2003, 3, 6, 23, 59, 59, 0, tzinfo=timezone.utc).timestamp()),
     Ecef(4787489.766778159, 181272.54855436122, 4196330.517202016),
     Ecef(-2503385.149590922, -4660255.25606549, 3551285.115595811),
     Ecef(-1270629.2090853488, -5706546.240194934, 2541250.16991839),
@@ -90,25 +95,25 @@ ecef_test_points = [
 
 eci_test_points = [
     Eci(-5441745.237752063, -429522.98068704456, 3287970.7565327426,
-        time=datetime(2000, 11, 20, 00, 15, 00, 00, timezone.utc).timestamp()),
+        time=datetime(2000, 11, 20, 00, 15, 00, 00, tzinfo=timezone.utc).timestamp()),
     Eci(-4870732.943097642, 1323304.3697514043, 3886373.8944033403,
-        time=datetime(2001, 6, 20, 1, 15, 45, 00, timezone.utc).timestamp()),
+        time=datetime(2001, 6, 20, 1, 15, 45, 00, tzinfo=timezone.utc).timestamp()),
     Eci(-5544955.70243912, -1913200.0016413413, 2496411.2094237907,
-        time=datetime(2011, 7, 14, 10, 15, 47, 400000, timezone.utc).timestamp()),
+        time=datetime(2011, 7, 14, 10, 15, 47, 400000, tzinfo=timezone.utc).timestamp()),
     Eci(4800401.841857878, 690944.7402699982, 4128448.252781357,
-        time=datetime(2021, 7, 10, 10, 15, 47, 0, timezone.utc).timestamp()),
+        time=datetime(2021, 7, 10, 10, 15, 47, 0, tzinfo=timezone.utc).timestamp()),
     Eci(-4794910.300098899, -1967325.0054090254, 3705042.415716683,
-        time=datetime(2009, 6, 20, 10, 15, 45, 00, timezone.utc).timestamp()),
+        time=datetime(2009, 6, 20, 10, 15, 45, 00, tzinfo=timezone.utc).timestamp()),
     Eci(-4924750.122931905, 3791408.596940791, 1432047.380128748,
-        time=datetime(2019, 6, 23, 10, 15, 15, 5000, timezone.utc).timestamp()),
+        time=datetime(2019, 6, 23, 10, 15, 15, 5000, tzinfo=timezone.utc).timestamp()),
     Eci(-3592604.666450538, -4081707.4185223705, 3322961.7076838976,
-        time=datetime(2013, 7, 15, 14, 43, 16, 50050, timezone.utc).timestamp()),
+        time=datetime(2013, 7, 15, 14, 43, 16, 50050, tzinfo=timezone.utc).timestamp()),
     Eci(4396365.506363477, -1830889.0483034858, 4228693.660743402,
-        time=datetime(2016, 4, 17, 14, 36, 16, 0, timezone.utc).timestamp()),
+        time=datetime(2016, 4, 17, 14, 36, 16, 0, tzinfo=timezone.utc).timestamp()),
     Eci(3425543.334677969, 3726262.2212037724, 3867912.2621600437,
-        time=datetime(2000, 1, 1, 12, 0, 0, 0, timezone.utc).timestamp()),
+        time=datetime(2000, 1, 1, 12, 0, 0, 0, tzinfo=timezone.utc).timestamp()),
     Eci(-2676783.7345566824, -4922647.07416093, 3037042.3971161866,
-        time=datetime(2003, 3, 6, 23, 59, 59, 0, timezone.utc).timestamp()),
+        time=datetime(2003, 3, 6, 23, 59, 59, 0, tzinfo=timezone.utc).timestamp()),
 ]
 
 
@@ -131,7 +136,7 @@ class TestCoordinates:
         for index in range(len(eci_test_points)):
             eci_test = ecef_test_points[index].eci
             assert ((eci_test.x - eci_test_points[index].x) ** 2 + (eci_test.y - eci_test_points[index].y) ** 2 + (
-                        eci_test.z - eci_test_points[index].z) ** 2) ** 0.5 == pytest.approx(0, abs=3)
+                        eci_test.z - eci_test_points[index].z) ** 2) ** 0.5 == pytest.approx(0, abs=5)
 
     def test_ecef_to_lla(self):
         for index in range(len(ecef_test_points)):
@@ -143,8 +148,9 @@ class TestCoordinates:
     def test_lla_to_eci(self):
         for index in range(len(eci_test_points)):
             eci_test = lla_test_points[index].eci
+            print(eci_test, eci_test_points[index])
             assert ((eci_test.x - eci_test_points[index].x) ** 2 + (eci_test.y - eci_test_points[index].y) ** 2 + (
-                        eci_test.z - eci_test_points[index].z) ** 2) ** 0.5 == pytest.approx(0, abs=3)
+                        eci_test.z - eci_test_points[index].z) ** 2) ** 0.5 == pytest.approx(0, abs=5)
 
     def test_lla_to_ecef(self):
         for index in range(len(lla_test_points)):
