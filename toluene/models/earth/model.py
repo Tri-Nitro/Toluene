@@ -55,7 +55,6 @@ class EarthModel:
 
     @property
     def ellipsoid(self) -> Ellipsoid:
-        self.__ellipsoid = Ellipsoid(c_ellipsoid=get_ellipsoid(self.__model))
         return self.__ellipsoid
 
     def set_ellipsoid(self, ellipsoid: Ellipsoid):
@@ -71,8 +70,6 @@ class EarthModel:
 
     @property
     def cirs_coefficients(self) -> CIRSCoefficients:
-        self.__cirs_coefficients = (
-            CIRSCoefficients(cirs_dict=get_cirs_coefficients(self.__model)))
         return self.__cirs_coefficients
 
     def set_cirs_coefficients(self, cirs_coefficients: CIRSCoefficients):
@@ -81,7 +78,6 @@ class EarthModel:
 
     @property
     def nutation_series(self) -> NutationSeries:
-        self.__nutation_series = NutationSeries(c_nutation_series=get_nutation_series(self.__model))
         return self.__nutation_series
 
     def set_nutation_series(self, nutation_series: NutationSeries):
@@ -90,7 +86,6 @@ class EarthModel:
 
     @property
     def eop_table(self) -> EarthOrientationTable:
-        self.__eop_table = EarthOrientationTable(get_eop_table(self.__model))
         return self.__eop_table
 
     def set_eop_table(self, eop_table: EarthOrientationTable):
@@ -99,7 +94,6 @@ class EarthModel:
 
     @property
     def delta_t_table(self) -> DeltaTTable:
-        self.__delta_t_table = EarthOrientationTable(get_eop_table(self.__model))
         return self.__delta_t_table
 
     def set_delta_t_table(self, delta_t_table: DeltaTTable):
@@ -108,7 +102,6 @@ class EarthModel:
 
     @property
     def epoch(self) -> float:
-        self.__epoch = get_epoch(self.__model)
         return self.__epoch
 
     def set_epoch(self, epoch: float):

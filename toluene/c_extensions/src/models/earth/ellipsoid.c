@@ -86,9 +86,9 @@ static PyObject* get_axes(PyObject* self, PyObject* args) {
 
 static PyObject* ellipsoid_radius(PyObject *self, PyObject *args) {
 
-    PyObject* capsule;
-    Ellipsoid* ellipsoid;
-    double latitude;
+    PyObject* capsule = NULL;
+    Ellipsoid* ellipsoid = NULL;
+    double latitude = 0.0;
 
     if(!PyArg_ParseTuple(args, "Od", &capsule, &latitude)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ellipsoid_radius(Ellipsoid, latitude).");
@@ -122,6 +122,9 @@ static PyObject* new_Ellipsoid(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for new_Ellipsoid.");
         return PyErr_Occurred();
     }
+
+    ellipsoid->a = 0;
+    ellipsoid->b = 0;
 
     return PyCapsule_New(ellipsoid, "Ellipsoid", delete_Ellipsoid);
 }

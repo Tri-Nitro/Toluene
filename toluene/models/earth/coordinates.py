@@ -228,7 +228,8 @@ class Lla(EarthCoordinates):
     @property
     def eci(self) -> Eci:
         x, y, z = lla_to_ecef(self.__latitude, self.__longitude, self.__altitude, self.model.model)
-        x, y, z, _, _, _, _, _, _ = ecef_to_eci(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, self.time, self.model.model)
+        x, y, z, _, _, _, _, _, _ = ecef_to_eci(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                                self.time, self.model.model)
         return Eci(x, y, z, self.time, self.model)
 
     @property

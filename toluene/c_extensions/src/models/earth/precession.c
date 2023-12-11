@@ -87,9 +87,9 @@ void iau_2000a_precession(double t, EarthModel* model, Matrix* matrix) {
 
     double sin_epsilon_0 = sin(epsilon_0 * M_PI/648000);
     double cos_epsilon_0 = cos(epsilon_0 * M_PI/648000);
-    double sin_psi_a = sin(-1 * psi_a * M_PI/648000);
+    double sin_psi_a = -1 * sin(psi_a * M_PI/648000);
     double cos_psi_a = cos(psi_a * M_PI/648000);
-    double sin_omega_a = sin(-1 * omega_a * M_PI/648000);
+    double sin_omega_a = -1 * sin(omega_a * M_PI/648000);
     double cos_omega_a = cos(omega_a * M_PI/648000);
     double sin_chi_a = sin(chi_a * M_PI/648000);
     double cos_chi_a = cos(chi_a * M_PI/648000);
@@ -97,17 +97,13 @@ void iau_2000a_precession(double t, EarthModel* model, Matrix* matrix) {
     if(matrix && matrix->ncols == 3 && matrix->nrows == 3) {
 
         matrix->elements[0] = cos_chi_a * cos_psi_a - sin_psi_a * sin_chi_a * cos_omega_a;
-        matrix->elements[1] = -1 * sin_chi_a * cos_omega_a - sin_psi_a * cos_chi_a * cos_omega_a;
-        matrix->elements[2] = sin_psi_a * sin_omega_a;
-        matrix->elements[3] = cos_chi_a * sin_psi_a * cos_epsilon_0 +
-            sin_chi_a * cos_omega_a * cos_psi_a * cos_epsilon_0 - sin_epsilon_0 * sin_chi_a * sin_omega_a;
-        matrix->elements[4] = -1 * sin_chi_a * sin_psi_a * cos_epsilon_0 +
-            cos_chi_a * cos_omega_a * cos_psi_a * cos_epsilon_0 - sin_epsilon_0 * cos_chi_a * sin_omega_a;
-        matrix->elements[5] = -1 * sin_omega_a * cos_psi_a * cos_epsilon_0 - sin_epsilon_0 * cos_omega_a;
-        matrix->elements[6] = cos_chi_a * sin_psi_a * sin_epsilon_0 +
-            sin_chi_a * cos_omega_a * cos_psi_a * sin_epsilon_0 + cos_epsilon_0 * sin_chi_a * sin_omega_a;
-        matrix->elements[7] = -1 * sin_chi_a * sin_psi_a * sin_epsilon_0 +
-            cos_chi_a * cos_omega_a * cos_psi_a * sin_epsilon_0 + cos_epsilon_0 * cos_chi_a * sin_omega_a;
+        matrix->elements[1] = cos_chi_a * sin_psi_a * cos_epsilon_0 + sin_chi_a * cos_omega_a * cos_psi_a * cos_epsilon_0 - sin_epsilon_0 * sin_chi_a * sin_omega_a;
+        matrix->elements[2] = cos_chi_a * sin_psi_a * sin_epsilon_0 + sin_chi_a * cos_omega_a * cos_psi_a * sin_psi_a + cos_epsilon_0 * sin_chi_a * sin_omega_a;
+        matrix->elements[3] = -1 * sin_chi_a * cos_psi_a - sin_psi_a * cos_chi_a * cos_omega_a;
+        matrix->elements[4] = -1 * sin_chi_a * sin_psi_a * cos_epsilon_0 + cos_chi_a * cos_omega_a * cos_psi_a * cos_epsilon_0 - sin_epsilon_0 * cos_chi_a * sin_omega_a;
+        matrix->elements[5] = -1 * sin_chi_a * sin_psi_a * sin_epsilon_0 + cos_chi_a * cos_omega_a * cos_psi_a * sin_epsilon_0 + cos_epsilon_0 * cos_chi_a * sin_omega_a;
+        matrix->elements[6] = sin_psi_a * sin_omega_a;
+        matrix->elements[7] = -1 * sin_omega_a * cos_psi_a * cos_epsilon_0 - sin_epsilon_0 * cos_omega_a;
         matrix->elements[8] = -1 * sin_omega_a * cos_psi_a * sin_epsilon_0 + cos_omega_a * cos_epsilon_0;
 
     }

@@ -53,6 +53,14 @@ setup_args = dict(
             py_limited_api=False
         ),
         Extension(
+            'toluene_extensions.models.earth.geoid',
+            [
+                'toluene/c_extensions/src/models/earth/geoid.c'
+            ],
+            include_dirs=['toluene/c_extensions/include'],
+            py_limited_api=False
+        ),
+        Extension(
             'toluene_extensions.models.earth.model',
             [
                 'toluene/c_extensions/src/models/earth/model.c'

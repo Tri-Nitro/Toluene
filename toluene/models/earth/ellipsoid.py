@@ -40,6 +40,7 @@ class Ellipsoid:
     def __init__(self, a: float = None, b: float = None, c_ellipsoid=None):
         if c_ellipsoid is not None:
             self.__ellipsoid = c_ellipsoid
+            a, b = get_axes(self.__ellipsoid)
         else:
             self.__ellipsoid = new_Ellipsoid()
         if a is not None and b is not None:
@@ -56,6 +57,7 @@ class Ellipsoid:
         """
         set_axes(self.__ellipsoid, a, b)
 
+    @property
     def axes(self) -> (float, float):
         """
         Gets the semi-major and semi-minor axes of the ellipsoid.
@@ -65,19 +67,21 @@ class Ellipsoid:
         """
         return get_axes(self.__ellipsoid)
 
+    @property
     def a(self) -> float:
         """
         :return: The semi-major axis of the ellipsoid in meters.
         :rtype: float
         """
-        return self.axes()[0]
+        return self.axes[0]
 
+    @property
     def b(self) -> float:
         """
         :return: The semi-minor axis of the ellipsoid in meters.
         :rtype: float
         """
-        return self.axes()[1]
+        return self.axes[1]
 
     def radius(self, latitude: float) -> float:
         """

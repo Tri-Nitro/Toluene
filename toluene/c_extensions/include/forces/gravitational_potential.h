@@ -21,51 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_GEOID_H__
-#define __MODELS_EARTH_GEOID_H__
-
-#include "math/linear_algebra.h"
+#ifndef __FORCES_GRAVITATIONAL_POTENTIAL_H__
+#define __FORCES_GRAVITATIONAL_POTENTIAL_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct {
-    int degree;
-    int order;
-    double C;
-    double S;
-} Harmonic;
+#ifdef __compile_forces_gravitational_potential
 
-typedef struct {
-    double lat;
-    double lon;
-    double height;
-} GeoidPoint;
+#include "models/earth/geoid.h"
+void gravitational_potential(double right_ascension, double declination, double radius, Geoid* geoid, double *potential);
 
-typedef struct {
-    int nharmonics;
-    int npoints;
-    int nharmonics_allocated;
-    int npoints_allocated;
-    Harmonic* harmonics;
-    GeoidPoint* points;
-} Geoid;
-
-
-#ifdef __compile_models_earth_geoid
-
-static PyObject* add_grid_point(PyObject* self, PyObject* args);
-static PyObject* add_harmonic(PyObject* self, PyObject* args);
-
-static PyObject* new_Geoid(PyObject* self, PyObject* args);
-static void delete_Geoid(PyObject* obj);
-
-#endif /* __compile_models_earth_geoid */
-
+#endif /* __compile_forces_gravitational_potential */
 
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif
 
-#endif /* __MODELS_EARTH_GEOID_H__ */
+#endif /* __FORCES_GRAVITATIONAL_POTENTIAL_H__ */
