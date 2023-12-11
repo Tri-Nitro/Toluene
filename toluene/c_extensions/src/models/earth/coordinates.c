@@ -180,6 +180,9 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     double delta_psi = 0.0, delta_epsilon = 0.0, epsilon = 0.0, eq_eq = 0.0;
     get_delta_psi_delta_epsilon_epsilon_eq_eq(tt, model, &delta_psi, &delta_epsilon, &epsilon, &eq_eq);
 
+    double magnitude = sqrt(x*x+y*y+z*z);
+    normalize(&vec_r);
+
     icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
     dot_product_matrix_transpose(&vec_r, &matrix, &vec_r_prime);
     dot_product_matrix_transpose(&vec_v, &matrix, &vec_v_prime);
@@ -188,7 +191,7 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     dot_product_matrix_transpose(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
     dot_product_matrix_transpose(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
 
-    iau_76_precession(tt, model, &matrix);
+    iau_2000a_precession(tt, model, &matrix);
     dot_product_matrix_transpose(&vec_r_prime, &matrix, &vec_r);
     dot_product_matrix_transpose(&vec_v_prime, &matrix, &vec_v);
     dot_product_matrix_transpose(&vec_a_prime, &matrix, &vec_a);
@@ -204,13 +207,36 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     dot_product_matrix_transpose(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
     dot_product_matrix_transpose(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
 
+    Vector vec_v_coriolis_rotation;
+    vec_v_coriolis_rotation.nelements = 3;
+    vec_v_coriolis_rotation.elements = (double*)malloc(sizeof(double)*3);
+    if(!vec_v_coriolis_rotation.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for velocity coriolis rotation vector.");
+        return PyErr_Occurred();
+    }
+
+    double rate;
+    rate_of_earth_rotation(tt, model, &rate);
+    vec_v_coriolis_rotation.elements[0] = 0.0;
+    vec_v_coriolis_rotation.elements[1] = 0.0;
+    vec_v_coriolis_rotation.elements[2] = rate;
+
+    cross_product_3_3(&vec_v_coriolis_rotation, &vec_v_coriolis_prime, &vec_v_coriolis);
+
+    cross_product_3_3(&vec_v_coriolis_rotation, &vec_v_coriolis, &vec_a_coriolis);
+    cross_product_3_3(&vec_v_coriolis_rotation, &vec_a_coriolis_prime, &vec_a_centrifugal);
+
+    vec_a_centrifugal.elements[0] *= 2.0;
+    vec_a_centrifugal.elements[1] *= 2.0;
+    vec_a_centrifugal.elements[2] *= 2.0;
+
     tirs_to_true_equinox_equator_earth_rotation(tt, eq_eq, model, &matrix);
     dot_product_matrix_transpose(&vec_r_prime, &matrix, &vec_r);
     dot_product_matrix_transpose(&vec_v_prime, &matrix, &vec_v);
     dot_product_matrix_transpose(&vec_a_prime, &matrix, &vec_a);
-
-    tirs_coriolis_velocity(tt, eq_eq, model, &matrix);
-    dot_product_matrix_transpose(&vec_v_coriolis_prime, &matrix, &vec_v_coriolis);
+    dot_product(&vec_v_coriolis, &matrix, &vec_v_coriolis_prime);
+    dot_product(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
+    dot_product(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
 
     itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
     dot_product_matrix_transpose(&vec_r, &matrix, &vec_r_prime);
@@ -220,15 +246,15 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     dot_product_matrix_transpose(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
     dot_product_matrix_transpose(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
 
-    x = vec_r_prime.elements[0];
-    y = vec_r_prime.elements[1];
-    z = vec_r_prime.elements[2];
-    v_x = vec_v_prime.elements[0] + vec_v_coriolis.elements[0];
-    v_y = vec_v_prime.elements[1] + vec_v_coriolis.elements[1];
-    v_z = vec_v_prime.elements[2] + vec_v_coriolis.elements[2];
-    a_x = vec_a_prime.elements[0];
-    a_y = vec_a_prime.elements[1];
-    a_z = vec_a_prime.elements[2];
+    x = vec_r_prime.elements[0] * magnitude;
+    y = vec_r_prime.elements[1] * magnitude;
+    z = vec_r_prime.elements[2] * magnitude;
+    v_x = vec_v_prime.elements[0] - vec_v_coriolis.elements[0];
+    v_y = vec_v_prime.elements[1] - vec_v_coriolis.elements[1];
+    v_z = vec_v_prime.elements[2] - vec_v_coriolis.elements[2];
+    a_x = vec_a_prime.elements[0] - vec_a_coriolis.elements[0] - vec_a_centrifugal.elements[0];
+    a_y = vec_a_prime.elements[1] - vec_a_coriolis.elements[1] - vec_a_centrifugal.elements[1];
+    a_z = vec_a_prime.elements[2] - vec_a_coriolis.elements[2] - vec_a_centrifugal.elements[2];
 
     free(matrix.elements);
     free(vec_r.elements);
@@ -239,6 +265,7 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     free(vec_a_prime.elements);
     free(vec_v_coriolis.elements);
     free(vec_v_coriolis_prime.elements);
+    free(vec_v_coriolis_rotation.elements);
     free(vec_a_coriolis.elements);
     free(vec_a_coriolis_prime.elements);
     free(vec_a_centrifugal.elements);
@@ -376,6 +403,9 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     double delta_psi = 0.0, delta_epsilon = 0.0, epsilon = 0.0, eq_eq = 0.0;
     get_delta_psi_delta_epsilon_epsilon_eq_eq(tt, model, &delta_psi, &delta_epsilon, &epsilon, &eq_eq);
 
+    double magnitude = sqrt(x*x+y*y+z*z);
+    normalize(&vec_r);
+
     itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
     dot_product(&vec_r, &matrix, &vec_r_prime);
     dot_product(&vec_v, &matrix, &vec_v_prime);
@@ -384,47 +414,70 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     dot_product(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
     dot_product(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
 
+    Vector vec_v_coriolis_rotation;
+    vec_v_coriolis_rotation.nelements = 3;
+    vec_v_coriolis_rotation.elements = (double*)malloc(sizeof(double)*3);
+    if(!vec_v_coriolis_rotation.elements) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for velocity coriolis rotation vector.");
+        return PyErr_Occurred();
+    }
+
+    double rate;
+    rate_of_earth_rotation(tt, model, &rate);
+    vec_v_coriolis_rotation.elements[0] = 0.0;
+    vec_v_coriolis_rotation.elements[1] = 0.0;
+    vec_v_coriolis_rotation.elements[2] = rate;
+
+    cross_product_3_3(&vec_v_coriolis_rotation, &vec_v_coriolis_prime, &vec_v_coriolis);
+
+    cross_product_3_3(&vec_v_coriolis_rotation, &vec_v_coriolis, &vec_a_coriolis);
+    cross_product_3_3(&vec_v_coriolis_rotation, &vec_a_coriolis_prime, &vec_a_centrifugal);
+
+    vec_a_centrifugal.elements[0] *= 2.0;
+    vec_a_centrifugal.elements[1] *= 2.0;
+    vec_a_centrifugal.elements[2] *= 2.0;
+
     tirs_to_true_equinox_equator_earth_rotation(tt, eq_eq, model, &matrix);
     dot_product(&vec_r_prime, &matrix, &vec_r);
     dot_product(&vec_v_prime, &matrix, &vec_v);
     dot_product(&vec_a_prime, &matrix, &vec_a);
-
-    tirs_coriolis_velocity(tt, eq_eq, model, &matrix);
-    dot_product(&vec_v_coriolis_prime, &matrix, &vec_v_coriolis);
+    dot_product(&vec_v_coriolis, &matrix, &vec_v_coriolis_prime);
+    dot_product(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
+    dot_product(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
 
     iau_2006_nutation(delta_psi, delta_epsilon, epsilon, &matrix);
     dot_product(&vec_r, &matrix, &vec_r_prime);
     dot_product(&vec_v, &matrix, &vec_v_prime);
     dot_product(&vec_a, &matrix, &vec_a_prime);
-    dot_product(&vec_v_coriolis, &matrix, &vec_v_coriolis_prime);
-    dot_product(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
-    dot_product(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
-
-    iau_76_precession(tt, model, &matrix);
-    dot_product(&vec_r_prime, &matrix, &vec_r);
-    dot_product(&vec_v_prime, &matrix, &vec_v);
-    dot_product(&vec_a_prime, &matrix, &vec_a);
     dot_product(&vec_v_coriolis_prime, &matrix, &vec_v_coriolis);
     dot_product(&vec_a_coriolis_prime, &matrix, &vec_a_coriolis);
     dot_product(&vec_a_centrifugal_prime, &matrix, &vec_a_centrifugal);
+
+    iau_2000a_precession(tt, model, &matrix);
+    dot_product(&vec_r_prime, &matrix, &vec_r);
+    dot_product(&vec_v_prime, &matrix, &vec_v);
+    dot_product(&vec_a_prime, &matrix, &vec_a);
+    dot_product(&vec_v_coriolis, &matrix, &vec_v_coriolis_prime);
+    dot_product(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
+    dot_product(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
 
     icrs_to_mean_j2000_bias_approximation(model->cirs_coefficients, &matrix);
     dot_product(&vec_r, &matrix, &vec_r_prime);
     dot_product(&vec_v, &matrix, &vec_v_prime);
     dot_product(&vec_a, &matrix, &vec_a_prime);
-    dot_product(&vec_v_coriolis, &matrix, &vec_v_coriolis_prime);
-    dot_product(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
-    dot_product(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
+    dot_product(&vec_v_coriolis_prime, &matrix, &vec_v_coriolis);
+    dot_product(&vec_a_coriolis_prime, &matrix, &vec_a_coriolis);
+    dot_product(&vec_a_centrifugal_prime, &matrix, &vec_a_centrifugal);
 
-    x = vec_r_prime.elements[0];
-    y = vec_r_prime.elements[1];
-    z = vec_r_prime.elements[2];
+    x = vec_r_prime.elements[0] * magnitude;
+    y = vec_r_prime.elements[1] * magnitude;
+    z = vec_r_prime.elements[2] * magnitude;
     v_x = vec_v_prime.elements[0] + vec_v_coriolis.elements[0];
     v_y = vec_v_prime.elements[1] + vec_v_coriolis.elements[1];
     v_z = vec_v_prime.elements[2] + vec_v_coriolis.elements[2];
-    a_x = vec_a_prime.elements[0];
-    a_y = vec_a_prime.elements[1];
-    a_z = vec_a_prime.elements[2];
+    a_x = vec_a_prime.elements[0] + vec_a_coriolis.elements[0] + vec_a_centrifugal.elements[0];
+    a_y = vec_a_prime.elements[1] + vec_a_coriolis.elements[1] + vec_a_centrifugal.elements[1];
+    a_z = vec_a_prime.elements[2] + vec_a_coriolis.elements[2] + vec_a_centrifugal.elements[2];
 
     free(matrix.elements);
     free(vec_r.elements);
@@ -435,6 +488,7 @@ static PyObject* ecef_to_eci(PyObject *self, PyObject *args) {
     free(vec_a_prime.elements);
     free(vec_v_coriolis.elements);
     free(vec_v_coriolis_prime.elements);
+    free(vec_v_coriolis_rotation.elements);
     free(vec_a_coriolis.elements);
     free(vec_a_coriolis_prime.elements);
     free(vec_a_centrifugal.elements);

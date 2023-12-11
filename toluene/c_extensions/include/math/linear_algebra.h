@@ -47,6 +47,11 @@ typedef struct {
 void dot_product(Vector* vector, Matrix* matrix, Vector* product);
 void dot_product_matrix_transpose(Vector* vector, Matrix* matrix, Vector* product);
 
+void cross_product_3_3(Vector* vector1, Vector* vector2, Vector* product);
+
+void normalize(Vector* vector);
+void magnitude(Vector* vector, double* mag);
+
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif

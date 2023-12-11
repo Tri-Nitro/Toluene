@@ -132,6 +132,44 @@ void dot_product_matrix_transpose(Vector* vector, Matrix* matrix, Vector* produc
 }
 
 
+void cross_product_3_3(Vector* vector1, Vector* vector2, Vector* product) {
+
+    if(vector1 && vector2 && product && vector1->nelements == 3 && vector2->nelements == 3 && product->nelements == 3) {
+
+        product->elements[0] = vector1->elements[1] * vector2->elements[2] - vector1->elements[2] * vector2->elements[1];
+        product->elements[1] = vector1->elements[2] * vector2->elements[0] - vector1->elements[0] * vector2->elements[2];
+        product->elements[2] = vector1->elements[0] * vector2->elements[1] - vector1->elements[1] * vector2->elements[0];
+    }
+
+}
+
+
+void normalize(Vector* vector) {
+
+    if(vector) {
+        double mag = 0;
+        magnitude(vector, &mag);
+        for(int i = 0; i < vector->nelements; i++) {
+            vector->elements[i] /= mag;
+        }
+    }
+
+}
+
+
+void magnitude(Vector* vector, double* mag) {
+
+        if(vector) {
+            *mag = 0;
+            for(int i = 0; i < vector->nelements; i++) {
+                *mag += vector->elements[i] * vector->elements[i];
+            }
+            *mag = sqrt(*mag);
+        }
+
+}
+
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
