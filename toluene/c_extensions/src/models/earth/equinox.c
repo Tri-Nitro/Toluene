@@ -67,7 +67,7 @@ void get_delta_psi_delta_epsilon_epsilon_eq_eq(double t, EarthModel* model, doub
 
     double ai, sin_ai, cos_ai;
 
-    for(size_t i = 0; i < n_series; ++i) {
+    for(int i = 0; i < n_series; ++i) {
         ai = nutation_series->records[i].a * nutation_critical_arguments[0] +
              nutation_series->records[i].b * nutation_critical_arguments[1] +
              nutation_series->records[i].c * nutation_critical_arguments[2] +
@@ -87,9 +87,9 @@ void get_delta_psi_delta_epsilon_epsilon_eq_eq(double t, EarthModel* model, doub
         cos_ai = cos(ai * M_PI/648000);
 
         *delta_psi += (nutation_series->records[i].S + nutation_series->records[i].S_dot * t) * sin_ai +
-                                    nutation_series->records[i].C * cos_ai;
+                                    nutation_series->records[i].C_prime * cos_ai;
         *delta_epsilon += (nutation_series->records[i].C + nutation_series->records[i].C_dot * t) * cos_ai +
-                                    nutation_series->records[i].S * sin_ai;
+                                    nutation_series->records[i].S_prime * sin_ai;
         *eq_eq += nutation_series->records[i].C_prime * sin_ai + nutation_series->records[i].S_prime * cos_ai;
     }
 

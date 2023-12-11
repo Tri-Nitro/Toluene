@@ -44,23 +44,23 @@ void iau_2006_nutation(double delta_psi, double delta_epsilon, double epsilon, M
 
     double sin_delta_psi, cos_delta_psi, sin_epsilon_prime, cos_epsilon_prime, sin_epsilon, cos_epsilon;
 
-    sin_epsilon = sin(epsilon * M_PI/648000);
-    cos_epsilon = cos(epsilon * M_PI/648000);
+    sin_epsilon = sin((epsilon-delta_epsilon) * M_PI/648000);
+    cos_epsilon = cos((epsilon-delta_epsilon) * M_PI/648000);
     sin_delta_psi = -1 * sin(delta_psi * M_PI/648000);
     cos_delta_psi = cos(delta_psi * M_PI/648000);
-    sin_epsilon_prime = sin((-1 * epsilon - delta_epsilon) * M_PI/648000);
-    cos_epsilon_prime = cos((-1 * epsilon - delta_epsilon) * M_PI/648000);
+    sin_epsilon_prime = -1 * sin(epsilon * M_PI/648000);
+    cos_epsilon_prime = cos(epsilon * M_PI/648000);
 
     if(matrix && matrix->ncols == 3 && matrix->nrows == 3) {
 
         matrix->elements[0] = cos_delta_psi;
-        matrix->elements[1] = -1.0 * sin_delta_psi * cos_epsilon_prime;
-        matrix->elements[2] = sin_delta_psi * sin_epsilon_prime;
-        matrix->elements[3] = sin_delta_psi * cos_epsilon;
-        matrix->elements[4] = cos_epsilon_prime * cos_delta_psi * cos_epsilon - sin_epsilon_prime * sin_epsilon;
-        matrix->elements[5] = -1.0 * sin_epsilon_prime * cos_delta_psi * cos_epsilon - sin_epsilon * cos_epsilon_prime;
-        matrix->elements[6] = sin_delta_psi * sin_epsilon;
-        matrix->elements[7] = cos_epsilon_prime * cos_delta_psi * sin_epsilon + cos_epsilon * sin_epsilon_prime;
+        matrix->elements[1] = sin_delta_psi * cos_epsilon;
+        matrix->elements[2] = sin_delta_psi * sin_epsilon;
+        matrix->elements[3] = -1.0 * sin_delta_psi * cos_epsilon_prime;
+        matrix->elements[4] = cos_epsilon_prime * cos_delta_psi * cos_epsilon - sin_epsilon * sin_epsilon_prime;
+        matrix->elements[5] = cos_epsilon_prime * cos_delta_psi * sin_epsilon + cos_epsilon * sin_epsilon_prime;
+        matrix->elements[6] = sin_delta_psi * sin_epsilon_prime;
+        matrix->elements[7] = -1.0 * sin_epsilon_prime * cos_delta_psi * cos_epsilon - sin_epsilon * cos_epsilon_prime;
         matrix->elements[8] = -1.0 * sin_epsilon_prime * cos_delta_psi * sin_epsilon + cos_epsilon_prime * cos_epsilon;
 
     }

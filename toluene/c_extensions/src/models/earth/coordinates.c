@@ -234,9 +234,9 @@ static PyObject* eci_to_ecef(PyObject *self, PyObject *args) {
     dot_product_matrix_transpose(&vec_r_prime, &matrix, &vec_r);
     dot_product_matrix_transpose(&vec_v_prime, &matrix, &vec_v);
     dot_product_matrix_transpose(&vec_a_prime, &matrix, &vec_a);
-    dot_product(&vec_v_coriolis, &matrix, &vec_v_coriolis_prime);
-    dot_product(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
-    dot_product(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
+    dot_product_matrix_transpose(&vec_v_coriolis, &matrix, &vec_v_coriolis_prime);
+    dot_product_matrix_transpose(&vec_a_coriolis, &matrix, &vec_a_coriolis_prime);
+    dot_product_matrix_transpose(&vec_a_centrifugal, &matrix, &vec_a_centrifugal_prime);
 
     itrs_to_tirs_polar_motion_approximation(tt, model, &matrix);
     dot_product_matrix_transpose(&vec_r, &matrix, &vec_r_prime);
