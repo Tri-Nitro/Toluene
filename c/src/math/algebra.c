@@ -24,10 +24,10 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
-#define __compile_math_algebra /* Used to get prototypes so we don't get warnings about missing definitions. */
+#define __compile_math_algebra__
 #include "math/algebra.h"
 
-#if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
+#if defined(_WIN32) || defined(WIN32)
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -37,9 +37,15 @@
 #ifdef __cplusplus
 extern "C"
 {
-#endif
+#endif /* __cplusplus */
 
-
+/**
+ * @brief Solve a polynomial for the value at a given x
+ *
+ * @param polynomial The polynomial
+ * @param x The variable
+ * @param value The value
+ */
 void solve(Polynomial* polynomial, double x, double* value) {
 
     if(polynomial && value) {
@@ -51,7 +57,12 @@ void solve(Polynomial* polynomial, double x, double* value) {
 
 }
 
-
+/**
+ * @brief Create a new polynomial available in python
+ *
+ * @param coefficients A python list of coefficients
+ * @return Polynomial* The polynomial
+ */
 static PyObject* new_Polynomial(PyObject* self, PyObject* args) {
 
     Polynomial* polynomial = (Polynomial*)malloc(sizeof(Polynomial));
@@ -80,7 +91,11 @@ static PyObject* new_Polynomial(PyObject* self, PyObject* args) {
     return PyCapsule_New(polynomial, "Polynomial", delete_Polynomial);
 }
 
-
+/**
+ * @brief Delete a polynomial
+ *
+ * @param obj The polynomial
+ */
 void delete_Polynomial(PyObject* obj) {
 
     Polynomial* polynomial = (Polynomial*)PyCapsule_GetPointer(obj, "Polynomial");
@@ -115,4 +130,4 @@ PyMODINIT_FUNC PyInit_algebra(void) {
 
 #ifdef __cplusplus
 } /* extern "C" */
-#endif
+#endif /* __cplusplus */
