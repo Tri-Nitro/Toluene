@@ -21,17 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MATH_INTERPOLATION_H__
-#define __MATH_INTERPOLATION_H__
+#ifndef __MODELS_EARTH_NUTATION_H__
+#define __MODELS_EARTH_NUTATION_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void bilinear_interpolation(double x, double y, double corners[], double* value);
+
+typedef struct {
+    double a, b, c, d, e, f, g, h, j, k, m, n, o, r;
+    double S, S_dot, C_prime, C, C_dot, S_prime;
+} NutationSeriesRecord;
+
+
+typedef struct {
+    int nrecords;
+    int nrecords_allocated;
+    NutationSeriesRecord* records;
+} NutationSeries;
+
+
+#ifdef __compile_models_earth_nutation
+
+
+void iau_2006_nutation(double delta_psi, double delta_epsilon, double epsilon, Matrix* matrix);
+
+static PyObject* nutation_series_add_record(PyObject* self, PyObject* args);
+
+static PyObject* new_NutationSeries(PyObject* self, PyObject* args);
+static void delete_NutationSeries(PyObject* obj);
+
+#endif /* __compile_models_earth_nutation */
 
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif
 
-#endif /* __MATH_INTERPOLATION_H__ */
+#endif /* __MODELS_EARTH_NUTATION_H__ */
