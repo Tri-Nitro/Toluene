@@ -272,7 +272,7 @@ static PyMethodDef tolueneModelsEarthNutationMethods[] = {
 static struct PyModuleDef models_earth_nutation = {
     PyModuleDef_HEAD_INIT,
     "models.earth.nutation",
-    "C Extensions to toluene models ellipsoid functions",
+    "C Extensions to work with nutation and nutation series inside the CPU ... GPU stuff to come for nutation series.",
     -1,
     tolueneModelsEarthNutationMethods
 };

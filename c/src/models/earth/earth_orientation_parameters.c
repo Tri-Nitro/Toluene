@@ -175,7 +175,7 @@ static PyMethodDef tolueneModelsEarthEarthOrientationMethods[] = {
 static struct PyModuleDef models_earth_earth_orientation = {
     PyModuleDef_HEAD_INIT,
     "models.earth.earth_orientation",
-    "C Extensions to toluene models ellipsoid functions",
+    "C Extensions to work with earth orientation parameters in C",
     -1,
     tolueneModelsEarthEarthOrientationMethods
 };

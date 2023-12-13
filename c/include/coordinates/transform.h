@@ -28,12 +28,26 @@
 extern "C" {
 #endif /* __cplusplus */
 
-
+/**
+ * @brief Converts itrf coordinates to the equivalent gcrf coordinates.
+ */
 static PyObject* itrf_to_gcrf(PyObject* self, PyObject* args);
+
+/**
+ * @brief Converts gcrf coordinates to the equivalent itrf coordinates.
+ */
 static PyObject* gcrf_to_itrf(PyObject* self, PyObject* args);
 
-static PyObject* geodetic_to_itrf(PyObject* self, PyObject* args);
+/**
+ * @brief Converts itrf coordinates to the equivalent geodetic coordinates.
+ */
 static PyObject* itrf_to_geodetic(PyObject* self, PyObject* args);
+
+/**
+ * @brief Converts geodetic coordinates to the equivalent itrf coordinates.
+ */
+static PyObject* geodetic_to_itrf(PyObject* self, PyObject* args);
+
 
 #ifdef __cplusplus
 }   /* extern "C" */

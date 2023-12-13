@@ -32,10 +32,10 @@ extern "C" {
  *  @brief List of Reference Frames Coordinates are in.
  */
 typedef enum {
-    InternationalTerrestrialReferenceFrame,
-    InternationalCelestialReferenceFrame,
-    GeocentricCelestialReferenceFrame,
-    GeodeticReferenceFrame
+    InternationalTerrestrialReferenceFrame = 1,
+    InternationalCelestialReferenceFrame   = 2,
+    GeocentricCelestialReferenceFrame      = 3,
+    GeodeticReferenceFrame                 = 4
 } ReferenceFrame;
 
 
