@@ -45,6 +45,8 @@ typedef struct {
 
 #ifdef __compile_util_time
 
+extern const double SECONDS_PER_JULIAN_CENTURY;
+
 void delta_t_record_lookup(DeltaTTable* table, double timestamp, DeltaTTableRecord* record);
 
 static PyObject* delta_t_add_record(PyObject* self, PyObject* args);

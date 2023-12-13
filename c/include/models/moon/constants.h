@@ -21,23 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_BIAS_H__
-#define __MODELS_EARTH_BIAS_H__
-
-#include "math/linear_algebra.h"
-#include "models/earth/coefficients.h"
+#ifndef __MODELS_MOON_CONSTANTS_H__
+#define __MODELS_MOON_CONSTANTS_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
-void icrs_to_mean_j2000_bias_approximation(CIRSCoefficients* coefficients, Matrix* matrix);
-void icrs_to_mean_j2000_bias_exact(CIRSCoefficients* coefficients, Matrix* matrix);
-
+extern const long double MEAN_ANOMALY_MOON[5];
+extern const long double MEAN_ARGUMENT_LATITUDE_MOON[5];
+extern const long double MEAN_ELONGATION_MOON_FROM_SUN[5];
+extern const long double MEAN_LONGITUDE_MOON_MEAN_ASCENDING_NODE[5];
 
 #ifdef __cplusplus
 }   /* extern "C" */
-#endif
+#endif /* __cplusplus */
 
-#endif /* __MODELS_EARTH_BIAS_H__ */
+
+#endif /* __MODELS_MOON_ELLIPSOID_H__ */

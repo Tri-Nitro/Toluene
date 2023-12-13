@@ -21,53 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MATH_ALGEBRA_H__
-#define __MATH_ALGEBRA_H__
+#ifndef __COORDINATES_REFERENCE_FRAME_H__
+#define __COORDINATES_REFERENCE_FRAME_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-
-/** @struct
- * @brief A polynomial
- *
- * @var order The order of the polynomial
- * @var coefficients The coefficients of the polynomial
+/** @enum
+ *  @brief List of Reference Frames Coordinates are in.
  */
-typedef struct {
-    int order;
-    long double* coefficients;
-} Polynomial;
-
-#ifdef __compile_math_algebra__
-
-/**
- * @brief Solve a polynomial for the value at a given x
- *
- * @param polynomial The polynomial
- * @param x The variable
- * @param value The value
- */
-void solve(Polynomial* polynomial, double x, double* value);
-
-/**
- * @brief Create a new polynomial available in python
- *
- * @param coefficients A python list of coefficients
- * @return Polynomial* The polynomial
- */
-static PyObject* new_Polynomial(PyObject* self, PyObject* args);
-
-/**
- * @brief Delete a polynomial
- *
- * @param obj The polynomial
- */
-void delete_Polynomial(PyObject* obj);
-
-
-#endif /* __compile_math_algebra__ */
+typedef enum {
+    InternationalTerrestrialReferenceFrame,
+    InternationalCelestialReferenceFrame,
+    GeocentricCelestialReferenceFrame,
+    GeodeticReferenceFrame
+} ReferenceFrame;
 
 
 #ifdef __cplusplus
@@ -75,4 +44,4 @@ void delete_Polynomial(PyObject* obj);
 #endif /* __cplusplus */
 
 
-#endif /* __MATH_ALGEBRA_H__ */
+#endif /* __COORDINATES_REFERENCE_FRAME_H__ */

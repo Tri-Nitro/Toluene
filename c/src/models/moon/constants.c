@@ -21,19 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __UTIL_CONFIG_H__
-#define __UTIL_CONFIG_H__
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+
+#include "models/moon/constants.h"
+
+#if defined(_WIN32) || defined(WIN32)
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+#endif /* _WIN32 */
 
 #ifdef __cplusplus
-extern "C" {
-#endif
+extern "C"
+{
+#endif /* __cplusplus */
 
-static PyObject* load_delta_t_data(PyObject* self, PyObject* args);
-static PyObject* load_iau_coefficients_data(PyObject* self, PyObject* args);
-static PyObject* load_iers_earth_orientation_data(PyObject* self, PyObject* args);
+/**
+ * These coefficients can be found here: https://aa.usno.navy.mil/downloads/Circular_179.pdf
+ */
+const long double MEAN_ANOMALY_MOON[5] = {485868.249036, 1717915923.2178, 31.8792, 0.051635, -0.00024470};
+const long double MEAN_ARGUMENT_LATITUDE_MOON[5] = {335779.526232, 1739527262.8478, -12.7512, -0.001037, 0.00000417};
+const long double MEAN_ELONGATION_MOON_FROM_SUN[5] = {1072260.703692, 1602961601.2090, -6.3706, 0.006593, -0.00003169};
+const long double MEAN_LONGITUDE_MOON_MEAN_ASCENDING_NODE[5] = {450160.398036, -6962890.5431, 7.4722, 0.007702,
+    -0.00005939};
 
 #ifdef __cplusplus
-}   /* extern "C" */
-#endif
-
-#endif /* __UTIL_CONFIG_H__ */
+} /* extern "C" */
+#endif /* __cplusplus */

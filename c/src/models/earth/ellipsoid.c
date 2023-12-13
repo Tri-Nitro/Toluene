@@ -210,7 +210,7 @@ static PyObject* get_flattening(PyObject* self, PyObject* args) {
  *
  * @return PyObject* The eccentricity squared
  */
-static PyObject* eccentricity_squared(PyObject *self, PyObject *args) {
+static PyObject* eccentricity_squared(PyObject* self, PyObject* args) {
 
     PyObject* capsule = NULL;
     Ellipsoid* ellipsoid = NULL;
@@ -235,7 +235,7 @@ static PyObject* eccentricity_squared(PyObject *self, PyObject *args) {
  *
  * @return PyObject* The radius of curvature in the prime vertical
  */
-static PyObject* ellipsoid_radius(PyObject *self, PyObject *args) {
+static PyObject* ellipsoid_radius(PyObject* self, PyObject* args) {
 
     PyObject* capsule = NULL;
     Ellipsoid* ellipsoid = NULL;
@@ -303,6 +303,12 @@ static void delete_Ellipsoid(PyObject* obj) {
 static PyMethodDef tolueneModelsEarthEllipsoidMethods[] = {
     {"set_axes", set_axes, METH_VARARGS, "Sets the ellipsoid axes."},
     {"get_axes", get_axes, METH_VARARGS, "Gets the ellipsoid axes."},
+    {"set_semi_major_axis", set_semi_major_axis, METH_VARARGS, "Sets the ellipsoid semi-major axis."},
+    {"get_semi_major_axis", get_semi_major_axis, METH_VARARGS, "Gets the ellipsoid semi-major axis."},
+    {"set_semi_minor_axis", set_semi_minor_axis, METH_VARARGS, "Sets the ellipsoid semi-minor axis."},
+    {"get_semi_minor_axis", get_semi_minor_axis, METH_VARARGS, "Gets the ellipsoid semi-minor axis."},
+    {"get_flattening", get_flattening, METH_VARARGS, "Gets the ellipsoid flattening."},
+    {"eccentricity_squared", eccentricity_squared, METH_VARARGS, "Calculates the eccentricity squared."},
     {"ellipsoid_radius", ellipsoid_radius, METH_VARARGS, "Gets the ellipsoid radius at a given latitude."},
     {"new_Ellipsoid", new_Ellipsoid, METH_VARARGS, "Create a new Ellipsoid object"},
     {NULL, NULL, 0, NULL}

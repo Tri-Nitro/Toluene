@@ -24,9 +24,9 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
-#include "util/config.h"
+#include "models/sun/constants.h"
 
-#if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
+#if defined(_WIN32) || defined(WIN32)
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -36,46 +36,22 @@
 #ifdef __cplusplus
 extern "C"
 {
-#endif
+#endif /* __cplusplus */
 
+/**
+ * These coefficients can be found here: https://aa.usno.navy.mil/downloads/Circular_179.pdf
+ */
+const long double mean_heliocentric_ecliptic_longitude_mercury[2] = {908103.259872, 538101628.688982};
+const long double mean_heliocentric_ecliptic_longitude_venus[2] = {655127.28306, 210664136.433548};
+const long double mean_heliocentric_ecliptic_longitude_earth[2] = {361679.244588, 129597742.283429};
+const long double mean_heliocentric_ecliptic_longitude_mars[2] = {1279558.798488, 68905077.493988};
+const long double mean_heliocentric_ecliptic_longitude_jupiter[2] = {123665.467464, 10925660.377991};
+const long double mean_heliocentric_ecliptic_longitude_saturn[2] = {180278.79948, 4399609.855732};
+const long double mean_heliocentric_ecliptic_longitude_uranus[2] = {1130598.018396, 1542481.193933};
+const long double mean_heliocentric_ecliptic_longitude_neptune[2] = {1095655.195728, 786550.320744};
 
-static PyObject* load_delta_t_data(PyObject* self, PyObject* args) {
-    return Py_BuildValue("d", 0);
-}
-
-
-static PyObject* load_iau_coefficients_data(PyObject* self, PyObject* args) {
-    return Py_BuildValue("d", 0);
-}
-
-
-static PyObject* load_iers_earth_orientation_data(PyObject* self, PyObject* args) {
-    return Py_BuildValue("d", 0);
-}
-
-
-static PyMethodDef tolueneUtilConfigMethods[] = {
-    {"load_delta_t_data", load_delta_t_data, METH_VARARGS, "Load delta t data from a file"},
-    {"load_iau_coefficients_data", load_iau_coefficients_data, METH_VARARGS, "Load iau coefficients data from a file"},
-    {"load_iers_earth_orientation_data", load_iers_earth_orientation_data, METH_VARARGS, "Load iers earth orientation data from a file"},
-    {NULL, NULL, 0, NULL}
-};
-
-
-static struct PyModuleDef util_config = {
-    PyModuleDef_HEAD_INIT,
-    "util.config",
-    "C Extensions to toluene core class functions",
-    -1,
-    tolueneUtilConfigMethods
-};
-
-
-PyMODINIT_FUNC PyInit_config(void) {
-    return PyModule_Create(&util_config);
-}
-
+const long double mean_anomaly_sun[5] = {1287104.79305, 129596581.0481, -0.5532, 0.000136, -1.148e-5};
 
 #ifdef __cplusplus
 } /* extern "C" */
-#endif
+#endif /* __cplusplus */

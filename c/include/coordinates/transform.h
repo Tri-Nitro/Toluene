@@ -21,41 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_NUTATION_H__
-#define __MODELS_EARTH_NUTATION_H__
+#ifndef __COORDINATES_TRANSFORM_H__
+#define __COORDINATES_TRANSFORM_H__
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
 
-typedef struct {
-    double a, b, c, d, e, f, g, h, j, k, m, n, o, r;
-    double S, S_dot, C_prime, C, C_dot, S_prime;
-} NutationSeriesRecord;
+static PyObject* itrf_to_gcrf(PyObject* self, PyObject* args);
+static PyObject* gcrf_to_itrf(PyObject* self, PyObject* args);
 
-
-typedef struct {
-    int nrecords;
-    int nrecords_allocated;
-    NutationSeriesRecord* records;
-} NutationSeries;
-
-
-#ifdef __compile_models_earth_nutation
-
-
-void iau_2006_nutation(double delta_psi, double delta_epsilon, double epsilon, Matrix* matrix);
-
-static PyObject* nutation_series_add_record(PyObject* self, PyObject* args);
-
-static PyObject* new_NutationSeries(PyObject* self, PyObject* args);
-static void delete_NutationSeries(PyObject* obj);
-
-#endif /* __compile_models_earth_nutation */
+static PyObject* geodetic_to_itrf(PyObject* self, PyObject* args);
+static PyObject* itrf_to_geodetic(PyObject* self, PyObject* args);
 
 #ifdef __cplusplus
 }   /* extern "C" */
-#endif
+#endif /* __cplusplus */
 
-#endif /* __MODELS_EARTH_NUTATION_H__ */
+
+#endif /* __COORDINATES_TRANSFORM_H__ */
