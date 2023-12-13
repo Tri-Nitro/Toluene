@@ -210,7 +210,7 @@ static PyObject* get_flattening(PyObject* self, PyObject* args) {
  *
  * @return PyObject* The eccentricity squared
  */
-static PyObject* eccentricity_squared(PyObject* self, PyObject* args) {
+static PyObject* get_eccentricity_squared(PyObject* self, PyObject* args) {
 
     PyObject* capsule = NULL;
     Ellipsoid* ellipsoid = NULL;
@@ -235,7 +235,7 @@ static PyObject* eccentricity_squared(PyObject* self, PyObject* args) {
  *
  * @return PyObject* The radius of curvature in the prime vertical
  */
-static PyObject* ellipsoid_radius(PyObject* self, PyObject* args) {
+static PyObject* get_ellipsoid_radius(PyObject* self, PyObject* args) {
 
     PyObject* capsule = NULL;
     Ellipsoid* ellipsoid = NULL;
@@ -278,8 +278,15 @@ static PyObject* new_Ellipsoid(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    ellipsoid->a = 0;
-    ellipsoid->b = 0;
+    long double a, b;
+
+    if(!PyArg_ParseTuple(args, "dd", &a, &b)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. new_StateVector()");
+        return PyErr_Occurred();
+    }
+
+    ellipsoid->a = a;
+    ellipsoid->b = b;
 
     return PyCapsule_New(ellipsoid, "Ellipsoid", delete_Ellipsoid);
 }
@@ -308,8 +315,8 @@ static PyMethodDef tolueneModelsEarthEllipsoidMethods[] = {
     {"set_semi_minor_axis", set_semi_minor_axis, METH_VARARGS, "Sets the ellipsoid semi-minor axis."},
     {"get_semi_minor_axis", get_semi_minor_axis, METH_VARARGS, "Gets the ellipsoid semi-minor axis."},
     {"get_flattening", get_flattening, METH_VARARGS, "Gets the ellipsoid flattening."},
-    {"eccentricity_squared", eccentricity_squared, METH_VARARGS, "Calculates the eccentricity squared."},
-    {"ellipsoid_radius", ellipsoid_radius, METH_VARARGS, "Gets the ellipsoid radius at a given latitude."},
+    {"get_eccentricity_squared", get_eccentricity_squared, METH_VARARGS, "Calculates the eccentricity squared."},
+    {"get_ellipsoid_radius", get_ellipsoid_radius, METH_VARARGS, "Gets the ellipsoid radius at a given latitude."},
     {"new_Ellipsoid", new_Ellipsoid, METH_VARARGS, "Create a new Ellipsoid object"},
     {NULL, NULL, 0, NULL}
 };
@@ -318,7 +325,7 @@ static PyMethodDef tolueneModelsEarthEllipsoidMethods[] = {
 static struct PyModuleDef models_earth_ellipsoid = {
     PyModuleDef_HEAD_INIT,
     "models.earth.ellipsoid",
-    "C Extensions to toluene models ellipsoid functions",
+    "C Extensions to working with an ellipsoid model.",
     -1,
     tolueneModelsEarthEllipsoidMethods
 };

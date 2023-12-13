@@ -28,10 +28,37 @@
 extern "C" {
 #endif
 
+#include "models/earth/earth_orientation_parameters.h"
+#include "models/earth/ellipsoid.h"
+#include "models/earth/nutation.h"
 
 typedef struct {
 
+    /* Earth Shape */
+    Ellipsoid ellipsoid;
+
+    /* Earth Motion */
+    NutationSeries nutation_series;
+    EOPTable earth_orientation_parameters;
+
 } EarthModel;
+
+
+#ifdef __compile_models_earth_earth__
+
+/**
+ * @brief Creates a new Earth Model object and makes it available to Python
+ */
+static PyObject* new_EarthModel(PyObject* self, PyObject* args);
+
+/**
+ * @brief Deletes the Earth Model object
+ *
+ * @param obj The Earth Model object
+ */
+static void delete_EarthModel(PyObject* obj);
+
+#endif /* __compile_models_earth_earth__ */
 
 
 #ifdef __cplusplus

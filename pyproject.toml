@@ -45,7 +45,7 @@ update-data = [
 version = {attr = "toluene.__version__"}
 
 [project.scripts]
-toluene-build-config = "toluene.apps.config_builder:main"
+toluene-update-data = "toluene.apps.update_data:main"
 
 [project.urls]
 homepage = "https://github.com/Tri-Nitro/Toluene"
