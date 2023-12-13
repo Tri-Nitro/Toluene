@@ -21,27 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_PRECESSION_H__
-#define __MODELS_EARTH_PRECESSION_H__
+#ifndef __MODELS_TIME_CONSTANTS_H__
+#define __MODELS_TIME_CONSTANTS_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
-#ifdef __compile_models_earth_precession
-
-#include "math/linear_algebra.h"
-#include "models/earth/model.h"
-
-void iau_76_precession(double t, EarthModel* model, Matrix* matrix);
-void iau_2000a_precession(double t, EarthModel* model, Matrix* matrix);
-
-#endif /* __compile_models_earth_precession */
-
+extern const long double SECONDS_PER_DAY;
+extern const long double DAYS_PER_JULIAN_CENTURY;
+extern const long double SECONDS_PER_JULIAN_CENTURY;
+extern const long double J2000_UNIX_TIME;
 
 #ifdef __cplusplus
 }   /* extern "C" */
-#endif
+#endif /* __cplusplus */
 
-#endif /* __MODELS_EARTH_PRECESSION_H__ */
+
+#endif /* __MODELS_TIME_ELLIPSOID_H__ */

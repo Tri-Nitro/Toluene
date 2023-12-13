@@ -28,6 +28,16 @@
 extern "C" {
 #endif
 
+
+/** @struct
+ * @brief The Ellipsoid object
+ *
+ * @var Ellipsoid::a
+ * Member 'a' contains the semi-major axis
+ *
+ * @var Ellipsoid::b
+ * Member 'b' contains the semi-minor axis
+ */
 typedef struct {
     long double a;   /* Semi-major axis */
     long double b;   /* Semi-minor axis */
@@ -85,14 +95,14 @@ static PyObject* get_flattening(PyObject* self, PyObject* args);
  *
  * @return PyObject* The eccentricity squared
  */
-static PyObject* eccentricity_squared(PyObject *self, PyObject *args);
+static PyObject* eccentricity_squared(PyObject* self, PyObject* args);
 
 /**
  * @brief Calculates the radius of curvature in the prime vertical
  *
  * @return PyObject* The radius of curvature in the prime vertical
  */
-static PyObject* ellipsoid_radius(PyObject *self, PyObject *args);
+static PyObject* ellipsoid_radius(PyObject* self, PyObject* args);
 
 /**
  * @brief Creates a new Ellipsoid object and makes it available to Python

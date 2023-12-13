@@ -21,34 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_ELLIPSOID_H__
-#define __MODELS_EARTH_ELLIPSOID_H__
-
-#include "math/linear_algebra.h"
+#ifndef __MODELS_EARTH_CONSTANTS_H__
+#define __MODELS_EARTH_CONSTANTS_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct {
-    double a;   /* Semi-major axis */
-    double b;   /* Semi-minor axis */
-} Ellipsoid;
+extern const long double MEAN_OBLIQUITY_EARTH[6];
 
-#ifdef __compile_models_earth_ellipsoid
-
-static PyObject* set_axes(PyObject* self, PyObject* args);
-static PyObject* get_axes(PyObject* self, PyObject* args);
-
-static PyObject* ellipsoid_radius(PyObject *self, PyObject *args);
-
-static PyObject* new_Ellipsoid(PyObject* self, PyObject* args);
-static void delete_Ellipsoid(PyObject* obj);
-
-#endif /* __compile_models_earth_ellipsoid */
+extern const long double GENERAL_PRECESSION_LONGITUDE[3];
+extern const long double PRECESSION_EQUATOR[6];
+extern const long double OBLIQUITY_MEAN_EQUATOR[6];
+extern const long double PRECESSION_ECLIPTIC_MEAN_EQUATOR[6];
 
 #ifdef __cplusplus
 }   /* extern "C" */
-#endif
+#endif /* __cplusplus */
 
-#endif /* __MODELS_EARTH_ELLIPSOID_H__ */
+
+#endif /* __MODELS_EARTH_CONSTANTS_H__ */

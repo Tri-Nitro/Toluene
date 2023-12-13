@@ -21,24 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_COORDINATES_H__
-#define __MODELS_EARTH_COORDINATES_H__
-
-#include "math/linear_algebra.h"
+#ifndef __COORDINATES_STATE_VECTOR_H__
+#define __COORDINATES_STATE_VECTOR_H__
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
+#include "coordinates/reference_frame.h"
+#include "math/linear_algebra.h"
 
-static PyObject* eci_to_ecef(PyObject *self, PyObject *args);
-static PyObject* ecef_to_eci(PyObject *self, PyObject *args);
-static PyObject* ecef_to_lla(PyObject *self, PyObject *args);
-static PyObject* lla_to_ecef(PyObject *self, PyObject *args);
+/** @struct
+ */
+typedef struct {
+    Vec3 r;
+    Vec3 v;
+    Vec3 a;
+    Frame reference_frame;
+} StateVector;
 
 
 #ifdef __cplusplus
 }   /* extern "C" */
-#endif
+#endif /* __cplusplus */
 
-#endif /* __MODELS_EARTH_ELLIPSOID_H__ */
+
+#endif /* __COORDINATES_STATE_VECTOR_H__ */

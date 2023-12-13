@@ -21,26 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_PRECESSION_H__
-#define __MODELS_EARTH_PRECESSION_H__
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+
+#include "models/earth/constants.h"
+
+#if defined(_WIN32) || defined(WIN32)
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+#endif /* _WIN32 */
 
 #ifdef __cplusplus
-extern "C" {
-#endif
-
-#include "math/linear_algebra.h"
+extern "C"
+{
+#endif /* __cplusplus */
 
 /**
- * @brief Precession matrix for the IAU 2000A model.
- *
- * @param t Time in seconds since J2000.0.
- * @param matrix Output matrix.
- * */
-void iau_2000a_precession(long double t, Mat3* matrix);
+ * These coefficients can be found here: https://aa.usno.navy.mil/downloads/Circular_179.pdf
+ */
+const long double MEAN_OBLIQUITY_EARTH[6] = {84381.406, -46.836769, -0.0001831, 0.00200340, -5.76e-7, -4.34e-8};
 
+const long double GENERAL_PRECESSION_LONGITUDE[3] = {0.0, 5028.82, 1.112022};
+const long double PRECESSION_EQUATOR[6] = {0.0, 5038.481507, -1.0790069, -0.00114045, 0.000132851, -0.0000000951};
+const long double OBLIQUITY_MEAN_EQUATOR[6] = {84381.406, -0.025754, 0.0512623, -0.00772503, -4.67e-7, -3.337e-7};
+const long double PRECESSION_ECLIPTIC_MEAN_EQUATOR[6] = {0.0, 10.556403, -2.3814292, -0.00121197, 0.000170663, -5.4e-8};
 
 #ifdef __cplusplus
-}   /* extern "C" */
-#endif
-
-#endif /* __MODELS_EARTH_PRECESSION_H__ */
+} /* extern "C" */
+#endif /* __cplusplus */

@@ -21,26 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_PRECESSION_H__
-#define __MODELS_EARTH_PRECESSION_H__
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+
+#include "math/constants.h"
+
+#if defined(_WIN32) || defined(WIN32)
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+#endif /* _WIN32 */
 
 #ifdef __cplusplus
-extern "C" {
-#endif
+extern "C"
+{
+#endif /* __cplusplus */
 
-#include "math/linear_algebra.h"
-
-/**
- * @brief Precession matrix for the IAU 2000A model.
- *
- * @param t Time in seconds since J2000.0.
- * @param matrix Output matrix.
- * */
-void iau_2000a_precession(long double t, Mat3* matrix);
-
+const long double ARCSECONDS_TO_RADIANS = M_PI / (180 * 3600);
 
 #ifdef __cplusplus
-}   /* extern "C" */
-#endif
-
-#endif /* __MODELS_EARTH_PRECESSION_H__ */
+} /* extern "C" */
+#endif /* __cplusplus */

@@ -21,22 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_EQUINOX_H__
-#define __MODELS_EARTH_EQUINOX_H__
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
 
-#include "models/earth/model.h"
+#include "time/constants.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#if defined(_WIN32) || defined(WIN32)
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 
-void get_delta_psi_delta_epsilon_epsilon_eq_eq(double t, EarthModel* model, double* delta_psi, double* delta_epsilon,
-    double* epsilon, double* eq_eq);
-
+#endif /* _WIN32 */
 
 #ifdef __cplusplus
-}   /* extern "C" */
-#endif
+extern "C"
+{
+#endif /* __cplusplus */
 
-#endif /* __MODELS_EARTH_EQUINOX_H__ */
+const long double SECONDS_PER_DAY = 86400.0;
+const long double DAYS_PER_JULIAN_CENTURY = 36525;
+const long double SECONDS_PER_JULIAN_CENTURY = SECONDS_PER_DAY * DAYS_PER_JULIAN_CENTURY;
+const long double J2000_UNIX_TIME = 946728000.0;
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */

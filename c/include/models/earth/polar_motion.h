@@ -24,24 +24,24 @@
 #ifndef __MODELS_EARTH_POLAR_MOTION_H__
 #define __MODELS_EARTH_POLAR_MOTION_H__
 
-#include "math/linear_algebra.h"
-#include "models/earth/model.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "math/linear_algebra.h"
+#include "models/earth/earth_orientation_parameters.h"
 
-#ifdef __compile_models_earth_polar_motion
-
-void itrs_to_tirs_polar_motion_approximation(double tt, EarthModel* model, Matrix* matrix);
-void itrs_to_tirs_polar_motion_exact(double tt, EarthModel* model, Matrix* matrix);
-
-#endif /* __compile_models_earth_polar_motion */
+/**
+ * @brief Polar motion matrix for time T.
+ *
+ * @param t Time in seconds since J2000.0.
+ * @param matrix Output matrix.
+ * */
+void wobble(long double t, EOPTable* earth_orientation_parameter_table, Mat3* matrix);
 
 
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif
 
-#endif /* __MODELS_EARTH_POLAR_MOTION_H__ */
+#endif /* __MODELS_EARTH_PRECESSION_H__ */

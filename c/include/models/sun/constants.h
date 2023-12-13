@@ -21,32 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_EARTH_ROTATION_H__
-#define __MODELS_EARTH_EARTH_ROTATION_H__
-
+#ifndef __MODELS_SUN_CONSTANTS_H__
+#define __MODELS_SUN_CONSTANTS_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+extern const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_MERCURY[];
+extern const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_VENUS[];
+extern const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_EARTH[];
+extern const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_MARS[];
+extern const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_JUPITER[];
+extern const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_SATURN[];
+extern const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_URANUS[];
+extern const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_NEPTUNE[];
 
-#ifdef __compile_models_earth_earth_rotation
-
-#include "models/earth/model.h"
-
-void greenwich_mean_sidereal_time(double tt, EarthModel* model, double* gmst_rad);
-void greenwich_apparent_sidereal_time(double tt, EarthModel* model, double* gast_rad);
-
-void tirs_to_true_equinox_equator_earth_rotation(double tt, double eq_eq, EarthModel* model, Matrix* matrix);
-
-void rate_of_earth_rotation(double tt, EarthModel* model, double* rate);
-void tirs_coriolis_velocity(double tt, double eq_eq, EarthModel* model, Matrix* matrix);
-
-#endif /* __compile_models_earth_earth_rotation */
-
+extern const long double MEAN_ANOMALY_SUN[];
 
 #ifdef __cplusplus
 }   /* extern "C" */
-#endif
+#endif /* __cplusplus */
 
-#endif /* __MODELS_EARTH_EARTH_ROTATION_H__ */
+
+#endif /* __MODELS_SUN_ELLIPSOID_H__ */
