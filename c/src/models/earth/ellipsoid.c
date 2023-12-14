@@ -278,7 +278,8 @@ static PyObject* new_Ellipsoid(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    long double a, b;
+    long double a = 0.0, b = 0.0;
+    printf("SIZE OF LONG DOUBLE %lu\n", sizeof(long double));
 
     if(!PyArg_ParseTuple(args, "dd", &a, &b)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. new_StateVector()");
