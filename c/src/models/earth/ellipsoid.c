@@ -44,7 +44,7 @@ static PyObject* set_axes(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
     Ellipsoid* ellipsoid;
-    long double a, b;
+    double a, b;
 
     if(!PyArg_ParseTuple(args, "Odd", &capsule, &a, &b)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for set_axes.");
@@ -92,7 +92,7 @@ static PyObject* set_semi_major_axis(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
     Ellipsoid* ellipsoid;
-    long double a;
+    double a;
 
     if(!PyArg_ParseTuple(args, "Od", &capsule, &a)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for set_semi_major_axis.");
@@ -141,7 +141,7 @@ static PyObject* set_semi_minor_axis(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
     Ellipsoid* ellipsoid;
-    long double b;
+    double b;
 
     if(!PyArg_ParseTuple(args, "Od", &capsule, &b)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for set_semi_minor_axis.");
@@ -239,7 +239,7 @@ static PyObject* get_ellipsoid_radius(PyObject* self, PyObject* args) {
 
     PyObject* capsule = NULL;
     Ellipsoid* ellipsoid = NULL;
-    long double latitude = 0.0;
+    double latitude = 0.0;
 
     if(!PyArg_ParseTuple(args, "Od", &capsule, &latitude)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. ellipsoid_radius(Ellipsoid, latitude).");
@@ -278,8 +278,7 @@ static PyObject* new_Ellipsoid(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    long double a = 0.0, b = 0.0;
-    printf("SIZE OF LONG DOUBLE %lu\n", sizeof(long double));
+    double a, b;
 
     if(!PyArg_ParseTuple(args, "dd", &a, &b)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. new_StateVector()");
