@@ -186,6 +186,9 @@ static PyObject* itrf_to_geodetic(PyObject *self, PyObject *args) {
     retval->r.y = atan2(y,x) * 180/M_PI;
     retval->r.z = big_u * (1-(model->ellipsoid.b*model->ellipsoid.b)/(model->ellipsoid.a*big_v));
 
+    printf("itrf_to_geodetic   x: %Lf, y: %Lf, z: %Lf\n", x, y, z);
+    printf("itrf_to_geodetic   r.x: %Lf, r.y: %Lf, r.z: %Lf\n", retval->r.x, retval->r.y, retval->r.z);
+
     retval->v.x = state_vector->v.x;
     retval->v.y = state_vector->v.y;
     retval->v.z = state_vector->v.z;
@@ -245,6 +248,9 @@ static PyObject* geodetic_to_itrf(PyObject *self, PyObject *args) {
     retval->r.x = (n_phi + altitude) * cos(latitude * M_PI/180) * cos(longitude * M_PI/180);
     retval->r.y = (n_phi + altitude) * cos(latitude * M_PI/180) * sin(longitude * M_PI/180);
     retval->r.z = ((1 - e_2) * n_phi + altitude) * sin(latitude * M_PI/180);
+
+    printf("geodetic_to_itrf   latitude: %Lf, longitude: %Lf, altitude: %Lf\n", latitude, longitude, altitude);
+    printf("geodetic_to_itrf   x: %Lf, y: %Lf, z: %Lf\n", retval->r.x, retval->r.y, retval->r.z);
 
     retval->v.x = state_vector->v.x;
     retval->v.y = state_vector->v.y;
