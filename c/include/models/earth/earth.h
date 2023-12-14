@@ -58,6 +58,37 @@ static PyObject* new_EarthModel(PyObject* self, PyObject* args);
  */
 static void delete_EarthModel(PyObject* obj);
 
+/**
+ * @brief Set the Earth Model's Ellipsoid
+ */
+static PyObject* earth_model_set_ellipsoid(PyObject* self, PyObject* args);
+
+/**
+ * @brief Set the Earth Model's Nutation Series
+ */
+static PyObject* earth_model_set_nutation_series(PyObject* self, PyObject* args);
+
+/**
+ * @brief Set the Earth Model's Earth Orientation Parameters
+ */
+static PyObject* earth_model_set_earth_orientation_parameters(PyObject* self, PyObject* args);
+
+/**
+ * @brief Get the Earth Model's Ellipsoid
+ */
+static PyObject* earth_model_get_ellipsoid(PyObject* self, PyObject* args);
+
+/**
+ * @brief Get the Earth Model's Nutation Series
+ */
+static PyObject* earth_model_get_nutation_series(PyObject* self, PyObject* args);
+
+/**
+ * @brief Get the Earth Model's Earth Orientation Parameters
+ */
+static PyObject* earth_model_get_earth_orientation_parameters(PyObject* self, PyObject* args);
+
+
 #endif /* __compile_models_earth_earth__ */
 
 

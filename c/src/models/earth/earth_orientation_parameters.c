@@ -24,8 +24,8 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
-#define __compile_models_earth_earth_orientation__
-#include "models/earth/earth_orientation.h"
+#define __compile_models_earth_earth_orientation_parameters__
+#include "models/earth/earth_orientation_parameters.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
 
@@ -181,7 +181,7 @@ static struct PyModuleDef models_earth_earth_orientation = {
 };
 
 
-PyMODINIT_FUNC PyInit_earth_orientation(void) {
+PyMODINIT_FUNC PyInit_earth_orientation_parameters(void) {
     return PyModule_Create(&models_earth_earth_orientation);
 }
 

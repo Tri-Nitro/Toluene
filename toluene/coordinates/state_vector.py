@@ -28,7 +28,7 @@ from __future__ import annotations
 from ctypes import py_object
 
 from toluene.coordinates.reference_frame import ReferenceFrame
-from toluene.models.earth.ellipsoid import Ellipsoid
+from toluene.models.earth.model import EarthModel
 from toluene_extensions.coordinates import state_vector, transform
 
 
@@ -133,7 +133,7 @@ class StateVector:
 
     @property
     def __copy(self) -> StateVector:
-        frame = self.__state_vector.get_frame(self.__state_vector)
+        frame = state_vector.get_frame(self.__state_vector)
         position = state_vector.get_position(self.__state_vector)
         velocity = state_vector.get_velocity(self.__state_vector)
         acceleration = state_vector.get_acceleration(self.__state_vector)
@@ -151,11 +151,11 @@ class StateVector:
     :return: A copy of the state vector in the GeodeticReferenceFrame.
     :rtype: :class:`StateVector`
     """
-    def get_geodetic(self, ellipsoid: Ellipsoid) -> StateVector:
+    def get_geodetic(self, model: EarthModel) -> StateVector:
         frame = state_vector.get_frame(self.__state_vector)
         if frame is int(ReferenceFrame.InternationalTerrestrialReferenceFrame):
             return StateVector(None, None,
-                               capsule=transform.itrf_to_geodetic(self.__state_vector, ellipsoid.c_capusle))
+                               capsule=transform.itrf_to_geodetic(self.__state_vector, model.capsule))
         elif frame is int(ReferenceFrame.InternationalCelestialReferenceFrame):
             return None
         elif frame is int(ReferenceFrame.GeocentricCelestialReferenceFrame):
@@ -174,7 +174,7 @@ class StateVector:
     :return: A copy of the state vector in the GeodeticReferenceFrame.
     :rtype: :class:`StateVector`
     """
-    def get_itrs(self, ellipsoid: Ellipsoid) -> StateVector:
+    def get_itrs(self, model: EarthModel) -> StateVector:
         frame = state_vector.get_frame(self.__state_vector)
         if frame is int(ReferenceFrame.InternationalTerrestrialReferenceFrame):
             return self.__copy
@@ -184,5 +184,5 @@ class StateVector:
             return None
         elif frame is int(ReferenceFrame.GeodeticReferenceFrame):
             return StateVector(None, None,
-                               capsule=transform.geodetic_to_itrf(self.__state_vector, ellipsoid.c_capusle))
+                               capsule=transform.geodetic_to_itrf(self.__state_vector, model.capsule))
         return None

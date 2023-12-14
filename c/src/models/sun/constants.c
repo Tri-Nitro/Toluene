@@ -41,16 +41,16 @@ extern "C"
 /**
  * These coefficients can be found here: https://aa.usno.navy.mil/downloads/Circular_179.pdf
  */
-const long double mean_heliocentric_ecliptic_longitude_mercury[2] = {908103.259872, 538101628.688982};
-const long double mean_heliocentric_ecliptic_longitude_venus[2] = {655127.28306, 210664136.433548};
-const long double mean_heliocentric_ecliptic_longitude_earth[2] = {361679.244588, 129597742.283429};
-const long double mean_heliocentric_ecliptic_longitude_mars[2] = {1279558.798488, 68905077.493988};
-const long double mean_heliocentric_ecliptic_longitude_jupiter[2] = {123665.467464, 10925660.377991};
-const long double mean_heliocentric_ecliptic_longitude_saturn[2] = {180278.79948, 4399609.855732};
-const long double mean_heliocentric_ecliptic_longitude_uranus[2] = {1130598.018396, 1542481.193933};
-const long double mean_heliocentric_ecliptic_longitude_neptune[2] = {1095655.195728, 786550.320744};
+const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_MERCURY[2] = {908103.259872, 538101628.688982};
+const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_VENUS[2] = {655127.28306, 210664136.433548};
+const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_EARTH[2] = {361679.244588, 129597742.283429};
+const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_MARS[2] = {1279558.798488, 68905077.493988};
+const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_JUPITER[2] = {123665.467464, 10925660.377991};
+const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_SATURN[2] = {180278.79948, 4399609.855732};
+const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_URANUS[2] = {1130598.018396, 1542481.193933};
+const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_NEPTUNE[2] = {1095655.195728, 786550.320744};
 
-const long double mean_anomaly_sun[5] = {1287104.79305, 129596581.0481, -0.5532, 0.000136, -1.148e-5};
+const long double MEAN_ANOMALY_SUN[5] = {1287104.79305, 129596581.0481, -0.5532, 0.000136, -1.148e-5};
 
 #ifdef __cplusplus
 } /* extern "C" */

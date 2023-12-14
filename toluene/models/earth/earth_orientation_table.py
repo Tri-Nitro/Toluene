@@ -23,16 +23,16 @@
 #   SOFTWARE.                                                                       #
 #                                                                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-from toluene_extensions.models.earth.earth_orientation import new_EOPTable, add_record
+from toluene_extensions.models.earth.earth_orientation_parameters import new_EOPTable, add_record
 
 from datetime import datetime
 
 
 class EarthOrientationTable:
 
-    def __init__(self, path: str=None, c_eop_table=None):
-        if c_eop_table is not None:
-            self.__eop_table = c_eop_table
+    def __init__(self, path: str = None, capsule=None):
+        if capsule is not None:
+            self.__eop_table = capsule
         else:
             self.__eop_table = new_EOPTable()
         if path is not None:
@@ -92,5 +92,5 @@ class EarthOrientationTable:
                            bulletin_a_lod_error, bulletin_b_PM_x, bulletin_b_PM_y, bulletin_b_dut1)
 
     @property
-    def table(self):
+    def capsule(self):
         return self.__eop_table

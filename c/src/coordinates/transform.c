@@ -40,7 +40,7 @@ extern "C"
 #define __compile_coordinates_state_vector__
 #include "coordinates/transform.h"
 #include "coordinates/state_vector.h"
-#include "models/earth/ellipsoid.h"
+#include "models/earth/earth.h"
 
 /**
  * @brief Converts itrf coordinates to the equivalent gcrf coordinates.
@@ -62,13 +62,13 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
 static PyObject* itrf_to_geodetic(PyObject *self, PyObject *args) {
 
     PyObject* state_vector_capsule;
-    PyObject* ellipsoid_capsule;
+    PyObject* model_capsule;
     StateVector* state_vector;
-    Ellipsoid* ellipsoid;
+    EarthModel* model;
 
     long double x, y, z;
 
-    if(!PyArg_ParseTuple(args, "OO", &state_vector_capsule, &ellipsoid_capsule)) {
+    if(!PyArg_ParseTuple(args, "OO", &state_vector_capsule, &model_capsule)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. itrf_to_geodetic()");
         return PyErr_Occurred();
     }
@@ -84,9 +84,9 @@ static PyObject* itrf_to_geodetic(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
 
-    ellipsoid = (Ellipsoid*)PyCapsule_GetPointer(ellipsoid_capsule, "Ellipsoid");
-    if(!ellipsoid) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the Ellipsoid from Capsule.");
+    model = (EarthModel*)PyCapsule_GetPointer(model_capsule, "EarthModel");
+    if(!model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from Capsule.");
         return PyErr_Occurred();
     }
 
@@ -100,29 +100,29 @@ static PyObject* itrf_to_geodetic(PyObject *self, PyObject *args) {
     // directly above the pole.
     if(x == 0 && y == 0) x = 0.000000001;
 
-    long double e_numerator = ellipsoid->a*ellipsoid->a - ellipsoid->b*ellipsoid->b;
-    long double e_2 = e_numerator/(ellipsoid->a*ellipsoid->a);
-    long double e_r2 = e_numerator/(ellipsoid->b*ellipsoid->b);
+    long double e_numerator = model->ellipsoid.a*model->ellipsoid.a - model->ellipsoid.b*model->ellipsoid.b;
+    long double e_2 = e_numerator/(model->ellipsoid.a*model->ellipsoid.a);
+    long double e_r2 = e_numerator/(model->ellipsoid.b*model->ellipsoid.b);
     long double p = sqrt(x*x+y*y);
-    long double big_f = 54.0*ellipsoid->b*ellipsoid->b*z*z;
+    long double big_f = 54.0*model->ellipsoid.b*model->ellipsoid.b*z*z;
     long double big_g = p*p+z*z*(1-e_2)-e_2*e_numerator;
     long double c = (e_2*e_2*big_f*p*p)/(big_g*big_g*big_g);
     long double s = cbrt(1+c+sqrt(c*c+2*c));
     long double k = s+1+1/s;
     long double big_p = big_f/(3*k*k*big_g*big_g);
     long double big_q = sqrt(1 + 2 * e_2 * e_2 * big_p);
-    long double sqrt_r_0 = (ellipsoid->a*ellipsoid->a/2)*(1+1/big_q)-((big_p*(1-e_2)*z*z)/(big_q*(1+big_q)))
+    long double sqrt_r_0 = (model->ellipsoid.a*model->ellipsoid.a/2)*(1+1/big_q)-((big_p*(1-e_2)*z*z)/(big_q*(1+big_q)))
                  -(big_p*p*p)/2;
     sqrt_r_0 = (sqrt_r_0 < 0? 0 : sqrt(sqrt_r_0));
     long double r_0 = ((-1* big_p*e_2*p)/(1+big_q)) + sqrt_r_0;
     long double p_e_2_r_0 = p-e_2*r_0;
     long double big_u = sqrt( p_e_2_r_0*p_e_2_r_0+z*z);
     long double big_v = sqrt(p_e_2_r_0*p_e_2_r_0+(1-e_2)*z*z);
-    long double z_0 = (ellipsoid->b*ellipsoid->b*z)/(ellipsoid->a*big_v);
+    long double z_0 = (model->ellipsoid.b*model->ellipsoid.b*z)/(model->ellipsoid.a*big_v);
 
     retval->r.x = atan((z+(e_r2*z_0))/p) * 180/M_PI;
     retval->r.y = atan2(y,x) * 180/M_PI;
-    retval->r.z = big_u * (1-(ellipsoid->b*ellipsoid->b)/(ellipsoid->a*big_v));
+    retval->r.z = big_u * (1-(model->ellipsoid.b*model->ellipsoid.b)/(model->ellipsoid.a*big_v));
 
     retval->v.x = state_vector->v.x;
     retval->v.y = state_vector->v.y;
@@ -142,13 +142,13 @@ static PyObject* itrf_to_geodetic(PyObject *self, PyObject *args) {
 static PyObject* geodetic_to_itrf(PyObject *self, PyObject *args) {
 
     PyObject* state_vector_capsule;
-    PyObject* ellipsoid_capsule;
+    PyObject* model_capsule;
     StateVector* state_vector;
-    Ellipsoid* ellipsoid;
+    EarthModel* model;
 
     long double latitude, longitude, altitude;
 
-    if(!PyArg_ParseTuple(args, "OO", &state_vector_capsule, &ellipsoid_capsule)) {
+    if(!PyArg_ParseTuple(args, "OO", &state_vector_capsule, &model_capsule)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. geodetic_to_itrf()");
         return PyErr_Occurred();
     }
@@ -164,9 +164,9 @@ static PyObject* geodetic_to_itrf(PyObject *self, PyObject *args) {
         return PyErr_Occurred();
     }
 
-    ellipsoid = (Ellipsoid*)PyCapsule_GetPointer(ellipsoid_capsule, "Ellipsoid");
-    if(!ellipsoid) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the Ellipsoid from Capsule.");
+    model = (EarthModel*)PyCapsule_GetPointer(model_capsule, "EarthModel");
+    if(!model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from Capsule.");
         return PyErr_Occurred();
     }
 
@@ -176,9 +176,9 @@ static PyObject* geodetic_to_itrf(PyObject *self, PyObject *args) {
     longitude = state_vector->r.y;
     altitude = state_vector->r.z;
 
-    long double e_2 = 1 - ((ellipsoid->b*ellipsoid->b)/(ellipsoid->a*ellipsoid->a));
+    long double e_2 = 1 - ((model->ellipsoid.b*model->ellipsoid.b)/(model->ellipsoid.a*model->ellipsoid.a));
     long double sin_of_latitude = sin((latitude * M_PI/180));
-    long double n_phi = ellipsoid->a/(sqrt(1-(e_2 * (sin_of_latitude*sin_of_latitude))));
+    long double n_phi = model->ellipsoid.a/(sqrt(1-(e_2 * (sin_of_latitude*sin_of_latitude))));
 
     retval->r.x = (n_phi + altitude) * cos(latitude * M_PI/180) * cos(longitude * M_PI/180);
     retval->r.y = (n_phi + altitude) * cos(latitude * M_PI/180) * sin(longitude * M_PI/180);

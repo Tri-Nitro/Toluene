@@ -30,9 +30,9 @@ from toluene_extensions.models.earth.nutation import new_NutationSeries, add_rec
 
 class NutationSeries:
 
-    def __init__(self, series: List[float] = None, c_nutation_series=None):
-        if c_nutation_series is not None:
-            self.__nutation_series = c_nutation_series
+    def __init__(self, series: List[float] = None, capsule=None):
+        if capsule is not None:
+            self.__nutation_series = capsule
         else:
             self.__nutation_series = new_NutationSeries()
         if series is not None:
@@ -48,5 +48,5 @@ class NutationSeries:
                        coefficients[20])
 
     @property
-    def series(self):
+    def capsule(self):
         return self.__nutation_series
