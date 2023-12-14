@@ -48,6 +48,13 @@ const long double PRECESSION_EQUATOR[6] = {0.0, 5038.481507, -1.0790069, -0.0011
 const long double OBLIQUITY_MEAN_EQUATOR[6] = {84381.406, -0.025754, 0.0512623, -0.00772503, -4.67e-7, -3.337e-7};
 const long double PRECESSION_ECLIPTIC_MEAN_EQUATOR[6] = {0.0, 10.556403, -2.3814292, -0.00121197, 0.000170663, -5.4e-8};
 
+const long double ICRS_X_POLE_OFFSET = 0.0;
+const long double ICRS_Y_POLE_OFFSET = 0.0;
+const long double ICRS_RIGHT_ASCENSION_OFFSET = 0.0;
+
+const long double GMST_FUNCTION_JULIAN_DU[6] = {67310.54837708, 86636.555367405292, 6.9540371e-11, -6.02e-24,
+    -1.1221e-24, -3.774e-32};
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */

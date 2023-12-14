@@ -36,17 +36,81 @@ extern "C"
 {
 #endif
 
-
+#define __compile_math_linear_algebra__
 #define __compile_coordinates_state_vector__
+#include "math/linear_algebra.h"
 #include "coordinates/transform.h"
 #include "coordinates/state_vector.h"
 #include "models/earth/earth.h"
+#include "models/earth/polar_motion.h"
+#include "time/constants.h"
 
 /**
  * @brief Converts itrf coordinates to the equivalent gcrf coordinates.
  */
 static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
-    return NULL;
+
+    PyObject* state_vector_capsule;
+    PyObject* model_capsule;
+    StateVector* state_vector;
+    EarthModel* model;
+
+    long double x, y, z;
+
+    if(!PyArg_ParseTuple(args, "OO", &state_vector_capsule, &model_capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. itrf_to_geodetic()");
+        return PyErr_Occurred();
+    }
+
+    state_vector = (StateVector*)PyCapsule_GetPointer(state_vector_capsule, "StateVector");
+    if(!state_vector) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the StateVector from Capsule.");
+        return PyErr_Occurred();
+    }
+
+    if(state_vector->frame != InternationalTerrestrialReferenceFrame) {
+        PyErr_SetString(PyExc_TypeError, "itrf_to_geodetic() was expecting InternationalTerrestrialReferenceFrame");
+        return PyErr_Occurred();
+    }
+
+    model = (EarthModel*)PyCapsule_GetPointer(model_capsule, "EarthModel");
+    if(!model) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the EarthModel from Capsule.");
+        return PyErr_Occurred();
+    }
+
+    Mat3 matrix;
+    Vec3 coriolis_velocity, coriolis_velocity_prime;
+    Vec3 coriolis_acceleration, coriolis_acceleration_prime;
+    Vec3 centrifugal_acceleration, centrifugal_acceleration_prime;
+
+    StateVector* retval = (StateVector*)malloc(sizeof(StateVector));
+    if(!retval) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for new_StateVector.");
+        return PyErr_Occurred();
+    }
+    StateVector temp;
+
+    retval->r.x = coriolis_velocity.x = centrifugal_acceleration.x = state_vector->r.x;
+    retval->r.y = coriolis_velocity.y = centrifugal_acceleration.y = state_vector->r.y;
+    retval->r.z = coriolis_velocity.z = centrifugal_acceleration.z = state_vector->r.z;
+    retval->v.x = coriolis_acceleration.x = state_vector->v.x;
+    retval->v.y = coriolis_acceleration.y = state_vector->v.y;
+    retval->v.z = coriolis_acceleration.z = state_vector->v.z;
+    retval->a.x = state_vector->a.x;
+    retval->a.y = state_vector->a.y;
+    retval->a.z = state_vector->a.z;
+
+    long double t = state_vector->time - J2000_UNIX_TIME;
+
+    wobble(t, &model->earth_orientation_parameters, &matrix);
+    dot_product(&matrix, &retval->r, &temp.r);
+    dot_product(&matrix, &retval->v, &temp.v);
+    dot_product(&matrix, &retval->a, &temp.a);
+    dot_product(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
+    dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
+    dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
+
 }
 
 /**
@@ -66,7 +130,7 @@ static PyObject* itrf_to_geodetic(PyObject *self, PyObject *args) {
     StateVector* state_vector;
     EarthModel* model;
 
-    double x, y, z;
+    long double x, y, z;
 
     if(!PyArg_ParseTuple(args, "OO", &state_vector_capsule, &model_capsule)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. itrf_to_geodetic()");
