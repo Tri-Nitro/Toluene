@@ -92,7 +92,7 @@ static PyObject* earth_model_set_ellipsoid(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
     EarthModel* model;
-    long double a, b;
+    double a, b;
 
     if(!PyArg_ParseTuple(args, "Odd", &capsule, &a, &b)) {
         PyErr_SetString(PyExc_TypeError, "Invalid arguments passed to earth_model_set_ellipsoid.");
