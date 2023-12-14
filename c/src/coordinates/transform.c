@@ -182,9 +182,9 @@ static PyObject* itrf_to_geodetic(PyObject *self, PyObject *args) {
     long double big_v = sqrt(p_e_2_r_0*p_e_2_r_0+(1-e_2)*z*z);
     long double z_0 = (model->ellipsoid.b*model->ellipsoid.b*z)/(model->ellipsoid.a*big_v);
 
-    retval->r.x = atan((z+(e_r2*z_0))/p) * 180/M_PI;
-    retval->r.y = atan2(y,x) * 180/M_PI;
-    retval->r.z = big_u * (1-(model->ellipsoid.b*model->ellipsoid.b)/(model->ellipsoid.a*big_v));
+    retval->r.x = (long double)(atan((z+(e_r2*z_0))/p) * 180/M_PI);
+    retval->r.y = (long double)(atan2(y,x) * 180/M_PI);
+    retval->r.z = (long double)(big_u * (1-(model->ellipsoid.b*model->ellipsoid.b)/(model->ellipsoid.a*big_v)));
 
     printf("itrf_to_geodetic   x: %Lf, y: %Lf, z: %Lf\n", x, y, z);
     printf("itrf_to_geodetic   r.x: %Lf, r.y: %Lf, r.z: %Lf\n", retval->r.x, retval->r.y, retval->r.z);
@@ -245,9 +245,9 @@ static PyObject* geodetic_to_itrf(PyObject *self, PyObject *args) {
     long double sin_of_latitude = sin((latitude * M_PI/180));
     long double n_phi = model->ellipsoid.a/(sqrt(1-(e_2 * (sin_of_latitude*sin_of_latitude))));
 
-    retval->r.x = (n_phi + altitude) * cos(latitude * M_PI/180) * cos(longitude * M_PI/180);
-    retval->r.y = (n_phi + altitude) * cos(latitude * M_PI/180) * sin(longitude * M_PI/180);
-    retval->r.z = ((1 - e_2) * n_phi + altitude) * sin(latitude * M_PI/180);
+    retval->r.x = (long double)((n_phi + altitude) * cos(latitude * M_PI/180) * cos(longitude * M_PI/180));
+    retval->r.y = (long double)((n_phi + altitude) * cos(latitude * M_PI/180) * sin(longitude * M_PI/180));
+    retval->r.z = (long double)(((1 - e_2) * n_phi + altitude) * sin(latitude * M_PI/180));
 
     printf("geodetic_to_itrf   latitude: %Lf, longitude: %Lf, altitude: %Lf\n", latitude, longitude, altitude);
     printf("geodetic_to_itrf   x: %Lf, y: %Lf, z: %Lf\n", retval->r.x, retval->r.y, retval->r.z);
