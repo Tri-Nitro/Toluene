@@ -59,8 +59,6 @@ static PyObject* new_StateVector(PyObject* self, PyObject* args){
         return PyErr_Occurred();
     }
 
-    printf("BEFORE --- x: %Lf, y: %Lf, z: %Lf, vx: %Lf, vy: %Lf, vz: %Lf, ax: %Lf, ay: %Lf, az: %Lf, time: %Lf, frame: %i\n", x, y, z, vx, vy, vz, ax, ay, az, time, frame);
-
     state_vector->r.x = (long double)x;
     state_vector->r.y = (long double)y;
     state_vector->r.z = (long double)z;
