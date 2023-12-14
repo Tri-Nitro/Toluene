@@ -153,6 +153,7 @@ static PyObject* itrf_to_geodetic(PyObject *self, PyObject *args) {
     retval->r.x = state_vector->r.x;
     retval->r.y = state_vector->r.y;
     retval->r.z = state_vector->r.z;
+    printf("itrf_to_geodetic   r.x: %Lf, r.y: %Lf, r.z: %Lf\n", state_vector->r.x, state_vector->r.y, state_vector->r.z);
 
     // Causes a divide by 0 bug because of p if x and y are 0. Just put a little offset so longitude can be set if
     // directly above the pole.
