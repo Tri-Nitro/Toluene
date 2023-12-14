@@ -13,7 +13,9 @@ extensions = [
         [
             'c/src/coordinates/state_vector.c',
             'c/src/coordinates/transform.c',
+            'c/src/math/constants.c',
             'c/src/math/linear_algebra.c',
+            'c/src/models/earth/earth_orientation_parameters.c',
             'c/src/models/earth/polar_motion.c',
             'c/src/time/constants.c',
         ],
