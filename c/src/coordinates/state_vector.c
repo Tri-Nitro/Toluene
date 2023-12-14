@@ -59,6 +59,8 @@ static PyObject* new_StateVector(PyObject* self, PyObject* args){
         return PyErr_Occurred();
     }
 
+    printf("x: %f, y: %f, z: %f, vx: %f, vy: %f, vz: %f, ax: %f, ay: %f, az: %f, time: %f, frame: %i\n", x, y, z, vx, vy, vz, ax, ay, az, time, frame);
+
     state_vector->r.x = x;
     state_vector->r.y = y;
     state_vector->r.z = z;
@@ -70,6 +72,8 @@ static PyObject* new_StateVector(PyObject* self, PyObject* args){
     state_vector->a.z = az;
     state_vector->time = time;
     state_vector->frame = frame;
+
+    printf("x: %f, y: %f, z: %f, vx: %f, vy: %f, vz: %f, ax: %f, ay: %f, az: %f, time: %f, frame: %i\n", state_vector->r.x, state_vector->r.y, state_vector->r.z, state_vector->v.x, state_vector->v.y, state_vector->v.z, state_vector->a.x, state_vector->a.y, state_vector->a.z, state_vector->time, state_vector->frame);
 
     return PyCapsule_New(state_vector, "StateVector", delete_StateVector);
 }
