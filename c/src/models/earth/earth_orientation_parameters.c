@@ -111,20 +111,20 @@ static PyObject* eop_table_add_record(PyObject* self, PyObject* args) {
     }
     table->nrecords++;
 
-    table->records[insertion_point].timestamp = timestamp;
+    table->records[insertion_point].timestamp = (long double)timestamp;
     table->records[insertion_point].is_bulletin_a_PM_predicted = is_bulletin_a_PM_predicted;
-    table->records[insertion_point].bulletin_a_PM_x = bulletin_a_PM_x;
-    table->records[insertion_point].bulletin_a_PM_x_error = bulletin_a_PM_x_error;
-    table->records[insertion_point].bulletin_a_PM_y = bulletin_a_PM_y;
-    table->records[insertion_point].bulletin_a_PM_y_error = bulletin_a_PM_y_error;
+    table->records[insertion_point].bulletin_a_PM_x = (long double)bulletin_a_PM_x;
+    table->records[insertion_point].bulletin_a_PM_x_error = (long double)bulletin_a_PM_x_error;
+    table->records[insertion_point].bulletin_a_PM_y = (long double)bulletin_a_PM_y;
+    table->records[insertion_point].bulletin_a_PM_y_error = (long double)bulletin_a_PM_y_error;
     table->records[insertion_point].is_bulletin_a_dut1_predicted = is_bulletin_a_dut1_predicted;
-    table->records[insertion_point].bulletin_a_dut1 = bulletin_a_dut1;
+    table->records[insertion_point].bulletin_a_dut1 = (long double)bulletin_a_dut1;
     table->records[insertion_point].bulletin_a_dut1_error = bulletin_a_dut1_error;
-    table->records[insertion_point].bulletin_a_lod = bulletin_a_lod;
-    table->records[insertion_point].bulletin_a_lod_error = bulletin_a_lod_error;
-    table->records[insertion_point].bulletin_b_PM_x = bulletin_b_PM_x;
-    table->records[insertion_point].bulletin_b_PM_y = bulletin_b_PM_y;
-    table->records[insertion_point].bulletin_b_dut1 = bulletin_b_dut1;
+    table->records[insertion_point].bulletin_a_lod = (long double)bulletin_a_lod;
+    table->records[insertion_point].bulletin_a_lod_error = (long double)bulletin_a_lod_error;
+    table->records[insertion_point].bulletin_b_PM_x = (long double)bulletin_b_PM_x;
+    table->records[insertion_point].bulletin_b_PM_y = (long double)bulletin_b_PM_y;
+    table->records[insertion_point].bulletin_b_dut1 = (long double)bulletin_b_dut1;
 
     return Py_BuildValue("i", table->nrecords);
 }

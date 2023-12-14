@@ -57,8 +57,8 @@ static PyObject* set_axes(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    ellipsoid->a = a;
-    ellipsoid->b = b;
+    ellipsoid->a = (long double)a;
+    ellipsoid->b = (long double)b;
 
     Py_RETURN_NONE;
 }
@@ -105,7 +105,7 @@ static PyObject* set_semi_major_axis(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    ellipsoid->a = a;
+    ellipsoid->a = (long double)a;
 
     Py_RETURN_NONE;
 }
@@ -154,7 +154,7 @@ static PyObject* set_semi_minor_axis(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    ellipsoid->b = b;
+    ellipsoid->b = (long double)b;
 
     Py_RETURN_NONE;
 }
@@ -285,8 +285,8 @@ static PyObject* new_Ellipsoid(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    ellipsoid->a = a;
-    ellipsoid->b = b;
+    ellipsoid->a = (long double)a;
+    ellipsoid->b = (long double)b;
 
     return PyCapsule_New(ellipsoid, "Ellipsoid", delete_Ellipsoid);
 }

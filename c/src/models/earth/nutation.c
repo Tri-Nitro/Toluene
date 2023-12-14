@@ -220,12 +220,12 @@ static PyObject* nutation_series_add_record(PyObject* self, PyObject* args) {
     table->records[table->nrecords].mean_argument_of_latitude_moon_coefficient = n;
     table->records[table->nrecords].mean_elongation_moon_from_the_sun_coefficient = o;
     table->records[table->nrecords].mean_longitude_of_moon_mean_ascending_node_coefficient = r;
-    table->records[table->nrecords].S = S;
-    table->records[table->nrecords].S_dot = S_dot;
-    table->records[table->nrecords].C_prime = C_prime;
-    table->records[table->nrecords].C = C;
-    table->records[table->nrecords].C_dot = C_dot;
-    table->records[table->nrecords++].S_prime = S_prime;
+    table->records[table->nrecords].S = (long double)S;
+    table->records[table->nrecords].S_dot = (long double)S_dot;
+    table->records[table->nrecords].C_prime = (long double)C_prime;
+    table->records[table->nrecords].C = (long double)C;
+    table->records[table->nrecords].C_dot = (long double)C_dot;
+    table->records[table->nrecords++].S_prime = (long double)S_prime;
 
     return Py_BuildValue("i", table->nrecords);
 }
