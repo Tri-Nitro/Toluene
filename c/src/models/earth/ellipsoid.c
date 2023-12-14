@@ -80,7 +80,7 @@ static PyObject* get_axes(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    return Py_BuildValue("dd", ellipsoid->a, ellipsoid->b);
+    return Py_BuildValue("dd", (double)ellipsoid->a, (double)ellipsoid->b);
 }
 
 /**
@@ -129,7 +129,7 @@ static PyObject* get_semi_major_axis(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    return Py_BuildValue("d", ellipsoid->a);
+    return Py_BuildValue("d", (double)ellipsoid->a);
 }
 
 /**
@@ -178,7 +178,7 @@ static PyObject* get_semi_minor_axis(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    return Py_BuildValue("d", ellipsoid->b);
+    return Py_BuildValue("d", (double)ellipsoid->b);
 }
 
 /**
@@ -202,7 +202,7 @@ static PyObject* get_flattening(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    return Py_BuildValue("d", (ellipsoid->a - ellipsoid->b) / ellipsoid->a);
+    return Py_BuildValue("d", (double)((ellipsoid->a - ellipsoid->b) / ellipsoid->a));
 }
 
 /**
@@ -226,8 +226,8 @@ static PyObject* get_eccentricity_squared(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    return Py_BuildValue("d", (ellipsoid->a * ellipsoid->a - ellipsoid->b * ellipsoid->b) /
-        (ellipsoid->a * ellipsoid->a));
+    return Py_BuildValue("d", (double)((ellipsoid->a * ellipsoid->a - ellipsoid->b * ellipsoid->b) /
+        (ellipsoid->a * ellipsoid->a)));
 }
 
 /**
@@ -261,7 +261,7 @@ static PyObject* get_ellipsoid_radius(PyObject* self, PyObject* args) {
     f2 = f2 * f2;
     f4 = f4 * f4;
 
-    return Py_BuildValue("d", sqrt((f1 + f2) / (f3 + f4)));
+    return Py_BuildValue("d", (double)sqrt((f1 + f2) / (f3 + f4)));
 }
 
 /**

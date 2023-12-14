@@ -51,7 +51,7 @@ static PyObject* new_StateVector(PyObject* self, PyObject* args){
         return PyErr_Occurred();
     }
 
-    long double x, y, z, vx, vy, vz, ax, ay, az, time;
+    double x, y, z, vx, vy, vz, ax, ay, az, time;
     int frame;
 
     if(!PyArg_ParseTuple(args, "ddddddddddi", &x, &y, &z, &vx, &vy, &vz, &ax, &ay, &az, &time, &frame)) {
@@ -95,7 +95,7 @@ static PyObject* set_position(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
     StateVector* state_vector;
-    long double x, y, z;
+    double x, y, z;
 
     if(!PyArg_ParseTuple(args, "Oddd", &capsule, &x, &y, &z)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for set_position.");
@@ -122,7 +122,7 @@ static PyObject* set_velocity(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
     StateVector* state_vector;
-    long double x, y, z;
+    double x, y, z;
 
     if(!PyArg_ParseTuple(args, "Oddd", &capsule, &x, &y, &z)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for set_velocity.");
@@ -149,7 +149,7 @@ static PyObject* set_acceleration(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
     StateVector* state_vector;
-    long double x, y, z;
+    double x, y, z;
 
     if(!PyArg_ParseTuple(args, "Oddd", &capsule, &x, &y, &z)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for set_acceleration.");
@@ -176,7 +176,7 @@ static PyObject* set_time(PyObject* self, PyObject* args) {
 
     PyObject* capsule;
     StateVector* state_vector;
-    long double time;
+    double time;
 
     if(!PyArg_ParseTuple(args, "Od", &capsule, &time)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments for set_time.");
@@ -238,7 +238,7 @@ static PyObject* get_position(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    return Py_BuildValue("(ddd)", state_vector->r.x, state_vector->r.y, state_vector->r.z);
+    return Py_BuildValue("(ddd)", (double)state_vector->r.x, (double)state_vector->r.y, (double)state_vector->r.z);
 }
 
 /**
@@ -260,7 +260,7 @@ static PyObject* get_velocity(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    return Py_BuildValue("(ddd)", state_vector->v.x, state_vector->v.y, state_vector->v.z);
+    return Py_BuildValue("(ddd)", (double)state_vector->v.x, (double)state_vector->v.y, (double)state_vector->v.z);
 }
 
 /**
@@ -282,7 +282,7 @@ static PyObject* get_acceleration(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    return Py_BuildValue("(ddd)", state_vector->a.x, state_vector->a.y, state_vector->a.z);
+    return Py_BuildValue("(ddd)", (double)state_vector->a.x, (double)state_vector->a.y, (double)state_vector->a.z);
 }
 
 /**
@@ -304,7 +304,7 @@ static PyObject* get_time(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    return Py_BuildValue("d", state_vector->time);
+    return Py_BuildValue("d", (double)state_vector->time);
 }
 
 /**

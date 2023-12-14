@@ -66,7 +66,7 @@ static PyObject* itrf_to_geodetic(PyObject *self, PyObject *args) {
     StateVector* state_vector;
     EarthModel* model;
 
-    long double x, y, z;
+    double x, y, z;
 
     if(!PyArg_ParseTuple(args, "OO", &state_vector_capsule, &model_capsule)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. itrf_to_geodetic()");
@@ -146,7 +146,7 @@ static PyObject* geodetic_to_itrf(PyObject *self, PyObject *args) {
     StateVector* state_vector;
     EarthModel* model;
 
-    long double latitude, longitude, altitude;
+    double latitude, longitude, altitude;
 
     if(!PyArg_ParseTuple(args, "OO", &state_vector_capsule, &model_capsule)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. geodetic_to_itrf()");
