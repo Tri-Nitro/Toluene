@@ -56,6 +56,8 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     StateVector* state_vector;
     EarthModel* model;
 
+    long double x, y, z;
+
     if(!PyArg_ParseTuple(args, "OO", &state_vector_capsule, &model_capsule)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. itrf_to_geodetic()");
         return PyErr_Occurred();
@@ -150,40 +152,34 @@ static PyObject* itrf_to_geodetic(PyObject *self, PyObject *args) {
     }
 
     StateVector* retval = (StateVector*)malloc(sizeof(StateVector));
-    retval->r.x = state_vector->r.x;
-    retval->r.y = state_vector->r.y;
-    retval->r.z = state_vector->r.z;
-    printf("itrf_to_geodetic   r.x: %Lf, r.y: %Lf, r.z: %Lf\n", state_vector->r.x, state_vector->r.y, state_vector->r.z);
 
     // Causes a divide by 0 bug because of p if x and y are 0. Just put a little offset so longitude can be set if
     // directly above the pole.
-    if(retval->r.x == 0 && retval->r.y == 0) retval->r.x = 0.000000000000000000001;
+    if(x == 0 && y == 0) x = 0.000000001;
 
     long double e_numerator = model->ellipsoid.a*model->ellipsoid.a - model->ellipsoid.b*model->ellipsoid.b;
     long double e_2 = e_numerator/(model->ellipsoid.a*model->ellipsoid.a);
     long double e_r2 = e_numerator/(model->ellipsoid.b*model->ellipsoid.b);
-    long double p = sqrt(retval->r.x*retval->r.x+retval->r.y*retval->r.y);
-    long double big_f = 54.0*model->ellipsoid.b*model->ellipsoid.b*retval->r.z*retval->r.z;
-    long double big_g = p*p+retval->r.z*retval->r.z*(1-e_2)-e_2*e_numerator;
+    long double p = sqrt(x*x+y*y);
+    long double big_f = 54.0*model->ellipsoid.b*model->ellipsoid.b*state_vector->r.z*state_vector->r.z;
+    long double big_g = p*p+state_vector->r.z*state_vector->r.z*(1-e_2)-e_2*e_numerator;
     long double c = (e_2*e_2*big_f*p*p)/(big_g*big_g*big_g);
     long double s = cbrt(1+c+sqrt(c*c+2*c));
     long double k = s+1+1/s;
     long double big_p = big_f/(3*k*k*big_g*big_g);
     long double big_q = sqrt(1 + 2 * e_2 * e_2 * big_p);
     long double sqrt_r_0 = (model->ellipsoid.a*model->ellipsoid.a/2)*(1+1/big_q)-
-        ((big_p*(1-e_2)*retval->r.z*retval->r.z)/(big_q*(1+big_q))) -(big_p*p*p)/2;
+        ((big_p*(1-e_2)*state_vector->r.z*state_vector->r.z)/(big_q*(1+big_q))) -(big_p*p*p)/2;
     sqrt_r_0 = (sqrt_r_0 < 0? 0 : sqrt(sqrt_r_0));
     long double r_0 = ((-1* big_p*e_2*p)/(1+big_q)) + sqrt_r_0;
     long double p_e_2_r_0 = p-e_2*r_0;
-    long double big_u = sqrt( p_e_2_r_0*p_e_2_r_0+retval->r.z*retval->r.z);
-    long double big_v = sqrt(p_e_2_r_0*p_e_2_r_0+(1-e_2)*retval->r.z*retval->r.z);
-    long double z_0 = (model->ellipsoid.b*model->ellipsoid.b*retval->r.z)/(model->ellipsoid.a*big_v);
+    long double big_u = sqrt( p_e_2_r_0*p_e_2_r_0+state_vector->r.z*state_vector->r.z);
+    long double big_v = sqrt(p_e_2_r_0*p_e_2_r_0+(1-e_2)*state_vector->r.z*state_vector->r.z);
+    long double z_0 = (model->ellipsoid.b*model->ellipsoid.b*state_vector->r.z)/(model->ellipsoid.a*big_v);
 
-    retval->r.x = (long double)(atan((double)((retval->r.z+(e_r2*z_0))/p)) * 180/M_PI);
-    retval->r.y = (long double)(atan2(retval->r.y,state_vector->r.x) * 180/M_PI);
-    retval->r.z = (long double)(big_u * (1-(model->ellipsoid.b*model->ellipsoid.b)/(model->ellipsoid.a*big_v)));
-
-    printf("itrf_to_geodetic   r.x: %Lf, r.y: %Lf, r.z: %Lf\n", retval->r.x, retval->r.y, retval->r.z);
+    retval->r.x = atan((state_vector->r.z+(e_r2*z_0))/p) * 180/M_PI;
+    retval->r.y = atan2(state_vector->r.y,state_vector->r.x) * 180/M_PI;
+    retval->r.z = big_u * (1-(model->ellipsoid.b*model->ellipsoid.b)/(model->ellipsoid.a*big_v));
 
     retval->v.x = state_vector->v.x;
     retval->v.y = state_vector->v.y;
@@ -231,21 +227,15 @@ static PyObject* geodetic_to_itrf(PyObject *self, PyObject *args) {
 
     StateVector* retval = (StateVector*)malloc(sizeof(StateVector));
 
-    printf("Semi-major axis: %Lf, Semi-minor axis: %Lf\n", model->ellipsoid.a, model->ellipsoid.b);
-
     long double e_2 = 1 - ((model->ellipsoid.b*model->ellipsoid.b)/(model->ellipsoid.a*model->ellipsoid.a));
-    long double sin_of_latitude = sin((double)(state_vector->r.x * M_PI/180));
+    long double sin_of_latitude = sin((state_vector->r.x * M_PI/180));
     long double n_phi = model->ellipsoid.a/(sqrt(1-(e_2 * (sin_of_latitude*sin_of_latitude))));
 
-    printf("e_2: %Lf, sin_of_latitude: %Lf, n_phi: %Lf\n", e_2, sin_of_latitude, n_phi);
-
-    retval->r.x = (long double)((n_phi + state_vector->r.z) * cos((double)(state_vector->r.x * M_PI/180))
-        * cos((double)(state_vector->r.y * M_PI/180)));
-    retval->r.y = (long double)((n_phi + state_vector->r.z) * cos((double)(state_vector->r.x * M_PI/180))
-        * sin((double)(state_vector->r.y * M_PI/180)));
-    retval->r.z = (long double)(((1 - e_2) * n_phi + state_vector->r.z) * sin((double)(state_vector->r.x * M_PI/180)));
-
-    printf("geodetic_to_itrf   x: %Lf, y: %Lf, z: %Lf\n", retval->r.x, retval->r.y, retval->r.z);
+    retval->r.x = (n_phi + state_vector->r.z) * cos(state_vector->r.x * M_PI/180) * cos(state_vector->r.y
+        * M_PI/180));
+    retval->r.y = (n_phi + state_vector->r.z) * cos(state_vector->r.x * M_PI/180) * sin(state_vector->r.y
+        * M_PI/180);
+    retval->r.z = ((1 - e_2) * n_phi + state_vector->r.z) * sin(state_vector->r.x * M_PI/180);
 
     retval->v.x = state_vector->v.x;
     retval->v.y = state_vector->v.y;
