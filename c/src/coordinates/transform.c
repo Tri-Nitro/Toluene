@@ -101,9 +101,7 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     retval->a.y = state_vector->a.y;
     retval->a.z = state_vector->a.z;
 
-    long double t = state_vector->time - J2000_UNIX_TIME;
-
-    wobble(t, &model->earth_orientation_parameters, &matrix);
+    wobble(state_vector->time, &model->earth_orientation_parameters, &matrix);
     dot_product(&matrix, &retval->r, &temp.r);
     dot_product(&matrix, &retval->v, &temp.v);
     dot_product(&matrix, &retval->a, &temp.a);

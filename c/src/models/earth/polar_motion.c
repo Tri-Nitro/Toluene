@@ -49,7 +49,7 @@ void wobble(long double t, EOPTable* earth_orientation_parameter_table, Mat3* ma
 
     if (matrix && earth_orientation_parameter_table) {
         EOPTableRecord record;
-        eop_table_record_lookup(earth_orientation_parameter_table, double timestamp, &record);
+        eop_table_record_lookup(earth_orientation_parameter_table, t, &record);
 
         long double sin_x = sin(record.bulletin_a_PM_x * ARCSECONDS_TO_RADIANS);
         long double cos_x = cos(record.bulletin_a_PM_x * ARCSECONDS_TO_RADIANS);

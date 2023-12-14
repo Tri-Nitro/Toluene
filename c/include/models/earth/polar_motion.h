@@ -28,6 +28,7 @@
 extern "C" {
 #endif
 
+#define __compile_models_earth_earth_orientation_parameters__
 #include "math/linear_algebra.h"
 #include "models/earth/earth_orientation_parameters.h"
 
