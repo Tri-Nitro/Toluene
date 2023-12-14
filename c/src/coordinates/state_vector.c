@@ -59,7 +59,7 @@ static PyObject* new_StateVector(PyObject* self, PyObject* args){
         return PyErr_Occurred();
     }
 
-    printf("BEFORE --- x: %f, y: %f, z: %f, vx: %f, vy: %f, vz: %f, ax: %f, ay: %f, az: %f, time: %f, frame: %i\n", x, y, z, vx, vy, vz, ax, ay, az, time, frame);
+    printf("BEFORE --- x: %Lf, y: %Lf, z: %Lf, vx: %Lf, vy: %Lf, vz: %Lf, ax: %Lf, ay: %Lf, az: %Lf, time: %Lf, frame: %i\n", x, y, z, vx, vy, vz, ax, ay, az, time, frame);
 
     state_vector->r.x = (long double)x;
     state_vector->r.y = (long double)y;
@@ -73,7 +73,7 @@ static PyObject* new_StateVector(PyObject* self, PyObject* args){
     state_vector->time = (long double)time;
     state_vector->frame = frame;
 
-    printf("AFTER --- x: %f, y: %f, z: %f, vx: %f, vy: %f, vz: %f, ax: %f, ay: %f, az: %f, time: %f, frame: %i\n", state_vector->r.x, state_vector->r.y, state_vector->r.z, state_vector->v.x, state_vector->v.y, state_vector->v.z, state_vector->a.x, state_vector->a.y, state_vector->a.z, state_vector->time, state_vector->frame);
+    printf("AFTER --- x: %Lf, y: %Lf, z: %Lf, vx: %Lf, vy: %Lf, vz: %Lf, ax: %Lf, ay: %Lf, az: %Lf, time: %Lf, frame: %i\n", state_vector->r.x, state_vector->r.y, state_vector->r.z, state_vector->v.x, state_vector->v.y, state_vector->v.z, state_vector->a.x, state_vector->a.y, state_vector->a.z, state_vector->time, state_vector->frame);
 
     return PyCapsule_New(state_vector, "StateVector", delete_StateVector);
 }

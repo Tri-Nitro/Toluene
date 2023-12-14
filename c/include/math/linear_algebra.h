@@ -38,7 +38,7 @@ extern "C" {
  *  Member 'z' is the z component of the vector
  */
 typedef struct {
-    long double x, y, z;
+    double x, y, z;
 } Vec3;
 
 /**
