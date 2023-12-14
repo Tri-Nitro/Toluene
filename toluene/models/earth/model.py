@@ -23,95 +23,64 @@
 #   SOFTWARE.                                                                       #
 #                                                                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+import yaml
+
 from toluene.models.earth.earth_orientation_table import EarthOrientationTable
-
-from toluene.math.algebra import Polynomial
-from toluene.models.earth.cirs_coefficients import CIRSCoefficients
 from toluene.models.earth.ellipsoid import Ellipsoid
-from toluene.models.earth.geoid import Geoid
 from toluene.models.earth.nutation import NutationSeries
-from toluene.util.time import DeltaTTable
+from toluene.util.file import configdir, datadir
+from toluene_extensions.models.earth import earth
 
-from toluene_extensions.models.earth.model import (new_EarthModel, get_ellipsoid, set_ellipsoid, \
-    get_cirs_coefficients, set_cirs_coefficients, get_nutation_series, set_nutation_series, get_eop_table,
-    set_eop_table, get_delta_t_table, set_delta_t_table, get_gmst_polynomial, set_gmst_polynomial, get_epoch, set_epoch)
+# Default is set to the WGS84 ellipsoid.
+# This is global and can be overwritten with by redefining this tuple to the desired semi-major and semi-minor axes.
+default_ellipsoid = (6378137.0, 6356752.314245)
 
 
 class EarthModel:
+    """
+    Class to represent a model of the Earth. This is not stored in python but in C. All computation using the classes
+    are just wrappers for C functions. Uses the defaults that ship with the library. As the library becomes outdated,
+    it is strongly advised to use your own data. Nutation Series should be very accurate for the next 100 years, but
+    the Earth Orientation Table is only accurate for the dates it was packaged. The default is the finals2000A.all
+    file which is pulled from the IERS website. The file is included in the package, but it is recommended to download
+    the latest file from the IERS website and set the eop_table to that file.
 
-    def __init__(self):
-        self.__model = new_EarthModel()
-        self.__ellipsoid = None
-        self.__geoid = None
-        self.__cirs_coefficients = None
-        self.__nutation_series = None
-        self.__eop_table = None
-        self.__gmst_polynomial = None
-        self.__epoch = None
+    :param ellipsoid: The ellipsoid model to use for the Earth.
+    :type ellipsoid: :class:`toluene.models.earth.Ellipsoid`
+    :param nutation_series: The nutation series to use for the Earth. Giving a nutation series will override the
+        default nutation series. The Earth Model will take ownership of the nutation series and will delete the series
+        passed in so all references to the series should go through the model.
+    :type nutation_series: :class:`toluene.models.earth.NutationSeries`
+    :param eop_table: The Earth Orientation Table to use for the Earth. Giving an Earth Orientation Table will
+        override the default Earth Orientation Table. The Earth Model will take ownership of the Earth Orientation
+        Table and will delete the table passed in so all references to the table should go through the model.
+    :type eop_table: :class:`toluene.models.earth.EarthOrientationTable`
+    """
+    def __init__(self, ellipsoid: Ellipsoid = None, nutation_series: NutationSeries = None,
+                 eop_table: EarthOrientationTable = None, capsule=None):
+        if capsule is None:
+            self.__model = earth.new_EarthModel()
 
+            if ellipsoid is None:
+                earth.set_ellipsoid(self.__model, default_ellipsoid[0], default_ellipsoid[1])
+            else:
+                earth.set_ellipsoid(self.__model, ellipsoid.semi_major_axis, ellipsoid.semi_minor_axis)
+
+            if nutation_series is None:
+                nutation_series = NutationSeries()
+                with open(configdir + '/nutation.yml') as f:
+                    yaml_config = yaml.safe_load(f)
+                nutation_series.load_from_list(yaml_config['nutation']['series'])
+            earth.set_nutation_series(self.__model, nutation_series.capsule)
+
+            if eop_table is None:
+                eop_table = EarthOrientationTable()
+                eop_table.load_from_file(datadir + '/finals2000A.all')
+            earth.set_earth_orientation_parameters(self.__model, eop_table.capsule)
+
+    """
+    Gets the model and returns it as a capsule.
+    """
     @property
-    def model(self):
+    def capsule(self):
         return self.__model
-
-    @property
-    def ellipsoid(self) -> Ellipsoid:
-        return self.__ellipsoid
-
-    def set_ellipsoid(self, ellipsoid: Ellipsoid):
-        self.__ellipsoid = ellipsoid
-        set_ellipsoid(self.__model, ellipsoid.c_ellipsoid)
-
-    @property
-    def geoid(self) -> Geoid:
-        return self.__geoid
-
-    def set_geoid(self, geoid: Geoid):
-        pass
-
-    @property
-    def cirs_coefficients(self) -> CIRSCoefficients:
-        return self.__cirs_coefficients
-
-    def set_cirs_coefficients(self, cirs_coefficients: CIRSCoefficients):
-        self.__cirs_coefficients = cirs_coefficients
-        set_cirs_coefficients(self.__model, cirs_coefficients.coefficients)
-
-    @property
-    def nutation_series(self) -> NutationSeries:
-        return self.__nutation_series
-
-    def set_nutation_series(self, nutation_series: NutationSeries):
-        self.__nutation_series = nutation_series
-        set_nutation_series(self.__model, nutation_series.series)
-
-    @property
-    def eop_table(self) -> EarthOrientationTable:
-        return self.__eop_table
-
-    def set_eop_table(self, eop_table: EarthOrientationTable):
-        self.__eop_table = eop_table
-        set_eop_table(self.__model, eop_table.table)
-
-    @property
-    def delta_t_table(self) -> DeltaTTable:
-        return self.__delta_t_table
-
-    def set_delta_t_table(self, delta_t_table: DeltaTTable):
-        self.__delta_t_table = delta_t_table
-        set_delta_t_table(self.__model, delta_t_table.table)
-
-    @property
-    def epoch(self) -> float:
-        return self.__epoch
-
-    def set_epoch(self, epoch: float):
-        self.__epoch = epoch
-        set_epoch(self.__model, epoch)
-
-    @property
-    def gmst_polynomial(self) -> Polynomial:
-        return self.__gmst_polynomial
-
-    def set_gmst_polynomial(self, gmst_du: Polynomial):
-        self.__gmst_polynomial = gmst_du
-        set_gmst_polynomial(self.__model, gmst_du.coefficients)

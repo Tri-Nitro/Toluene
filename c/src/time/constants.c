@@ -39,8 +39,8 @@ extern "C"
 #endif /* __cplusplus */
 
 const long double SECONDS_PER_DAY = 86400.0;
-const long double DAYS_PER_JULIAN_CENTURY = 36525;
-const long double SECONDS_PER_JULIAN_CENTURY = SECONDS_PER_DAY * DAYS_PER_JULIAN_CENTURY;
+const long double DAYS_PER_JULIAN_CENTURY = 36525.0;
+const long double SECONDS_PER_JULIAN_CENTURY = 3.15576e9;
 const long double J2000_UNIX_TIME = 946728000.0;
 
 #ifdef __cplusplus

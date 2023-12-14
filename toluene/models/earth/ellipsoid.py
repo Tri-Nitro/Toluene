@@ -140,5 +140,5 @@ class Ellipsoid:
     :rtype: ctypes.py_object
     """
     @property
-    def c_capusle(self) -> py_object:
+    def capsule(self) -> py_object:
         return self.__ellipsoid
