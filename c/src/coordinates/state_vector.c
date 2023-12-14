@@ -61,16 +61,16 @@ static PyObject* new_StateVector(PyObject* self, PyObject* args){
 
     printf("x: %f, y: %f, z: %f, vx: %f, vy: %f, vz: %f, ax: %f, ay: %f, az: %f, time: %f, frame: %i\n", x, y, z, vx, vy, vz, ax, ay, az, time, frame);
 
-    state_vector->r.x = x;
-    state_vector->r.y = y;
-    state_vector->r.z = z;
-    state_vector->v.x = vx;
-    state_vector->v.y = vy;
-    state_vector->v.z = vz;
-    state_vector->a.x = ax;
-    state_vector->a.y = ay;
-    state_vector->a.z = az;
-    state_vector->time = time;
+    state_vector->r.x = (long double)x;
+    state_vector->r.y = (long double)y;
+    state_vector->r.z = (long double)z;
+    state_vector->v.x = (long double)vx;
+    state_vector->v.y = (long double)vy;
+    state_vector->v.z = (long double)vz;
+    state_vector->a.x = (long double)ax;
+    state_vector->a.y = (long double)ay;
+    state_vector->a.z = (long double)az;
+    state_vector->time = (long double)time;
     state_vector->frame = frame;
 
     printf("x: %f, y: %f, z: %f, vx: %f, vy: %f, vz: %f, ax: %f, ay: %f, az: %f, time: %f, frame: %i\n", state_vector->r.x, state_vector->r.y, state_vector->r.z, state_vector->v.x, state_vector->v.y, state_vector->v.z, state_vector->a.x, state_vector->a.y, state_vector->a.z, state_vector->time, state_vector->frame);
