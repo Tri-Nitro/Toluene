@@ -71,8 +71,6 @@ static PyObject* new_StateVector(PyObject* self, PyObject* args){
     state_vector->time = (long double)time;
     state_vector->frame = frame;
 
-    printf("AFTER --- x: %Lf, y: %Lf, z: %Lf, vx: %Lf, vy: %Lf, vz: %Lf, ax: %Lf, ay: %Lf, az: %Lf, time: %Lf, frame: %i\n", state_vector->r.x, state_vector->r.y, state_vector->r.z, state_vector->v.x, state_vector->v.y, state_vector->v.z, state_vector->a.x, state_vector->a.y, state_vector->a.z, state_vector->time, state_vector->frame);
-
     return PyCapsule_New(state_vector, "StateVector", delete_StateVector);
 }
 
