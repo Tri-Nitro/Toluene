@@ -238,8 +238,8 @@ static PyObject* geodetic_to_itrf(PyObject *self, PyObject *args) {
     retval->r.x = (long double)((n_phi + state_vector->r.z) * cos((double)(state_vector->r.x * M_PI/180))
         * cos((double)(state_vector->r.y * M_PI/180)));
     retval->r.y = (long double)((n_phi + state_vector->r.z) * cos((double)(state_vector->r.x * M_PI/180))
-        * sin((double)(state_vector->r.y * M_PI/180));
-    retval->r.z = (long double)(((1 - e_2) * n_phi + state_vector->r.z) * sin(s(double)(state_vector->r.x * M_PI/180)));
+        * sin((double)(state_vector->r.y * M_PI/180)));
+    retval->r.z = (long double)(((1 - e_2) * n_phi + state_vector->r.z) * sin((double)(state_vector->r.x * M_PI/180)));
 
     printf("geodetic_to_itrf   x: %Lf, y: %Lf, z: %Lf\n", retval->r.x, retval->r.y, retval->r.z);
 
