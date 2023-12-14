@@ -21,29 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_CONSTANTS_H__
-#define __MODELS_EARTH_CONSTANTS_H__
+#ifndef __MODELS_EARTH_POLAR_MOTION_H__
+#define __MODELS_EARTH_POLAR_MOTION_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern const long double MEAN_OBLIQUITY_EARTH[6];
 
-extern const long double GENERAL_PRECESSION_LONGITUDE[3];
-extern const long double PRECESSION_EQUATOR[6];
-extern const long double OBLIQUITY_MEAN_EQUATOR[6];
-extern const long double PRECESSION_ECLIPTIC_MEAN_EQUATOR[6];
+/**
+ * @brief Calculate the Greenwich Mean Sidereal Time (GMST).
+ *
+ * @param[in] t seconds since J2000.0.
+ */
+void gmst(long double t, long double* gmst);
 
-extern const long double ICRS_X_POLE_OFFSET;
-extern const long double ICRS_Y_POLE_OFFSET;
-extern const long double ICRS_RIGHT_ASCENSION_OFFSET;
+/**
+ * @brief Calculate the Earth rotation matrix.
+ *
+ * @param[in] angle angle of rotation.
+ * @param[out] matrix rotation matrix.
+ */
+void earth_rotation_matrix(long double angle, Mat3* matrix);
 
-extern const long double GMST_FUNCTION_JULIAN_DU[6];
 
 #ifdef __cplusplus
 }   /* extern "C" */
-#endif /* __cplusplus */
+#endif
 
-
-#endif /* __MODELS_EARTH_CONSTANTS_H__ */
+#endif /* __MODELS_EARTH_PRECESSION_H__ */

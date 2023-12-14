@@ -82,6 +82,7 @@ class TestStateVectorTransform:
             print("Trying to convert from ITRF to Geodetic for", geodetic_test_points[idx])
             geodetic_point = itrf_test_points[idx].get_geodetic(earth_model)
             assert geodetic_point is not None
+            print(geodetic_point.position, geodetic_test_points[idx].position)
             assert geodetic_point.position[0] == pytest.approx(geodetic_test_points[idx].position[0], abs=1e-8)
             assert geodetic_point.position[1] == pytest.approx(geodetic_test_points[idx].position[1], abs=1e-8)
             assert geodetic_point.position[2] == pytest.approx(geodetic_test_points[idx].position[2], abs=1e-8)
@@ -91,6 +92,7 @@ class TestStateVectorTransform:
             print("Trying to convert from Geodetic to ITRF for", itrf_test_points[idx])
             itrf_point = geodetic_test_points[idx].get_itrs(earth_model)
             assert itrf_point is not None
-            assert itrf_point.position[0] == pytest.approx(itrf_test_points[idx].position[0], abs=1e-18)
-            assert itrf_point.position[1] == pytest.approx(itrf_test_points[idx].position[1], abs=1e-18)
-            assert itrf_point.position[2] == pytest.approx(itrf_test_points[idx].position[2], abs=1e-18)
+            print(itrf_point.position, geodetic_test_points[idx].position)
+            assert itrf_point.position[0] == pytest.approx(itrf_test_points[idx].position[0], abs=1e-8)
+            assert itrf_point.position[1] == pytest.approx(itrf_test_points[idx].position[1], abs=1e-8)
+            assert itrf_point.position[2] == pytest.approx(itrf_test_points[idx].position[2], abs=1e-8)

@@ -21,29 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_CONSTANTS_H__
-#define __MODELS_EARTH_CONSTANTS_H__
+#ifndef __MODELS_EARTH_BIAS_H__
+#define __MODELS_EARTH_BIAS_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern const long double MEAN_OBLIQUITY_EARTH[6];
+#include "math/linear_algebra.h"
 
-extern const long double GENERAL_PRECESSION_LONGITUDE[3];
-extern const long double PRECESSION_EQUATOR[6];
-extern const long double OBLIQUITY_MEAN_EQUATOR[6];
-extern const long double PRECESSION_ECLIPTIC_MEAN_EQUATOR[6];
 
-extern const long double ICRS_X_POLE_OFFSET;
-extern const long double ICRS_Y_POLE_OFFSET;
-extern const long double ICRS_RIGHT_ASCENSION_OFFSET;
+/**
+ * @brief Frame bias transform from ICRS or GCRS to ITRS
+ */
+void icrs_frame_bias(Mat3* matrix);
 
-extern const long double GMST_FUNCTION_JULIAN_DU[6];
 
 #ifdef __cplusplus
 }   /* extern "C" */
-#endif /* __cplusplus */
+#endif
 
-
-#endif /* __MODELS_EARTH_CONSTANTS_H__ */
+#endif /* __MODELS_EARTH_PRECESSION_H__ */

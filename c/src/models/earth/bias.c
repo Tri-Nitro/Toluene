@@ -21,29 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_CONSTANTS_H__
-#define __MODELS_EARTH_CONSTANTS_H__
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+
+#include "math/constants.h"
+#include "models/earth/polar_motion.h"
+
+#if defined(_WIN32) || defined(WIN32)
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+#endif /* _WIN32 */
 
 #ifdef __cplusplus
-extern "C" {
-#endif
-
-extern const long double MEAN_OBLIQUITY_EARTH[6];
-
-extern const long double GENERAL_PRECESSION_LONGITUDE[3];
-extern const long double PRECESSION_EQUATOR[6];
-extern const long double OBLIQUITY_MEAN_EQUATOR[6];
-extern const long double PRECESSION_ECLIPTIC_MEAN_EQUATOR[6];
-
-extern const long double ICRS_X_POLE_OFFSET;
-extern const long double ICRS_Y_POLE_OFFSET;
-extern const long double ICRS_RIGHT_ASCENSION_OFFSET;
-
-extern const long double GMST_FUNCTION_JULIAN_DU[6];
-
-#ifdef __cplusplus
-}   /* extern "C" */
+extern "C"
+{
 #endif /* __cplusplus */
 
+/**
+ * @brief Frame bias transform from ICRS or GCRS to ITRS
+ */
+void icrs_frame_bias(Mat3* matrix) {
 
-#endif /* __MODELS_EARTH_CONSTANTS_H__ */
+    if (matrix) {
+        matrix->w11 = 1.0;
+        matrix->w12 = 0.0;
+        matrix->w13 = 0.0;
+        matrix->w21 = 0.0;
+        matrix->w22 = 1.0;
+        matrix->w23 = 0.0;
+        matrix->w31 = 0.0;
+        matrix->w32 = 0.0;
+        matrix->w33 = 1.0;
+    }
+}
+
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */

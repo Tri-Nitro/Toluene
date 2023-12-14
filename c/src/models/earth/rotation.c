@@ -21,29 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_CONSTANTS_H__
-#define __MODELS_EARTH_CONSTANTS_H__
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+
+#include "math/constants.h"
+#include "models/earth/polar_motion.h"
+
+#if defined(_WIN32) || defined(WIN32)
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+#endif /* _WIN32 */
 
 #ifdef __cplusplus
-extern "C" {
-#endif
-
-extern const long double MEAN_OBLIQUITY_EARTH[6];
-
-extern const long double GENERAL_PRECESSION_LONGITUDE[3];
-extern const long double PRECESSION_EQUATOR[6];
-extern const long double OBLIQUITY_MEAN_EQUATOR[6];
-extern const long double PRECESSION_ECLIPTIC_MEAN_EQUATOR[6];
-
-extern const long double ICRS_X_POLE_OFFSET;
-extern const long double ICRS_Y_POLE_OFFSET;
-extern const long double ICRS_RIGHT_ASCENSION_OFFSET;
-
-extern const long double GMST_FUNCTION_JULIAN_DU[6];
-
-#ifdef __cplusplus
-}   /* extern "C" */
+extern "C"
+{
 #endif /* __cplusplus */
 
+/**
+ * @brief Calculate the Greenwich Mean Sidereal Time (GMST).
+ *
+ * @param[in] t seconds since J2000.0.
+ */
+void gmst(long double t, EarthModel* model, long double* gmst) {
 
-#endif /* __MODELS_EARTH_CONSTANTS_H__ */
+    EOPTableRecord record;
+
+    eop_table_record_lookup(model->eop_table, tt, &record);
+
+    long double du = (tt + record.bulletin_a_dut1) / SECONDS_PER_DAY;
+    *gmst = ((((GMST_FUNCTION_JULIAN_DU[5] * t + GMST_FUNCTION_JULIAN_DU[4])* t + GMST_FUNCTION_JULIAN_DU[3]) * t +
+        GMST_FUNCTION_JULIAN_DU[2]) * t + GMST_FUNCTION_JULIAN_DU[1]) * t + GMST_FUNCTION_JULIAN_DU[0];
+
+/**
+ * @brief Calculate the Earth rotation matrix.
+ *
+ * @param[in] angle angle of rotation.
+ * @param[out] matrix rotation matrix.
+ */
+void earth_rotation_matrix(long double angle, Mat3* matrix);
+
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */
