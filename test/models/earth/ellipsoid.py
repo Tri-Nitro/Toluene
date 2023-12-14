@@ -44,12 +44,14 @@ class TestEllipsoid:
         for test_case in ellipsoids_test_cases:
             print("Trying to create ellipsoid for", test_case[0])
             ellipsoid = Ellipsoid(test_case[1], test_case[2])
+            print("Created ellipsoid for", test_case[0])
             ellipsoids.append(ellipsoid)
 
     def test_get_axes(self):
         for idx in range(len(ellipsoids)):
             print("Trying to get axes for", ellipsoids_test_cases[idx][0])
             semi_major_axis, semi_minor_axis = ellipsoids[idx].axes
+            print("Got axes", semi_major_axis, semi_minor_axis, "for", ellipsoids_test_cases[idx][0])
             assert semi_major_axis == ellipsoids_test_cases[idx][1]
             assert semi_minor_axis == ellipsoids_test_cases[idx][2]
 
@@ -57,16 +59,19 @@ class TestEllipsoid:
         for idx in range(len(ellipsoids)):
             print("Trying to get semi-major axis for", ellipsoids_test_cases[idx][0])
             semi_major_axis = ellipsoids[idx].semi_major_axis
+            print("Got semi-major axis", semi_major_axis, "for", ellipsoids_test_cases[idx][0])
             assert semi_major_axis == ellipsoids_test_cases[idx][1]
 
     def test_get_semi_minor_axis(self):
         for idx in range(len(ellipsoids)):
             print("Trying to get semi-minor axis for", ellipsoids_test_cases[idx][0])
             semi_minor_axis = ellipsoids[idx].semi_minor_axis
+            print("Got semi-minor axis", semi_minor_axis, "for", ellipsoids_test_cases[idx][0])
             assert semi_minor_axis == ellipsoids_test_cases[idx][2]
 
     def test_inverse_flattening(self):
         for idx in range(len(ellipsoids)):
             print("Trying to get inverse flattening for", ellipsoids_test_cases[idx][0])
             inverse_flattening = 1. / ellipsoids[idx].flattening
+            print("Got inverse flattening", inverse_flattening, "for", ellipsoids_test_cases[idx][0])
             assert inverse_flattening == inverse_flattening_accepted[idx]
