@@ -12,7 +12,10 @@ extensions = [
         'toluene_extensions.coordinates.transform',
         [
             'c/src/coordinates/state_vector.c',
-            'c/src/coordinates/transform.c'
+            'c/src/coordinates/transform.c',
+            'c/src/math/linear_algebra.c',
+            'c/src/models/earth/polar_motion.c',
+            'c/src/time/constants.c',
         ],
         include_dirs=['c/include']
     ),
