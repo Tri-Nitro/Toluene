@@ -231,6 +231,8 @@ static PyObject* geodetic_to_itrf(PyObject *self, PyObject *args) {
 
     StateVector* retval = (StateVector*)malloc(sizeof(StateVector));
 
+    printf("Semi-major axis: %Lf, Semi-minor axis: %Lf\n", model->ellipsoid.a, model->ellipsoid.b);
+
     long double e_2 = 1 - ((model->ellipsoid.b*model->ellipsoid.b)/(model->ellipsoid.a*model->ellipsoid.a));
     long double sin_of_latitude = sin((double)(state_vector->r.x * M_PI/180));
     long double n_phi = model->ellipsoid.a/(sqrt(1-(e_2 * (sin_of_latitude*sin_of_latitude))));
