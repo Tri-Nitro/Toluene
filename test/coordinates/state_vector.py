@@ -41,7 +41,7 @@ geodetic_test_points = [
 
 itrf_test_points = [
     StateVector(-2850075.294343253, 4655695.796924158, 3287765.2299773037,
-                time=datetime(2023, 11, 20, 0, 0, 0, tzinfo=timezone.utc).timestamp(),
+                time=datetime(2023, 11, 20, 00, 0, 00, 00, tzinfo=timezone.utc).timestamp(),
                 frame=ReferenceFrame.InternationalTerrestrialReferenceFrame),  # Shanghai, China
     StateVector(-2706181.6267071473, -4261070.165026739, 3885735.290996956,
                 time=datetime(2023, 11, 20, 0, 0, 0, tzinfo=timezone.utc).timestamp(),
@@ -159,3 +159,7 @@ class TestStateVectorTransform:
         earth_model = EarthModel()
         for idx in range(len(itrf_test_points)):
             gcrf_point = itrf_test_points[idx].get_gcrs(earth_model)
+            print(gcrf_point.position)
+
+    def test_gcrf_to_itrf(self):
+        earth_model = EarthModel()

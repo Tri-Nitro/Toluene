@@ -24,7 +24,10 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#include "math/constants.h"
+#include "models/earth/constants.h"
 #include "models/earth/precession.h"
+#include "time/constants.h"
 
 #if defined(_WIN32) || defined(WIN32)
 
@@ -47,6 +50,7 @@ extern "C"
 void iau_2000a_precession(long double t, Mat3* matrix) {
 
     if (matrix) {
+        t = (t-J2000_UNIX_TIME)/ SECONDS_PER_JULIAN_CENTURY;
         long double mean_obliquity_j2000 = MEAN_OBLIQUITY_EARTH[0];
         long double precession_equator = ((((PRECESSION_EQUATOR[5] * t + PRECESSION_EQUATOR[4]) * t +
             PRECESSION_EQUATOR[3]) * t + PRECESSION_EQUATOR[2]) * t + PRECESSION_EQUATOR[1]) * t;

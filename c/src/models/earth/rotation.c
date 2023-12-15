@@ -24,11 +24,11 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#define __compile_models_earth_earth_orientation_parameters__
 #define __compile_time_delta_t__
 
-#include "math/constants.h"
 #include "models/earth/constants.h"
-#include "models/earth/polar_motion.h"
+#include "models/earth/earth_orientation_parameters.h"
 #include "models/earth/rotation.h"
 #include "time/constants.h"
 #include "time/delta_t.h"
@@ -86,6 +86,22 @@ void earth_rotation_matrix(long double angle, Mat3* matrix) {
         matrix->w33 = 1.0;
 
     }
+
+}
+
+/**
+ * @brief Calculate the Earth rotation matrix.
+ *
+ * @param[in] t Unix time
+ * @param[in] model Earth model
+ * @param[out] rate the rotation rate in rad/s.
+ */
+void rate_of_earth_rotation(double t, EarthModel* model, double* rate) {
+
+    EOPTableRecord record;
+    eop_table_record_lookup(&model->earth_orientation_parameters, t, &record);
+
+    *rate = 2.0 * M_PI / (SECONDS_PER_DAY + record.bulletin_a_lod/1000.0);
 
 }
 

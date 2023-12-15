@@ -150,12 +150,12 @@ void nutation_matrix(long double mean_obliquity_date, long double nutation_longi
 
     long double sin_delta_psi, cos_delta_psi, sin_epsilon_prime, cos_epsilon_prime, sin_epsilon, cos_epsilon;
 
-    sin_epsilon = sin(mean_obliquity_date * M_PI/648000);
-    cos_epsilon = cos(mean_obliquity_date * M_PI/648000);
-    sin_delta_psi = -1 * sin(nutation_longitude * M_PI/648000);
-    cos_delta_psi = cos(nutation_longitude * M_PI/648000);
-    sin_epsilon_prime = -1 * sin(true_obliquity_date * M_PI/648000);
-    cos_epsilon_prime = cos(true_obliquity_date * M_PI/648000);
+    sin_epsilon = sinl(mean_obliquity_date * ARCSECONDS_TO_RADIANS);
+    cos_epsilon = cosl(mean_obliquity_date * ARCSECONDS_TO_RADIANS);
+    sin_delta_psi = -1 * sinl(nutation_longitude * ARCSECONDS_TO_RADIANS);
+    cos_delta_psi = cosl(nutation_longitude * ARCSECONDS_TO_RADIANS);
+    sin_epsilon_prime = -1 * sinl(true_obliquity_date * ARCSECONDS_TO_RADIANS);
+    cos_epsilon_prime = cosl(true_obliquity_date * ARCSECONDS_TO_RADIANS);
 
     if(nutation_matrix) {
         nutation_matrix->w11 = cos_delta_psi;
