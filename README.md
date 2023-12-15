@@ -29,4 +29,4 @@ You should be able to see it acknowledge the OpenCL library. If you don't see it
 the OpenCL headers and libraries. If you are on Windows, you will need to install the OpenCL headers and libraries from
 the Intel SDK or AMD SDK. If you are on Mac, you will need to install the OpenCL headers and libraries from the Intel
 SDK. `CUDA_PATH` is used for Nvidia GPUs and `ROCM_PATH` is used for AMD GPUs. To find the path to OpenCL so make sure
-those are set approriately and uninstall and install again.
+those are set approriately and uninstall and install again. This was written by AI so have fun trying to decipher it.

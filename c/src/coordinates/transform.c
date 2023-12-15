@@ -44,9 +44,11 @@ extern "C"
 #include "math/linear_algebra.h"
 #include "coordinates/transform.h"
 #include "coordinates/state_vector.h"
+#include "models/earth/bias.h"
 #include "models/earth/earth.h"
 #include "models/earth/nutation.h"
 #include "models/earth/polar_motion.h"
+#include "models/earth/precession.h"
 #include "models/earth/rotation.h"
 #include "time/constants.h"
 
@@ -121,13 +123,63 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
     dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
 
+    long double rate;
+    Vec3 coriolis_rotation;
+    rate_of_earth_rotation(state_vector->time, model, &rate);
+    coriolis_rotation.x = 0.0;
+    coriolis_rotation.y = 0.0;
+    coriolis_rotation.x = rate;
+
+    cross_product(&coriolis_rotation, &coriolis_velocity_prime, &coriolis_velocity);
+
+    cross_product(&coriolis_rotation, &coriolis_velocity, &coriolis_acceleration);
+    cross_product(&coriolis_rotation, &centrifugal_acceleration_prime, &centrifugal_acceleration);
+
+    centrifugal_acceleration.x *= 2.0;
+    centrifugal_acceleration.y *= 2.0;
+    centrifugal_acceleration.z *= 2.0;
+
     earth_rotation_matrix(gast/SECONDS_PER_DAY * 2.0 * M_PI, &matrix);
+    dot_product_transpose(&matrix, &temp.r, &retval->r);
+    dot_product_transpose(&matrix, &temp.v, &retval->v);
+    dot_product_transpose(&matrix, &temp.a, &retval->a);
+    dot_product_transpose(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
+    dot_product_transpose(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
+    dot_product_transpose(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
+
+    nutation_matrix(mean_obliquity_date, nutation_longitude, mean_obliquity_date-nutation_obliquity, &matrix);
     dot_product(&matrix, &retval->r, &temp.r);
     dot_product(&matrix, &retval->v, &temp.v);
     dot_product(&matrix, &retval->a, &temp.a);
+    dot_product(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
+    dot_product(&matrix, &coriolis_acceleration_prime, &coriolis_acceleration);
+    dot_product(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
+
+    iau_2000a_precession(state_vector->time, &matrix);
+    dot_product(&matrix, &temp.r, &retval->r);
+    dot_product(&matrix, &temp.v, &retval->v);
+    dot_product(&matrix, &temp.a, &retval->a);
     dot_product(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
     dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
     dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
+
+    icrs_frame_bias(&matrix);
+    dot_product(&matrix, &retval->r, &temp.r);
+    dot_product(&matrix, &retval->v, &temp.v);
+    dot_product(&matrix, &retval->a, &temp.a);
+    dot_product(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
+    dot_product(&matrix, &coriolis_acceleration_prime, &coriolis_acceleration);
+    dot_product(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
+
+    retval->r.x = temp.r.x;
+    retval->r.y = temp.r.y;
+    retval->r.z = temp.r.z;
+    retval->v.x = temp.v.x + coriolis_velocity.x;
+    retval->v.y = temp.v.y + coriolis_velocity.y;
+    retval->v.z = temp.v.z + coriolis_velocity.z;
+    retval->a.x = temp.a.x + coriolis_acceleration.x + centrifugal_acceleration.x;
+    retval->a.y = temp.a.y + coriolis_acceleration.y + centrifugal_acceleration.y;
+    retval->a.z = temp.a.z + coriolis_acceleration.z + centrifugal_acceleration.z;
 
     return PyCapsule_New(retval, "StateVector", delete_StateVector);
 }
