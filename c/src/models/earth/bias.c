@@ -45,15 +45,15 @@ extern "C"
 void icrs_frame_bias(Mat3* matrix) {
 
     if (matrix) {
-        matrix->w11 = 1.0;
-        matrix->w12 = 0.0;
-        matrix->w13 = 0.0;
-        matrix->w21 = 0.0;
-        matrix->w22 = 1.0;
-        matrix->w23 = 0.0;
-        matrix->w31 = 0.0;
-        matrix->w32 = 0.0;
-        matrix->w33 = 1.0;
+        matrix->w11 = 0.99999999999999425;
+        matrix->w12 = -0.000000071;
+        matrix->w13 = 0.00000008056;
+        matrix->w21 = 0.000000071;
+        matrix->w22 = 0.99999999999999695;
+        matrix->w23 = -0.00000003306;
+        matrix->w31 = -0.00000008056;
+        matrix->w32 = 0.00000003306;
+        matrix->w33 = 0.999999999999996208;
     }
 }
 

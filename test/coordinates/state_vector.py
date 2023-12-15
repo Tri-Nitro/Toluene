@@ -159,7 +159,14 @@ class TestStateVectorTransform:
         earth_model = EarthModel()
         for idx in range(len(itrf_test_points)):
             gcrf_point = itrf_test_points[idx].get_gcrs(earth_model)
-            print(gcrf_point.position)
+            print("ITRF-TO-GCRF-R:", gcrf_point.position)
+            print("ITRF-TO-GCRF-V:", gcrf_point.velocity)
+            print("ITRF-TO-GCRF-A:", gcrf_point.acceleration)
 
     def test_gcrf_to_itrf(self):
         earth_model = EarthModel()
+        for idx in range(len(itrf_test_points)):
+            itrf_point = itrf_test_points[idx].get_gcrs(earth_model).get_itrs(earth_model)
+            print("GCRF-TO-ITRF-R:", itrf_point.position)
+            print("GCRF-TO-ITRF-V:", itrf_point.velocity)
+            print("GCRF-TO-ITRF-A:", itrf_point.acceleration)

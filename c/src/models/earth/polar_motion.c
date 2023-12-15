@@ -65,6 +65,7 @@ void wobble(long double t, EOPTable* earth_orientation_parameter_table, Mat3* ma
         matrix->w31 = sin_x;
         matrix->w32 = -1.0 * cos_x * sin_y;
         matrix->w33 = cos_x * cos_y;
+
     }
 }
 
