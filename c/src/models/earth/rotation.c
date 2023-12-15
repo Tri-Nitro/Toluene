@@ -76,9 +76,9 @@ void earth_rotation_matrix(long double angle, Mat3* matrix) {
     if (matrix) {
 
         matrix->w11 = cosl(angle);
-        matrix->w12 = sinl(angle);
+        matrix->w12 = -sinl(angle);
         matrix->w13 = 0.0;
-        matrix->w21 = -sinl(angle);
+        matrix->w21 = sinl(angle);
         matrix->w22 = cosl(angle);
         matrix->w23 = 0.0;
         matrix->w31 = 0.0;

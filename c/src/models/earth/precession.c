@@ -73,7 +73,7 @@ void iau_2000a_precession(long double t, Mat3* matrix) {
         matrix->w11 = cos_chi_a * cos_psi_a - sin_psi_a * sin_chi_a * cos_omega_a;
         matrix->w12 = cos_chi_a * sin_psi_a * cos_epsilon_0 + sin_chi_a * cos_omega_a * cos_psi_a * cos_epsilon_0 -
             sin_epsilon_0 * sin_chi_a * sin_omega_a;
-        matrix->w13 = cos_chi_a * sin_psi_a * sin_epsilon_0 + sin_chi_a * cos_omega_a * cos_psi_a * sin_psi_a +
+        matrix->w13 = cos_chi_a * sin_psi_a * sin_epsilon_0 + sin_chi_a * cos_omega_a * cos_psi_a * sin_epsilon_0 +
             cos_epsilon_0 * sin_chi_a * sin_omega_a;
         matrix->w21 = -1 * sin_chi_a * cos_psi_a - sin_psi_a * cos_chi_a * cos_omega_a;
         matrix->w22 = -1 * sin_chi_a * sin_psi_a * cos_epsilon_0 + cos_chi_a * cos_omega_a * cos_psi_a * cos_epsilon_0 -
