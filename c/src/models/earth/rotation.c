@@ -24,8 +24,14 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#define __compile_time_delta_t__
+
 #include "math/constants.h"
+#include "models/earth/constants.h"
 #include "models/earth/polar_motion.h"
+#include "models/earth/rotation.h"
+#include "time/constants.h"
+#include "time/delta_t.h"
 
 #if defined(_WIN32) || defined(WIN32)
 
@@ -47,12 +53,17 @@ extern "C"
 void gmst(long double t, EarthModel* model, long double* gmst) {
 
     EOPTableRecord record;
+    DeltaTTableRecord delta_t_record;
+    eop_table_record_lookup(&model->earth_orientation_parameters, t, &record);
+    delta_t_record_lookup(&model->delta_t_table, t, &delta_t_record);
 
-    eop_table_record_lookup(model->eop_table, tt, &record);
+    long double du = (t - J2000_UNIX_TIME + record.bulletin_a_dut1/1000.0) / SECONDS_PER_DAY;
+    *gmst = ((((GMST_FUNCTION_JULIAN_DU[5] * du + GMST_FUNCTION_JULIAN_DU[4])* du + GMST_FUNCTION_JULIAN_DU[3]) * du +
+        GMST_FUNCTION_JULIAN_DU[2]) * du + GMST_FUNCTION_JULIAN_DU[1]) * du + GMST_FUNCTION_JULIAN_DU[0];
+    *gmst +=  GMST_DELTA_T * delta_t_record.deltaT/SECONDS_PER_DAY;
 
-    long double du = (tt + record.bulletin_a_dut1) / SECONDS_PER_DAY;
-    *gmst = ((((GMST_FUNCTION_JULIAN_DU[5] * t + GMST_FUNCTION_JULIAN_DU[4])* t + GMST_FUNCTION_JULIAN_DU[3]) * t +
-        GMST_FUNCTION_JULIAN_DU[2]) * t + GMST_FUNCTION_JULIAN_DU[1]) * t + GMST_FUNCTION_JULIAN_DU[0];
+    *gmst = fmodl(*gmst, 86400.0);
+}
 
 /**
  * @brief Calculate the Earth rotation matrix.
@@ -60,7 +71,23 @@ void gmst(long double t, EarthModel* model, long double* gmst) {
  * @param[in] angle angle of rotation.
  * @param[out] matrix rotation matrix.
  */
-void earth_rotation_matrix(long double angle, Mat3* matrix);
+void earth_rotation_matrix(long double angle, Mat3* matrix) {
+
+    if (matrix) {
+
+        matrix->w11 = cosl(angle);
+        matrix->w12 = sinl(angle);
+        matrix->w13 = 0.0;
+        matrix->w21 = -sinl(angle);
+        matrix->w22 = cosl(angle);
+        matrix->w23 = 0.0;
+        matrix->w31 = 0.0;
+        matrix->w32 = 0.0;
+        matrix->w33 = 1.0;
+
+    }
+
+}
 
 
 #ifdef __cplusplus

@@ -43,6 +43,8 @@ const long double DAYS_PER_JULIAN_CENTURY = 36525.0;
 const long double SECONDS_PER_JULIAN_CENTURY = 3.15576e9;
 const long double J2000_UNIX_TIME = 946728000.0;
 
+const long double GMST_DELTA_T = 0.008418264265;
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */

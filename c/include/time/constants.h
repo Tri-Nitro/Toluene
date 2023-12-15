@@ -33,6 +33,8 @@ extern const long double DAYS_PER_JULIAN_CENTURY;
 extern const long double SECONDS_PER_JULIAN_CENTURY;
 extern const long double J2000_UNIX_TIME;
 
+extern const long double GMST_DELTA_T;
+
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif /* __cplusplus */

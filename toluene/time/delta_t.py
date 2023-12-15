@@ -23,9 +23,9 @@
 #   SOFTWARE.                                                                       #
 #                                                                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-from toluene_extensions.util.time import new_DeltaTTable, add_record
+from toluene_extensions.time import delta_t
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class DeltaTTable:
@@ -34,7 +34,7 @@ class DeltaTTable:
         if c_eop_table is not None:
             self.__delta_t_table = c_eop_table
         else:
-            self.__delta_t_table = new_DeltaTTable()
+            self.__delta_t_table = delta_t.new_DeltaTTable()
         if path is not None:
             self.load_from_file(path)
 
@@ -45,9 +45,9 @@ class DeltaTTable:
                 month = int(line[6:8])
                 day = int(line[9:11])
                 deltaT = float(line[12:])
-                timestamp = datetime(year, month, day, 0, 0, 0, 0).timestamp()
-                add_record(self.__delta_t_table, timestamp, deltaT)
+                timestamp = datetime(year, month, day, 0, 0, 0, 0, tzinfo=timezone.utc).timestamp()
+                delta_t.add_record(self.__delta_t_table, timestamp, deltaT)
 
     @property
-    def table(self):
+    def capsule(self):
         return self.__delta_t_table

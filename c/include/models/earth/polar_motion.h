@@ -45,4 +45,4 @@ void wobble(long double t, EOPTable* earth_orientation_parameter_table, Mat3* ma
 }   /* extern "C" */
 #endif
 
-#endif /* __MODELS_EARTH_PRECESSION_H__ */
+#endif /* __MODELS_EARTH_POLAR_MOTION_H__ */

@@ -37,13 +37,17 @@ extern "C"
 {
 #endif
 
-#define __compile_math_linear_algebra__
 #define __compile_coordinates_state_vector__
+#define __compile_math_linear_algebra__
+#define __compile_models_earth_nutation__
+
 #include "math/linear_algebra.h"
 #include "coordinates/transform.h"
 #include "coordinates/state_vector.h"
 #include "models/earth/earth.h"
+#include "models/earth/nutation.h"
 #include "models/earth/polar_motion.h"
+#include "models/earth/rotation.h"
 #include "time/constants.h"
 
 /**
@@ -100,6 +104,15 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     retval->a.y = state_vector->a.y;
     retval->a.z = state_vector->a.z;
 
+    long double gast;
+    gmst(state_vector->time, model, &gast);
+
+    long double nutation_longitude, nutation_obliquity, mean_obliquity_date, equation_of_the_equinoxes;
+    nutation_values_of_date(state_vector->time, &model->nutation_series, &nutation_longitude, &nutation_obliquity,
+        &mean_obliquity_date, &equation_of_the_equinoxes);
+
+    gast += equation_of_the_equinoxes/15.0;
+
     wobble(state_vector->time, &model->earth_orientation_parameters, &matrix);
     dot_product(&matrix, &retval->r, &temp.r);
     dot_product(&matrix, &retval->v, &temp.v);
@@ -108,6 +121,15 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
     dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
 
+    earth_rotation_matrix(gast/SECONDS_PER_DAY * 2.0 * M_PI, &matrix);
+    dot_product(&matrix, &retval->r, &temp.r);
+    dot_product(&matrix, &retval->v, &temp.v);
+    dot_product(&matrix, &retval->a, &temp.a);
+    dot_product(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
+    dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
+    dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
+
+    return PyCapsule_New(retval, "StateVector", delete_StateVector);
 }
 
 /**
@@ -182,8 +204,8 @@ static PyObject* itrf_to_geodetic(PyObject *self, PyObject *args) {
     long double big_v = sqrt(p_e_2_r_0*p_e_2_r_0+(1-e_2)*retval->r.z*retval->r.z);
     long double z_0 = (model->ellipsoid.b*model->ellipsoid.b*retval->r.z)/(model->ellipsoid.a*big_v);
 
-    retval->r.x = atan((retval->r.z+(e_r2*z_0))/p) * 180/M_PI;
-    retval->r.y = atan2(retval->r.y,state_vector->r.x) * 180/M_PI;
+    retval->r.x = atanl((retval->r.z+(e_r2*z_0))/p) * 180/M_PI;
+    retval->r.y = atan2l(retval->r.y,state_vector->r.x) * 180/M_PI;
     retval->r.z = big_u * (1-(model->ellipsoid.b*model->ellipsoid.b)/(model->ellipsoid.a*big_v));
 
     retval->v.x = state_vector->v.x;
@@ -233,14 +255,14 @@ static PyObject* geodetic_to_itrf(PyObject *self, PyObject *args) {
     StateVector* retval = (StateVector*)malloc(sizeof(StateVector));
 
     long double e_2 = 1 - ((model->ellipsoid.b*model->ellipsoid.b)/(model->ellipsoid.a*model->ellipsoid.a));
-    long double sin_of_latitude = sin((state_vector->r.x * M_PI/180));
+    long double sin_of_latitude = sinl((state_vector->r.x * M_PI/180));
     long double n_phi = model->ellipsoid.a/(sqrt(1-(e_2 * (sin_of_latitude*sin_of_latitude))));
 
-    retval->r.x = (n_phi + state_vector->r.z) * cos(state_vector->r.x * M_PI/180) * cos(state_vector->r.y
+    retval->r.x = (n_phi + state_vector->r.z) * cosl(state_vector->r.x * M_PI/180) * cosl(state_vector->r.y
         * M_PI/180);
-    retval->r.y = (n_phi + state_vector->r.z) * cos(state_vector->r.x * M_PI/180) * sin(state_vector->r.y
+    retval->r.y = (n_phi + state_vector->r.z) * cosl(state_vector->r.x * M_PI/180) * sinl(state_vector->r.y
         * M_PI/180);
-    retval->r.z = ((1 - e_2) * n_phi + state_vector->r.z) * sin(state_vector->r.x * M_PI/180);
+    retval->r.z = ((1 - e_2) * n_phi + state_vector->r.z) * sinl(state_vector->r.x * M_PI/180);
 
     retval->v.x = state_vector->v.x;
     retval->v.y = state_vector->v.y;

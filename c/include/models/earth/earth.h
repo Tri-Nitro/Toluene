@@ -31,6 +31,7 @@ extern "C" {
 #include "models/earth/earth_orientation_parameters.h"
 #include "models/earth/ellipsoid.h"
 #include "models/earth/nutation.h"
+#include "time/delta_t.h"
 
 typedef struct {
 
@@ -40,6 +41,9 @@ typedef struct {
     /* Earth Motion */
     NutationSeries nutation_series;
     EOPTable earth_orientation_parameters;
+
+    /* Earth Time */
+    DeltaTTable delta_t_table;
 
 } EarthModel;
 
@@ -87,6 +91,16 @@ static PyObject* earth_model_get_nutation_series(PyObject* self, PyObject* args)
  * @brief Get the Earth Model's Earth Orientation Parameters
  */
 static PyObject* earth_model_get_earth_orientation_parameters(PyObject* self, PyObject* args);
+
+/**
+ * @brief Set the Earth Model's Delta T Table
+ */
+static PyObject* earth_model_set_delta_t_table(PyObject* self, PyObject* args);
+
+/**
+ * @brief Get the Earth Model's Delta T Table
+ */
+static PyObject* earth_model_get_delta_t_table(PyObject* self, PyObject* args);
 
 
 #endif /* __compile_models_earth_earth__ */

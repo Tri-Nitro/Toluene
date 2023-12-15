@@ -55,7 +55,7 @@ void nutation_values_of_date(long double t, NutationSeries* series, long double*
     *mean_obliquity_date = 0.0;
     *equation_of_the_equinoxes = 0.0;
 
-    t = t / SECONDS_PER_JULIAN_CENTURY;
+    t = (t-J2000_UNIX_TIME)/ SECONDS_PER_JULIAN_CENTURY;
     double nutation_critical_arguments[14];
 
     nutation_critical_arguments[0] = MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_MERCURY[0] +
@@ -92,7 +92,7 @@ void nutation_values_of_date(long double t, NutationSeries* series, long double*
         + MEAN_LONGITUDE_MOON_MEAN_ASCENDING_NODE[0];
 
 
-    double ai, sin_ai, cos_ai;
+    long double ai, sin_ai, cos_ai;
     for(int i = 0; i < series->nrecords; ++i) {
         ai = series->records[i].heliocentric_elliptical_longitude_mercury_coefficient
                 * nutation_critical_arguments[0] +
@@ -123,8 +123,8 @@ void nutation_values_of_date(long double t, NutationSeries* series, long double*
              series->records[i].mean_longitude_of_moon_mean_ascending_node_coefficient
                 * nutation_critical_arguments[13];
 
-        sin_ai = sin(ai * ARCSECONDS_TO_RADIANS);
-        cos_ai = cos(ai * ARCSECONDS_TO_RADIANS);
+        sin_ai = sinl(ai * ARCSECONDS_TO_RADIANS);
+        cos_ai = cosl(ai * ARCSECONDS_TO_RADIANS);
 
         *nutation_longitude += (series->records[i].S + series->records[i].S_dot * t) * sin_ai +
             series->records[i].C_prime * cos_ai;
@@ -137,8 +137,8 @@ void nutation_values_of_date(long double t, NutationSeries* series, long double*
     *mean_obliquity_date = ((((MEAN_OBLIQUITY_EARTH[5] * t + MEAN_OBLIQUITY_EARTH[4]) * t
         + MEAN_OBLIQUITY_EARTH[3]) * t + MEAN_OBLIQUITY_EARTH[2]) * t + MEAN_OBLIQUITY_EARTH[1]) * t
         + MEAN_OBLIQUITY_EARTH[0];
-    *equation_of_the_equinoxes += *nutation_longitude * cos(*nutation_obliquity * ARCSECONDS_TO_RADIANS) +
-        0.00000087 * t * sin(nutation_critical_arguments[13] * ARCSECONDS_TO_RADIANS);
+    *equation_of_the_equinoxes += *nutation_longitude * cosl(*nutation_obliquity * ARCSECONDS_TO_RADIANS) +
+        0.00000087 * t * sinl(nutation_critical_arguments[13] * ARCSECONDS_TO_RADIANS);
 
 }
 

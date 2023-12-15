@@ -28,6 +28,7 @@ import yaml
 from toluene.models.earth.earth_orientation_table import EarthOrientationTable
 from toluene.models.earth.ellipsoid import Ellipsoid
 from toluene.models.earth.nutation import NutationSeries
+from toluene.time.delta_t import DeltaTTable
 from toluene.util.file import configdir, datadir
 from toluene_extensions.models.earth import earth
 
@@ -57,7 +58,7 @@ class EarthModel:
     :type eop_table: :class:`toluene.models.earth.EarthOrientationTable`
     """
     def __init__(self, ellipsoid: Ellipsoid = None, nutation_series: NutationSeries = None,
-                 eop_table: EarthOrientationTable = None, capsule=None):
+                 eop_table: EarthOrientationTable = None, delta_t_table: DeltaTTable = None, capsule=None):
         if capsule is None:
             self.__model = earth.new_EarthModel()
 
@@ -77,6 +78,11 @@ class EarthModel:
                 eop_table = EarthOrientationTable()
                 eop_table.load_from_file(datadir + '/finals2000A.all')
             earth.set_earth_orientation_parameters(self.__model, eop_table.capsule)
+
+            if delta_t_table is None:
+                delta_t_table = DeltaTTable()
+                delta_t_table.load_from_file(datadir + '/deltat.data')
+            earth.set_delta_t_table(self.__model, delta_t_table.capsule)
 
     """
     Gets the model and returns it as a capsule.
