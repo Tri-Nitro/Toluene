@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __UTIL_TIME_H__
-#define __UTIL_TIME_H__
+#ifndef __TIME_DELTA_T_H__
+#define __TIME_DELTA_T_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,8 +30,8 @@ extern "C" {
 
 typedef struct {
 
-    double timestamp;
-    double deltaT;
+    long double timestamp;
+    long double deltaT;
 
 } DeltaTTableRecord;
 
@@ -43,22 +43,20 @@ typedef struct {
 } DeltaTTable;
 
 
-#ifdef __compile_util_time
+#ifdef __compile_time_delta_t__
 
-extern const double SECONDS_PER_JULIAN_CENTURY;
-
-void delta_t_record_lookup(DeltaTTable* table, double timestamp, DeltaTTableRecord* record);
+void delta_t_record_lookup(DeltaTTable* table, long double timestamp, DeltaTTableRecord* record);
 
 static PyObject* delta_t_add_record(PyObject* self, PyObject* args);
 
 static PyObject* new_DeltaTTable(PyObject* self, PyObject* args);
 static void delete_DeltaTTable(PyObject* obj);
 
-#endif /* __compile_util_time */
+#endif /* __compile_time_delta_t__ */
 
 
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif
 
-#endif /* __UTIL_TIME_H__ */
+#endif /* __TIME_DELTA_T_H__ */

@@ -21,12 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_EARTH_POLAR_MOTION_H__
-#define __MODELS_EARTH_POLAR_MOTION_H__
+#ifndef __MODELS_EARTH_ROTATION_H__
+#define __MODELS_EARTH_ROTATION_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "models/earth/earth.h"
 
 
 /**
@@ -34,7 +36,7 @@ extern "C" {
  *
  * @param[in] t seconds since J2000.0.
  */
-void gmst(long double t, long double* gmst);
+void gmst(long double t, EarthModel* model, long double* gmst);
 
 /**
  * @brief Calculate the Earth rotation matrix.
@@ -49,4 +51,4 @@ void earth_rotation_matrix(long double angle, Mat3* matrix);
 }   /* extern "C" */
 #endif
 
-#endif /* __MODELS_EARTH_PRECESSION_H__ */
+#endif /* __MODELS_EARTH_ROTATION_H__ */

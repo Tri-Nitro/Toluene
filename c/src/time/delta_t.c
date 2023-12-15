@@ -24,8 +24,8 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
-#define __compile_util_time
-#include "util/time.h"
+#define __compile_time_delta_t__
+#include "time/delta_t.h"
 
 #if defined(_WIN32) || defined(WIN32)     /* _Win32 is usually defined by compilers targeting 32 or 64 bit Windows systems */
 
@@ -40,7 +40,7 @@ extern "C"
 #endif
 
 
-void delta_t_record_lookup(DeltaTTable* table, double timestamp, DeltaTTableRecord* record) {
+void delta_t_record_lookup(DeltaTTable* table, long double timestamp, DeltaTTableRecord* record) {
 
     int lower = 0, upper = (table->nrecords)-1, pointer = upper;
 
@@ -126,24 +126,24 @@ static void delete_DeltaTTable(PyObject* obj) {
 }
 
 
-static PyMethodDef tolueneUtilTimeMethods[] = {
+static PyMethodDef tolueneTimeDeltaTMethods[] = {
     {"add_record", delta_t_add_record, METH_VARARGS, "Add a record to the DeltaTTable"},
     {"new_DeltaTTable", new_DeltaTTable, METH_VARARGS, "Create a new DeltaTTable"},
     {NULL, NULL, 0, NULL}
 };
 
 
-static struct PyModuleDef util_time = {
+static struct PyModuleDef time_delta_t = {
     PyModuleDef_HEAD_INIT,
-    "util.time",
-    "C Extensions to toluene models ellipsoid functions",
+    "time.delta_t",
+    "C Extensions to load and use the DeltaTTable.",
     -1,
-    tolueneUtilTimeMethods
+    tolueneTimeDeltaTMethods
 };
 
 
-PyMODINIT_FUNC PyInit_time(void) {
-    return PyModule_Create(&util_time);
+PyMODINIT_FUNC PyInit_delta_t(void) {
+    return PyModule_Create(&time_delta_t);
 }
 
 

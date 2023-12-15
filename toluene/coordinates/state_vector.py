@@ -146,8 +146,8 @@ class StateVector:
     """
     Creates a copy of the current vector but doing the appropriate translation to be in the GeodeticReferenceFrame.
     
-    :param ellipsoid: The ellipsoid to convert the vector into.
-    :type ellipsoid: :class:`toluene.models.earth.Ellipsoid`
+    :param model: The earth model to use for the conversion.
+    :type model: :class:`toluene.models.earth.EarthModel`
     :return: A copy of the state vector in the GeodeticReferenceFrame.
     :rtype: :class:`StateVector`
     """
@@ -168,9 +168,8 @@ class StateVector:
     Creates a copy of the current vector but doing the appropriate translation to be in the
     InternationalTerrestrialReferenceFrame.
 
-    :param ellipsoid: The ellipsoid to convert the vector from. Only needed if the current vector is in the Geodetic
-    reference frame.
-    :type ellipsoid: :class:`toluene.models.earth.Ellipsoid`
+    :param model: The earth model to use for the conversion.
+    :type model: :class:`toluene.models.earth.EarthModel`
     :return: A copy of the state vector in the GeodeticReferenceFrame.
     :rtype: :class:`StateVector`
     """
@@ -181,8 +180,32 @@ class StateVector:
         elif frame is int(ReferenceFrame.InternationalCelestialReferenceFrame):
             return None
         elif frame is int(ReferenceFrame.GeocentricCelestialReferenceFrame):
-            return None
+            return StateVector(None, None,
+                               capsule=transform.gcrf_to_itrf(self.__state_vector, model.capsule))
         elif frame is int(ReferenceFrame.GeodeticReferenceFrame):
             return StateVector(None, None,
                                capsule=transform.geodetic_to_itrf(self.__state_vector, model.capsule))
         return None
+
+
+    """
+    Creates a copy of the current vector but doing the appropriate translation to be in the
+    GeocentricCelestialReferenceFrame. This is a non-rotating reference frame that is fixed to the earth's center of
+    mass. This requires the UTC timestamp of the coordinates to mean anything to an observer on earth.
+    
+    :param model: The earth model to use for the conversion.
+    :type model: :class:`toluene.models.earth.EarthModel`
+    :return: A copy of the state vector in the GeodeticReferenceFrame.
+    :rtype: :class:`StateVector`
+    """
+    def get_gcrs(self, model: EarthModel) -> StateVector:
+        frame = state_vector.get_frame(self.__state_vector)
+        if frame is int(ReferenceFrame.InternationalTerrestrialReferenceFrame):
+            return StateVector(None, None,
+                                 capsule=transform.itrf_to_gcrf(self.__state_vector, model.capsule))
+        elif frame is int(ReferenceFrame.InternationalCelestialReferenceFrame):
+            return None
+        elif frame is int(ReferenceFrame.GeocentricCelestialReferenceFrame):
+            return self.__copy
+        elif frame is int(ReferenceFrame.GeodeticReferenceFrame):
+            return None

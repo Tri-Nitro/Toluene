@@ -45,7 +45,7 @@ extern "C"
  */
 static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
 
-    EarthModel* model = (Ellipsoid*)malloc(sizeof(EarthModel));
+    EarthModel* model = (EarthModel*)malloc(sizeof(EarthModel));
 
     if(!model) {
         PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for new_EarthModel.");
@@ -70,6 +70,7 @@ static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
  * @param obj The Earth Model object
  */
 static void delete_EarthModel(PyObject* obj) {
+
     EarthModel* model = (EarthModel*)PyCapsule_GetPointer(obj, "EarthModel");
 
     if(model) {
@@ -117,7 +118,6 @@ static PyObject* earth_model_set_nutation_series(PyObject* self, PyObject* args)
     EarthModel* model;
     NutationSeries* series;
 
-
     if(!PyArg_ParseTuple(args, "OO", &model_capsule, &nutation_capsule)) {
         PyErr_SetString(PyExc_TypeError, "Invalid arguments passed to earth_model_set_nutation_series.");
         return PyErr_Occurred();
@@ -148,7 +148,6 @@ static PyObject* earth_model_set_earth_orientation_parameters(PyObject* self, Py
     EarthModel* model;
     EOPTable* earth_orientation_parameters;
 
-
     if(!PyArg_ParseTuple(args, "OO", &model_capsule, &earth_orientation_parameters_capsule)) {
         PyErr_SetString(PyExc_TypeError, "Invalid arguments passed to earth_model_set_earth_orientation_parameters.");
         return PyErr_Occurred();
@@ -165,6 +164,36 @@ static PyObject* earth_model_set_earth_orientation_parameters(PyObject* self, Py
     earth_orientation_parameters->nrecords = 0;
     earth_orientation_parameters->nrecords_allocated = 0;
     earth_orientation_parameters->records = NULL;
+
+    Py_RETURN_NONE;
+}
+
+/**
+ * @brief Set the Earth Model's Delta T
+ */
+static PyObject* earth_model_set_delta_t_table(PyObject* self, PyObject* args) {
+
+    PyObject* model_capsule;
+    PyObject* delta_t_table_capsule;
+    EarthModel* model;
+    DeltaTTable* delta_t_table;
+
+    if(!PyArg_ParseTuple(args, "OO", &model_capsule, &delta_t_table_capsule)) {
+        PyErr_SetString(PyExc_TypeError, "Invalid arguments passed to earth_model_set_delta_t.");
+        return PyErr_Occurred();
+    }
+
+    model = (EarthModel*)PyCapsule_GetPointer(model_capsule, "EarthModel");
+    delta_t_table = (DeltaTTable*)PyCapsule_GetPointer(delta_t_table_capsule, "DeltaTTable");
+
+    model->delta_t_table.nrecords = delta_t_table->nrecords;
+    model->delta_t_table.nrecords_allocated = delta_t_table->nrecords_allocated;
+    model->delta_t_table.records = delta_t_table->records;
+
+    /* Kill their version of the table because now it's managed by earth model */
+    delta_t_table->nrecords = 0;
+    delta_t_table->nrecords_allocated = 0;
+    delta_t_table->records = NULL;
 
     Py_RETURN_NONE;
 }
@@ -190,6 +219,15 @@ static PyObject* earth_model_get_earth_orientation_parameters(PyObject* self, Py
     Py_RETURN_NONE;
 }
 
+/**
+ * @brief Get the Earth Model's Delta T
+ */
+static PyObject* earth_model_get_delta_t_table(PyObject* self, PyObject* args) {
+    Py_RETURN_NONE;
+}
+
+
+
 
 static PyMethodDef tolueneModelsEarthEarthMethods[] = {
     {"new_EarthModel", new_EarthModel, METH_VARARGS, "Creates a new Earth Model object."},
@@ -198,11 +236,13 @@ static PyMethodDef tolueneModelsEarthEarthMethods[] = {
         "Set the Earth Model's Nutation Series."},
     {"set_earth_orientation_parameters", earth_model_set_earth_orientation_parameters, METH_VARARGS,
         "Set the Earth Model's Earth Orientation Parameters."},
+    {"set_delta_t_table", earth_model_set_delta_t_table, METH_VARARGS, "Set the Earth Model's Delta T."},
     {"get_ellipsoid", earth_model_get_ellipsoid, METH_VARARGS, "Get the Earth Model's Ellipsoid."},
     {"get_nutation_series", earth_model_get_nutation_series, METH_VARARGS,
         "Get the Earth Model's Nutation Series."},
     {"get_earth_orientation_parameters", earth_model_get_earth_orientation_parameters, METH_VARARGS,
         "Get the Earth Model's Earth Orientation Parameters."},
+    {"get_delta_t_table", earth_model_get_delta_t_table, METH_VARARGS, "Get the Earth Model's Delta T."},
     {NULL, NULL, 0, NULL}
 };
 

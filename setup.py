@@ -15,9 +15,15 @@ extensions = [
             'c/src/coordinates/transform.c',
             'c/src/math/constants.c',
             'c/src/math/linear_algebra.c',
+            'c/src/models/earth/constants.c',
             'c/src/models/earth/earth_orientation_parameters.c',
+            'c/src/models/earth/nutation.c',
             'c/src/models/earth/polar_motion.c',
+            'c/src/models/earth/rotation.c',
+            'c/src/models/moon/constants.c',
+            'c/src/models/sun/constants.c',
             'c/src/time/constants.c',
+            'c/src/time/delta_t.c',
         ],
         include_dirs=['c/include']
     ),
@@ -26,7 +32,6 @@ extensions = [
         [
             'c/src/models/earth/ellipsoid.c',
             'c/src/models/earth/earth.c',
-
         ],
         include_dirs=['c/include'],
     ),
@@ -53,6 +58,13 @@ extensions = [
             'c/src/models/moon/constants.c',
             'c/src/models/sun/constants.c',
             'c/src/time/constants.c',
+        ],
+        include_dirs=['c/include'],
+    ),
+    Extension(
+        'toluene_extensions.time.delta_t',
+        [
+            'c/src/time/delta_t.c',
         ],
         include_dirs=['c/include'],
     ),
