@@ -79,11 +79,8 @@ void cross_product(Vec3* vector1, Vec3* vector2, Vec3* product) {
 
     if(vector1 && vector2 && product) {
         product->x = vector1->y * vector2->z - vector1->z * vector2->y;
-        printf("CROSS PRODUCT 1: %Lf = %Lf * %Lf - %Lf * %Lf\n", product->x, vector1->y, vector2->z, vector1->z, vector2->y);
         product->y = vector1->z * vector2->x - vector1->x * vector2->z;
-        printf("CROSS PRODUCT 2: %Lf = %Lf * %Lf - %Lf * %Lf\n", product->y, vector1->z, vector2->x, vector1->x, vector2->z);
         product->z = vector1->x * vector2->y - vector1->y * vector2->x;
-        printf("CROSS PRODUCT 3: %Lf = %Lf * %Lf - %Lf * %Lf\n", product->z, vector1->x, vector2->y, vector1->y, vector2->x);
     }
 }
 
