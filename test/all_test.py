@@ -1,2 +1,2 @@
-from core.coordinates import TestCoordinates
-from core.ellipsoid import TestEllipsoids
+from coordinates.state_vector import TestStateVectorTransform
+from models.earth.ellipsoid import TestEllipsoid
