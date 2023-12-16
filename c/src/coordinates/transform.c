@@ -302,6 +302,14 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
     dot_product_transpose(&matrix, &coriolis_acceleration_prime, &coriolis_acceleration);
     dot_product_transpose(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
 
+    printf("Position: %Lf, %Lf, %Lf\n", retval->r.x, retval->r.y, retval->r.z);
+    printf("Velocity: %Lf, %Lf, %Lf\n", retval->v.x, retval->v.y, retval->v.z);
+    printf("Acceleration: %Lf, %Lf, %Lf\n", retval->a.x, retval->a.y, retval->a.z);
+
+    printf("Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity.x, coriolis_velocity.y, coriolis_velocity.z);
+    printf("Coriolis Acceleration: %Lf, %Lf, %Lf\n", coriolis_acceleration.x, coriolis_acceleration.y, coriolis_acceleration.z);
+    printf("Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration.x, centrifugal_acceleration.y, centrifugal_acceleration.z);
+
     retval->v.x -= coriolis_velocity.x;
     retval->v.y -= coriolis_velocity.y;
     retval->v.z -= coriolis_velocity.z;
