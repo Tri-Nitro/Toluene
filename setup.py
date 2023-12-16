@@ -1,3 +1,6 @@
+import os
+import sys
+
 from setuptools import setup, Extension
 
 extensions = [
@@ -71,6 +74,40 @@ extensions = [
         include_dirs=['c/include'],
     ),
 ]
+
+found_opencl = False
+opencl_include_dir = []
+opencl_library_dir = []
+
+
+if 'darwin' in sys.platform:
+    pass
+elif 'linux' in sys.platform:
+    pass
+elif 'win32' in sys.platform:
+    if 'CUDA_PATH' in os.environ:
+        print('Found OpenCL at ' + os.environ['CUDA_PATH'])
+        opencl_include_dir = [os.environ['CUDA_PATH'] + '/include']
+        opencl_library_dir = [os.environ['CUDA_PATH'] + '/lib/x64']
+        found_opencl = True
+
+if not found_opencl:
+    print('OpenCL not found. OpenCL is required for some extensions.')
+    print('If you have OpenCL installed, please set the environment variable CUDA_PATH to the path of your OpenCL installation.')
+    print('If you do not have OpenCL installed, you can install it from https://www.khronos.org/opencl/')
+    print('If you do not want to install OpenCL, you can still use the rest of the library.')
+else:
+    extensions.append(
+        Extension(
+            'toluene_extensions.opencl.context',
+            [
+                'c/src/opencl/context.c',
+            ],
+            include_dirs=['c/include'] + opencl_include_dir,
+            library_dirs=opencl_library_dir,
+            libraries=['OpenCL']
+        )
+    )
 
 setup_args = dict(
     ext_modules=extensions,
