@@ -96,7 +96,7 @@ void earth_rotation_matrix(long double angle, Mat3* matrix) {
  * @param[in] model Earth model
  * @param[out] rate the rotation rate in rad/s.
  */
-void rate_of_earth_rotation(double t, EarthModel* model, double* rate) {
+void rate_of_earth_rotation(long double t, EarthModel* model, long double* rate) {
 
     EOPTableRecord record;
     eop_table_record_lookup(&model->earth_orientation_parameters, t, &record);
