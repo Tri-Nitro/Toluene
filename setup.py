@@ -112,6 +112,31 @@ if not found_opencl:
 else:
     extensions.append(
         Extension(
+            'toluene_extensions.opencl.coordinates.transform',
+            [
+                'c/src/coordinates/state_vector.c',
+                'c/src/coordinates/transform.c',
+                'c/src/math/constants.c',
+                'c/src/math/linear_algebra.c',
+                'c/src/models/earth/bias.c',
+                'c/src/models/earth/constants.c',
+                'c/src/models/earth/earth_orientation_parameters.c',
+                'c/src/models/earth/nutation.c',
+                'c/src/models/earth/polar_motion.c',
+                'c/src/models/earth/precession.c',
+                'c/src/models/earth/rotation.c',
+                'c/src/models/moon/constants.c',
+                'c/src/models/sun/constants.c',
+                'c/src/time/constants.c',
+                'c/src/time/delta_t.c',
+            ],
+            include_dirs=['c/include'] + opencl_include_dir,
+            library_dirs=opencl_library_dir,
+            libraries=['OpenCL']
+        ),
+    )
+    extensions.append(
+        Extension(
             'toluene_extensions.opencl.context',
             [
                 'c/src/opencl/context.c',
@@ -121,6 +146,7 @@ else:
             libraries=['OpenCL']
         )
     )
+
 
 setup_args = dict(
     ext_modules=extensions,
