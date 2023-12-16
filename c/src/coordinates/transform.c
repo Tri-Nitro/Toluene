@@ -237,6 +237,14 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
     temp.a.y = state_vector->a.y;
     temp.a.z = state_vector->a.z;
 
+    printf("First Position: %Lf, %Lf, %Lf\n", temp.r.x, temp.r.y, temp.r.z);
+    printf("First Velocity: %Lf, %Lf, %Lf\n", temp.v.x, temp.v.y, temp.v.z);
+    printf("First Acceleration: %Lf, %Lf, %Lf\n", temp.a.x, temp.a.y, temp.a.z);
+
+    printf("First Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity.x, coriolis_velocity.y, coriolis_velocity.z);
+    printf("First Coriolis Acceleration: %Lf, %Lf, %Lf\n", coriolis_acceleration.x, coriolis_acceleration.y, coriolis_acceleration.z);
+    printf("First Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration.x, centrifugal_acceleration.y, centrifugal_acceleration.z);
+
     retval->time = state_vector->time;
     retval->frame = InternationalTerrestrialReferenceFrame;
 
@@ -256,6 +264,12 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
     dot_product_transpose(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
     dot_product_transpose(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
 
+    printf("Second Position: %Lf, %Lf, %Lf\n", retval->r.x, retval->r.y, retval->r.z);
+    printf("Second Velocity: %Lf, %Lf, %Lf\n", retval->v.x, retval->v.y, retval->v.z);
+    printf("Second Acceleration: %Lf, %Lf, %Lf\n", retval->a.x, retval->a.y, retval->a.z);
+    printf("Second Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity_prime.x, coriolis_velocity_prime.y, coriolis_velocity_prime.z);
+    printf("Second Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration_prime.x, centrifugal_acceleration_prime.y, centrifugal_acceleration_prime.z);
+
     iau_2000a_precession(state_vector->time, &matrix);
     dot_product_transpose(&matrix, &retval->r, &temp.r);
     dot_product_transpose(&matrix, &retval->v, &temp.v);
@@ -263,12 +277,24 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
     dot_product_transpose(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
     dot_product_transpose(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
 
+    printf("Third Position: %Lf, %Lf, %Lf\n", temp.r.x, temp.r.y, temp.r.z);
+    printf("Third Velocity: %Lf, %Lf, %Lf\n", temp.v.x, temp.v.y, temp.v.z);
+    printf("Third Acceleration: %Lf, %Lf, %Lf\n", temp.a.x, temp.a.y, temp.a.z);
+    printf("Third Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity.x, coriolis_velocity.y, coriolis_velocity.z);
+    printf("Third Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration.x, centrifugal_acceleration.y, centrifugal_acceleration.z);
+
     nutation_matrix(mean_obliquity_date, nutation_longitude, mean_obliquity_date-nutation_obliquity, &matrix);
     dot_product_transpose(&matrix, &temp.r, &retval->r);
     dot_product_transpose(&matrix, &temp.v, &retval->v);
     dot_product_transpose(&matrix, &temp.a, &retval->a);
     dot_product_transpose(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
     dot_product_transpose(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
+
+    printf("Fourth Position: %Lf, %Lf, %Lf\n", retval->r.x, retval->r.y, retval->r.z);
+    printf("Fourth Velocity: %Lf, %Lf, %Lf\n", retval->v.x, retval->v.y, retval->v.z);
+    printf("Fourth Acceleration: %Lf, %Lf, %Lf\n", retval->a.x, retval->a.y, retval->a.z);
+    printf("Fourth Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity_prime.x, coriolis_velocity_prime.y, coriolis_velocity_prime.z);
+    printf("Fourth Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration_prime.x, centrifugal_acceleration_prime.y, centrifugal_acceleration_prime.z);
 
     long double rate;
     Vec3 coriolis_rotation;
@@ -279,12 +305,18 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
 
     cross_product(&coriolis_rotation, &coriolis_velocity_prime, &coriolis_velocity);
 
+    printf("Fifth Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity.x, coriolis_velocity.y, coriolis_velocity.z);
+
     cross_product(&coriolis_rotation, &coriolis_velocity, &coriolis_acceleration);
+    printf("Fifth Coriolis Acceleration: %Lf, %Lf, %Lf\n", coriolis_acceleration.x, coriolis_acceleration.y, coriolis_acceleration.z);
     cross_product(&coriolis_rotation, &coriolis_acceleration_prime, &centrifugal_acceleration);
+    printf("Fifth Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration.x, centrifugal_acceleration.y, centrifugal_acceleration.z);
 
     centrifugal_acceleration.x *= 2.0;
     centrifugal_acceleration.y *= 2.0;
     centrifugal_acceleration.z *= 2.0;
+
+    printf("Fifth Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration.x, centrifugal_acceleration.y, centrifugal_acceleration.z);
 
     earth_rotation_matrix(gast/SECONDS_PER_DAY * 2.0 * M_PI, &matrix);
     dot_product_transpose(&matrix, &retval->r, &temp.r);
@@ -293,6 +325,13 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
     dot_product_transpose(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
     dot_product_transpose(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
     dot_product_transpose(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
+
+    printf("Sixth Position: %Lf, %Lf, %Lf\n", temp.r.x, temp.r.y, temp.r.z);
+    printf("Sixth Velocity: %Lf, %Lf, %Lf\n", temp.v.x, temp.v.y, temp.v.z);
+    printf("Sixth Acceleration: %Lf, %Lf, %Lf\n", temp.a.x, temp.a.y, temp.a.z);
+    printf("Sixth Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity_prime.x, coriolis_velocity_prime.y, coriolis_velocity_prime.z);
+    printf("Sixth Coriolis Acceleration: %Lf, %Lf, %Lf\n", coriolis_acceleration_prime.x, coriolis_acceleration_prime.y, coriolis_acceleration_prime.z);
+    printf("Sixth Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration_prime.x, centrifugal_acceleration_prime.y, centrifugal_acceleration_prime.z);
 
     wobble(state_vector->time, &model->earth_orientation_parameters, &matrix);
     dot_product_transpose(&matrix, &temp.r, &retval->r);
