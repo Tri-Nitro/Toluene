@@ -96,9 +96,9 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     }
     StateVector temp;
 
-    temp.r.x = coriolis_velocity.x = centrifugal_acceleration.x = state_vector->r.x;
-    temp.r.y = coriolis_velocity.y = centrifugal_acceleration.y = state_vector->r.y;
-    temp.r.z = coriolis_velocity.z = centrifugal_acceleration.z = state_vector->r.z;
+    temp.r.x = coriolis_velocity.x = state_vector->r.x;
+    temp.r.y = coriolis_velocity.y = state_vector->r.y;
+    temp.r.z = coriolis_velocity.z = state_vector->r.z;
     temp.v.x = coriolis_acceleration.x = state_vector->v.x;
     temp.v.y = coriolis_acceleration.y = state_vector->v.y;
     temp.v.z = coriolis_acceleration.z = state_vector->v.z;
@@ -123,7 +123,7 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     dot_product(&matrix, &temp.v, &retval->v);
     dot_product(&matrix, &temp.a, &retval->a);
     dot_product(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
-    dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
+    dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
 
     long double rate;
     Vec3 coriolis_rotation;
@@ -135,7 +135,7 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     cross_product(&coriolis_rotation, &coriolis_velocity_prime, &coriolis_velocity);
 
     cross_product(&coriolis_rotation, &coriolis_velocity, &coriolis_acceleration);
-    cross_product(&coriolis_rotation, &centrifugal_acceleration_prime, &centrifugal_acceleration);
+    cross_product(&coriolis_rotation, &coriolis_acceleration_prime, &centrifugal_acceleration);
 
     centrifugal_acceleration.x *= 2.0;
     centrifugal_acceleration.y *= 2.0;
@@ -227,9 +227,9 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
     }
     StateVector temp;
 
-    temp.r.x = coriolis_velocity.x = centrifugal_acceleration.x = state_vector->r.x;
-    temp.r.y = coriolis_velocity.y = centrifugal_acceleration.y = state_vector->r.y;
-    temp.r.z = coriolis_velocity.z = centrifugal_acceleration.z = state_vector->r.z;
+    temp.r.x = coriolis_velocity.x = state_vector->r.x;
+    temp.r.y = coriolis_velocity.y = state_vector->r.y;
+    temp.r.z = coriolis_velocity.z = state_vector->r.z;
     temp.v.x = coriolis_acceleration.x = state_vector->v.x;
     temp.v.y = coriolis_acceleration.y = state_vector->v.y;
     temp.v.z = coriolis_acceleration.z = state_vector->v.z;
@@ -254,7 +254,7 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
     dot_product_transpose(&matrix, &temp.v, &retval->v);
     dot_product_transpose(&matrix, &temp.a, &retval->a);
     dot_product_transpose(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
-    dot_product_transpose(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
+    dot_product_transpose(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
 
     iau_2000a_precession(state_vector->time, &matrix);
     dot_product_transpose(&matrix, &retval->r, &temp.r);
@@ -280,7 +280,7 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
     cross_product(&coriolis_rotation, &coriolis_velocity_prime, &coriolis_velocity);
 
     cross_product(&coriolis_rotation, &coriolis_velocity, &coriolis_acceleration);
-    cross_product(&coriolis_rotation, &centrifugal_acceleration_prime, &centrifugal_acceleration);
+    cross_product(&coriolis_rotation, &coriolis_acceleration_prime, &centrifugal_acceleration);
 
     centrifugal_acceleration.x *= 2.0;
     centrifugal_acceleration.y *= 2.0;
