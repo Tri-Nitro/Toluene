@@ -145,6 +145,8 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     coriolis_rotation.y = 0.0;
     coriolis_rotation.z = rate;
 
+    printf("ROTATION RATE: %Lf\n", rate);
+
     cross_product(&coriolis_rotation, &coriolis_velocity_prime, &coriolis_velocity);
 
     printf("ITRF - Third Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity.x, coriolis_velocity.y, coriolis_velocity.z);
