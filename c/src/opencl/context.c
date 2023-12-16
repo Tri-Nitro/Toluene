@@ -59,7 +59,9 @@ static PyObject* new_opencl_context(PyObject* self, PyObject* args) {
     context->context = clCreateContext(NULL, 1, &context->device_id, NULL, NULL, &ret);
 
     // Create a command queue
-    context->command_queue = clCreateCommandQueue(context->context, context->device_id, 0, &ret);
+    const cl_command_queue_properties queue_properties[] = {CL_QUEUE_PROPERTIES, CL_QUEUE_PROFILING_ENABLE, 0};
+    context->command_queue = clCreateCommandQueueWithProperties(context->context, context->device_id,
+        queue_properties, &ret);
 
 
     return PyCapsule_New(context, "OpenCLContext", delete_opencl_context);
@@ -80,6 +82,65 @@ static void delete_opencl_context(PyObject* obj) {
         clReleaseContext(context->context);
 
         free(context);
+        context = NULL;
+    }
+}
+
+/**
+ * @brief Creates a new opencl kernel
+ */
+static PyObject* new_opencl_kernel(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+
+    char* kernel_name;
+    char* kernel_source;
+
+    OpenCLKernel* kernel = (OpenCLKernel*)malloc(sizeof(OpenCLKernel));
+
+    if(!PyArg_ParseTuple(args, "Oss", &capsule, &kernel_source, &kernel_name)) {
+        PyErr_SetString(PyExc_TypeError, "Invalid arguments passed to new_opencl_kernel.");
+        return PyErr_Occurred();
+    }
+
+    OpenCLContext* context = (OpenCLContext*)PyCapsule_GetPointer(capsule, "OpenCLContext");
+    if(!context) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the OpenCLContext from capsule.");
+        return PyErr_Occurred();
+    }
+
+    cl_int ret;
+    kernel->context = context;
+    kernel->program = clCreateProgramWithSource(context->context, 1, (const char**)&kernel_source, NULL, &ret);
+    if(ret != CL_SUCCESS) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to create program with source.");
+        return PyErr_Occurred();
+    }
+
+    clBuildProgram(kernel->program, 1, &context->device_id, NULL, NULL, NULL);
+    kernel->kernel = clCreateKernel(kernel->program, kernel_name, &ret);
+
+    if(ret != CL_SUCCESS) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to create kernel.");
+        return PyErr_Occurred();
+    }
+
+    return PyCapsule_New(kernel, "OpenCLKernel", delete_opencl_kernel);
+}
+
+/**
+ * @brief Deletes an opencl kernel
+ */
+static void delete_opencl_kernel(PyObject* obj) {
+
+    OpenCLKernel* kernel = (OpenCLKernel*)PyCapsule_GetPointer(obj, "OpenCLKernel");
+
+    if(kernel) {
+        clReleaseKernel(kernel->kernel);
+        clReleaseProgram(kernel->program);
+
+        free(kernel);
+        kernel = NULL;
     }
 }
 
@@ -109,6 +170,7 @@ static PyObject* get_max_compute_units(PyObject* self, PyObject* args) {
  */
 static PyMethodDef tolueneOpenCLContextMethods[] = {
     {"new_opencl_context", new_opencl_context, METH_VARARGS, "Creates a new OpenCL context."},
+    {"new_opencl_kernel", new_opencl_kernel, METH_VARARGS, "Creates a new OpenCL kernel."},
     {"get_max_compute_units", get_max_compute_units, METH_VARARGS, "Gets the max compute units."},
     {NULL, NULL, 0, NULL}
 };

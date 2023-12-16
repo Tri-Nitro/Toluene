@@ -79,17 +79,30 @@ found_opencl = False
 opencl_include_dir = []
 opencl_library_dir = []
 
-
-if 'darwin' in sys.platform:
-    pass
-elif 'linux' in sys.platform:
-    pass
-elif 'win32' in sys.platform:
-    if 'CUDA_PATH' in os.environ:
-        print('Found OpenCL at ' + os.environ['CUDA_PATH'])
-        opencl_include_dir = [os.environ['CUDA_PATH'] + '/include']
-        opencl_library_dir = [os.environ['CUDA_PATH'] + '/lib/x64']
-        found_opencl = True
+if 'TOLUENE_OPENCL' in os.environ and os.environ['TOLUENE_OPENCL'] == '1':
+    if 'darwin' in sys.platform:
+        if 'TOLUENE_OPENCL_INCLUDE_DIR' in os.environ and 'TOLUENE_OPENCL_LIBRARY_DIR' in os.environ:
+            print('Found OpenCL at ' + os.environ['TOLUENE_OPENCL_INCLUDE_DIR'])
+            opencl_include_dir = [os.environ['TOLUENE_OPENCL_INCLUDE_DIR']]
+            opencl_library_dir = [os.environ['TOLUENE_OPENCL_LIBRARY_DIR']]
+            found_opencl = True
+    elif 'linux' in sys.platform:
+        if 'TOLUENE_OPENCL_INCLUDE_DIR' in os.environ and 'TOLUENE_OPENCL_LIBRARY_DIR' in os.environ:
+            print('Found OpenCL at ' + os.environ['TOLUENE_OPENCL_INCLUDE_DIR'])
+            opencl_include_dir = [os.environ['TOLUENE_OPENCL_INCLUDE_DIR']]
+            opencl_library_dir = [os.environ['TOLUENE_OPENCL_LIBRARY_DIR']]
+            found_opencl = True
+    elif 'win32' in sys.platform:
+        if 'TOLUENE_OPENCL_INCLUDE_DIR' in os.environ and 'TOLUENE_OPENCL_LIBRARY_DIR' in os.environ:
+            print('Found OpenCL at ' + os.environ['TOLUENE_OPENCL_INCLUDE_DIR'])
+            opencl_include_dir = [os.environ['TOLUENE_OPENCL_INCLUDE_DIR']]
+            opencl_library_dir = [os.environ['TOLUENE_OPENCL_LIBRARY_DIR']]
+            found_opencl = True
+        if 'CUDA_PATH' in os.environ:
+            print('Found OpenCL at ' + os.environ['CUDA_PATH'])
+            opencl_include_dir = [os.environ['CUDA_PATH'] + '/include']
+            opencl_library_dir = [os.environ['CUDA_PATH'] + '/lib/x64']
+            found_opencl = True
 
 if not found_opencl:
     print('OpenCL not found. OpenCL is required for some extensions.')
