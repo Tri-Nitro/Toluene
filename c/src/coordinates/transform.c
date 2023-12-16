@@ -106,6 +106,13 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     temp.a.y = state_vector->a.y;
     temp.a.z = state_vector->a.z;
 
+    printf("ITRF - First Position: %Lf, %Lf, %Lf\n", temp.r.x, temp.r.y, temp.r.z);
+    printf("ITRF - First Velocity: %Lf, %Lf, %Lf\n", temp.v.x, temp.v.y, temp.v.z);
+    printf("ITRF - First Acceleration: %Lf, %Lf, %Lf\n", temp.a.x, temp.a.y, temp.a.z);
+    printf("ITRF - First Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity.x, coriolis_velocity.y, coriolis_velocity.z);
+    printf("ITRF - First Coriolis Acceleration: %Lf, %Lf, %Lf\n", coriolis_acceleration.x, coriolis_acceleration.y, coriolis_acceleration.z);
+    printf("ITRF - First Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration.x, centrifugal_acceleration.y, centrifugal_acceleration.z);
+
     retval->time = state_vector->time;
     retval->frame = GeocentricCelestialReferenceFrame;
 
@@ -125,6 +132,12 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     dot_product(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
     dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
 
+    printf("ITRF - Second Position: %Lf, %Lf, %Lf\n", retval->r.x, retval->r.y, retval->r.z);
+    printf("ITRF - Second Velocity: %Lf, %Lf, %Lf\n", retval->v.x, retval->v.y, retval->v.z);
+    printf("ITRF - Second Acceleration: %Lf, %Lf, %Lf\n", retval->a.x, retval->a.y, retval->a.z);
+    printf("ITRF - Second Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity_prime.x, coriolis_velocity_prime.y, coriolis_velocity_prime.z);
+    printf("ITRF - Second Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration_prime.x, centrifugal_acceleration_prime.y, centrifugal_acceleration_prime.z);
+
     long double rate;
     Vec3 coriolis_rotation;
     rate_of_earth_rotation(state_vector->time, model, &rate);
@@ -134,8 +147,12 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
 
     cross_product(&coriolis_rotation, &coriolis_velocity_prime, &coriolis_velocity);
 
+    printf("ITRF - Third Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity.x, coriolis_velocity.y, coriolis_velocity.z);
+
     cross_product(&coriolis_rotation, &coriolis_velocity, &coriolis_acceleration);
+    printf("ITRF - Third Coriolis Acceleration: %Lf, %Lf, %Lf\n", coriolis_acceleration.x, coriolis_acceleration.y, coriolis_acceleration.z);
     cross_product(&coriolis_rotation, &coriolis_acceleration_prime, &centrifugal_acceleration);
+    printf("ITRF - Third Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration.x, centrifugal_acceleration.y, centrifugal_acceleration.z);
 
     centrifugal_acceleration.x *= 2.0;
     centrifugal_acceleration.y *= 2.0;
@@ -149,6 +166,13 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
     dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
 
+    printf("ITRF - Fourth Position: %Lf, %Lf, %Lf\n", temp.r.x, temp.r.y, temp.r.z);
+    printf("ITRF - Fourth Velocity: %Lf, %Lf, %Lf\n", temp.v.x, temp.v.y, temp.v.z);
+    printf("ITRF - Fourth Acceleration: %Lf, %Lf, %Lf\n", temp.a.x, temp.a.y, temp.a.z);
+    printf("ITRF - Fourth Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity_prime.x, coriolis_velocity_prime.y, coriolis_velocity_prime.z);
+    printf("ITRF - Fourth Coriolis Acceleration: %Lf, %Lf, %Lf\n", coriolis_acceleration_prime.x, coriolis_acceleration_prime.y, coriolis_acceleration_prime.z);
+    printf("ITRF - Fourth Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration_prime.x, centrifugal_acceleration_prime.y, centrifugal_acceleration_prime.z);
+
     nutation_matrix(mean_obliquity_date, nutation_longitude, mean_obliquity_date-nutation_obliquity, &matrix);
     dot_product(&matrix, &temp.r, &retval->r);
     dot_product(&matrix, &temp.v, &retval->v);
@@ -156,6 +180,13 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     dot_product(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
     dot_product(&matrix, &coriolis_acceleration_prime, &coriolis_acceleration);
     dot_product(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
+
+    printf("ITRF - Fifth Position: %Lf, %Lf, %Lf\n", retval->r.x, retval->r.y, retval->r.z);
+    printf("ITRF - Fifth Velocity: %Lf, %Lf, %Lf\n", retval->v.x, retval->v.y, retval->v.z);
+    printf("ITRF - Fifth Acceleration: %Lf, %Lf, %Lf\n", retval->a.x, retval->a.y, retval->a.z);
+    printf("ITRF - Fifth Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity.x, coriolis_velocity.y, coriolis_velocity.z);
+    printf("ITRF - Fifth Coriolis Acceleration: %Lf, %Lf, %Lf\n", coriolis_acceleration.x, coriolis_acceleration.y, coriolis_acceleration.z);
+    printf("ITRF - Fifth Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration.x, centrifugal_acceleration.y, centrifugal_acceleration.z);
 
     iau_2000a_precession(state_vector->time, &matrix);
     dot_product(&matrix, &retval->r, &temp.r);
@@ -165,6 +196,13 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
     dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
 
+    printf("ITRF - Sixth Position: %Lf, %Lf, %Lf\n", temp.r.x, temp.r.y, temp.r.z);
+    printf("ITRF - Sixth Velocity: %Lf, %Lf, %Lf\n", temp.v.x, temp.v.y, temp.v.z);
+    printf("ITRF - Sixth Acceleration: %Lf, %Lf, %Lf\n", temp.a.x, temp.a.y, temp.a.z);
+    printf("ITRF - Sixth Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity_prime.x, coriolis_velocity_prime.y, coriolis_velocity_prime.z);
+    printf("ITRF - Sixth Coriolis Acceleration: %Lf, %Lf, %Lf\n", coriolis_acceleration_prime.x, coriolis_acceleration_prime.y, coriolis_acceleration_prime.z);
+    printf("ITRF - Sixth Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration_prime.x, centrifugal_acceleration_prime.y, centrifugal_acceleration_prime.z);
+
     icrs_frame_bias(&matrix);
     dot_product(&matrix, &temp.r, &retval->r);
     dot_product(&matrix, &temp.v, &retval->v);
@@ -172,6 +210,13 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     dot_product(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
     dot_product(&matrix, &coriolis_acceleration_prime, &coriolis_acceleration);
     dot_product(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
+
+    printf("ITRF - Seventh Position: %Lf, %Lf, %Lf\n", retval->r.x, retval->r.y, retval->r.z);
+    printf("ITRF - Seventh Velocity: %Lf, %Lf, %Lf\n", retval->v.x, retval->v.y, retval->v.z);
+    printf("ITRF - Seventh Acceleration: %Lf, %Lf, %Lf\n", retval->a.x, retval->a.y, retval->a.z);
+    printf("ITRF - Seventh Coriolis Velocity: %Lf, %Lf, %Lf\n", coriolis_velocity.x, coriolis_velocity.y, coriolis_velocity.z);
+    printf("ITRF - Seventh Coriolis Acceleration: %Lf, %Lf, %Lf\n", coriolis_acceleration.x, coriolis_acceleration.y, coriolis_acceleration.z);
+    printf("ITRF - Seventh Centrifugal Acceleration: %Lf, %Lf, %Lf\n", centrifugal_acceleration.x, centrifugal_acceleration.y, centrifugal_acceleration.z);
 
     retval->v.x += coriolis_velocity.x;
     retval->v.y += coriolis_velocity.y;
