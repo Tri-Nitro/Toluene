@@ -287,17 +287,17 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
     centrifugal_acceleration.z *= 2.0;
 
     earth_rotation_matrix(gast/SECONDS_PER_DAY * 2.0 * M_PI, &matrix);
-    dot_product_transpose(&matrix, &temp.r, &retval->r);
-    dot_product_transpose(&matrix, &temp.v, &retval->v);
-    dot_product_transpose(&matrix, &temp.a, &retval->a);
+    dot_product_transpose(&matrix, &retval->r, &temp.r);
+    dot_product_transpose(&matrix, &retval->v, &temp.v);
+    dot_product_transpose(&matrix, &retval->a, &temp.a);
     dot_product_transpose(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
     dot_product_transpose(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
     dot_product_transpose(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
 
     wobble(state_vector->time, &model->earth_orientation_parameters, &matrix);
-    dot_product_transpose(&matrix, &retval->r, &temp.r);
-    dot_product_transpose(&matrix, &retval->v, &temp.v);
-    dot_product_transpose(&matrix, &retval->a, &temp.a);
+    dot_product_transpose(&matrix, &temp.r, &retval->r);
+    dot_product_transpose(&matrix, &temp.v, &retval->v);
+    dot_product_transpose(&matrix, &temp.a, &retval->a);
     dot_product_transpose(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
     dot_product_transpose(&matrix, &coriolis_acceleration_prime, &coriolis_acceleration);
     dot_product_transpose(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
