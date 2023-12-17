@@ -115,7 +115,6 @@ else:
             'toluene_extensions.opencl.coordinates.transform',
             [
                 'c/src/coordinates/state_vector.c',
-                'c/src/coordinates/transform.c',
                 'c/src/math/constants.c',
                 'c/src/math/linear_algebra.c',
                 'c/src/models/earth/bias.c',
@@ -127,6 +126,8 @@ else:
                 'c/src/models/earth/rotation.c',
                 'c/src/models/moon/constants.c',
                 'c/src/models/sun/constants.c',
+                'c/src/opencl/coordinates/transform.c',
+                'c/src/opencl/models/earth/nutation.c',
                 'c/src/time/constants.c',
                 'c/src/time/delta_t.c',
             ],

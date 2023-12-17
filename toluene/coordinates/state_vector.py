@@ -209,3 +209,7 @@ class StateVector:
             return self.__copy
         elif frame is int(ReferenceFrame.GeodeticReferenceFrame):
             return None
+
+    @property
+    def capsule(self) -> py_object:
+        return self.__state_vector

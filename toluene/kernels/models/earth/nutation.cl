@@ -1,6 +1,6 @@
 __kernel void nutation_values_of_date(__global const double* nutation_critical_arguments,
     __global const double* nutation_coefficients, __global const double* time,
-    __global double* nutation_values, __global long* size) {
+    __global double* nutation_values, __global int* size) {
 
     int tid = get_global_id(0);
 
@@ -31,9 +31,9 @@ __kernel void nutation_values_of_date(__global const double* nutation_critical_a
     barrier( CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE );
     if(tid == 0) {
         for(int i = 1; i < size[0]; i++) {
-            nutation_values[0] = nutation_values[0] + nutation_values[i*3];
-            nutation_values[1] = nutation_values[1] + nutation_values[i*3+1];
-            nutation_values[2] = nutation_values[2] + nutation_values[i*3+2];
+            nutation_values[0] += nutation_values[i*3];
+            nutation_values[1] += nutation_values[i*3+1];
+            nutation_values[2] += nutation_values[i*3+2];
         }
     }
 

@@ -41,15 +41,17 @@ extern "C"
 #define __compile_math_linear_algebra__
 #define __compile_models_earth_nutation__
 
-#include "math/linear_algebra.h"
-#include "coordinates/transform.h"
+
 #include "coordinates/state_vector.h"
+#include "math/linear_algebra.h"
 #include "models/earth/bias.h"
 #include "models/earth/earth.h"
 #include "models/earth/nutation.h"
 #include "models/earth/polar_motion.h"
 #include "models/earth/precession.h"
 #include "models/earth/rotation.h"
+#include "opencl/coordinates/transform.h"
+#include "opencl/context.h"
 #include "time/constants.h"
 
 /**
@@ -57,13 +59,21 @@ extern "C"
  */
 static PyObject* opencl_itrf_to_gcrf(PyObject *self, PyObject *args) {
 
+    PyObject* opencl_kernel;
     PyObject* state_vector_capsule;
     PyObject* model_capsule;
+    OpenCLKernel* kernel;
     StateVector* state_vector;
     EarthModel* model;
 
-    if(!PyArg_ParseTuple(args, "OO", &state_vector_capsule, &model_capsule)) {
+    if(!PyArg_ParseTuple(args, "OOO", &opencl_kernel, &state_vector_capsule, &model_capsule)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. itrf_to_geodetic()");
+        return PyErr_Occurred();
+    }
+
+    kernel = (OpenCLKernel*)PyCapsule_GetPointer(opencl_kernel, "OpenCLKernel");
+    if(!kernel) {
+        PyErr_SetString(PyExc_MemoryError, "Unable to get the OpenCLKernel from Capsule.");
         return PyErr_Occurred();
     }
 
@@ -113,7 +123,7 @@ static PyObject* opencl_itrf_to_gcrf(PyObject *self, PyObject *args) {
     gmst(state_vector->time, model, &gast);
 
     long double nutation_longitude, nutation_obliquity, mean_obliquity_date, equation_of_the_equinoxes;
-    nutation_values_of_date(state_vector->time, &model->nutation_series, &nutation_longitude, &nutation_obliquity,
+    nutation_values_of_date_opencl(kernel, state_vector->time, &model->nutation_series, &nutation_longitude, &nutation_obliquity,
         &mean_obliquity_date, &equation_of_the_equinoxes);
 
     gast += equation_of_the_equinoxes/15.0;
@@ -244,7 +254,7 @@ static PyObject* opencl_gcrf_to_itrf(PyObject *self, PyObject *args) {
     gmst(state_vector->time, model, &gast);
 
     long double nutation_longitude, nutation_obliquity, mean_obliquity_date, equation_of_the_equinoxes;
-    nutation_values_of_date(state_vector->time, &model->nutation_series, &nutation_longitude, &nutation_obliquity,
+    nutation_values_of_date_opencl(state_vector->time, &model->nutation_series, &nutation_longitude, &nutation_obliquity,
         &mean_obliquity_date, &equation_of_the_equinoxes);
 
     gast += equation_of_the_equinoxes/15.0;

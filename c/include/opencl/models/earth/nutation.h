@@ -28,13 +28,15 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#include "models/earth/nutation.h"
+#include "opencl/context.h"
 
 #ifdef __compile_opencl_models_earth_nutation__
 
 /**
  * @brief Compute nutation values of date along with the equation of the equinoxes.
  */
-void nutation_values_of_date_opencl(long double t, NutationSeries* series, long double* nutation_longitude,
+void nutation_values_of_date_opencl(OpenCLKernel* kernel, long double t, NutationSeries* series, long double* nutation_longitude,
     long double* nutation_obliquity, long double* mean_obliquity_date, long double* equation_of_the_equinoxes);
 
 

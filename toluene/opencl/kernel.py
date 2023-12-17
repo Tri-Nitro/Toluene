@@ -10,5 +10,6 @@ class OpenCLKernel:
             source = file.read()
             self.__kernel = context.new_opencl_kernel(py_context.capsule, source, name)
 
+    @property
     def capsule(self):
         return self.__kernel
