@@ -21,62 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __OPENCL_CONTEXT_H__
-#define __OPENCL_CONTEXT_H__
+#ifndef __OPENCL_COORDINATES_TRANSFORM_H__
+#define __OPENCL_COORDINATES_TRANSFORM_H__
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#ifdef __APPLE__
-#include <OpenCL/opencl.h>
-#else
-#include <CL/cl.h>
-#endif
+#endif /* __cplusplus */
 
 /**
- * @brief OpenCL context
+ * @brief Converts itrf coordinates to the equivalent gcrf coordinates.
  */
-typedef struct {
-    cl_platform_id platform_id;
-    cl_device_id device_id;
-    cl_context context;
-    cl_command_queue command_queue;
-} OpenCLContext;
-
-typedef struct {
-    OpenCLContext* context;
-    cl_program program;
-    cl_kernel kernel;
-} OpenCLKernel;
+static PyObject* opencl_itrf_to_gcrf(PyObject* self, PyObject* args);
 
 /**
- * @brief Creates a new opencl context
+ * @brief Converts gcrf coordinates to the equivalent itrf coordinates.
  */
-static PyObject* new_opencl_context(PyObject* self, PyObject* args);
+static PyObject* opencl_gcrf_to_itrf(PyObject* self, PyObject* args);
 
-/**
- * @brief Deletes an opencl context
- */
-static void delete_opencl_context(PyObject* obj);
-
-/**
- * @brief Creates a new opencl kernel
- */
-static PyObject* new_opencl_kernel(PyObject* self, PyObject* args);
-
-/**
- * @brief Deletes an opencl kernel
- */
-static void delete_opencl_kernel(PyObject* obj);
-
-/**
- * @brief Gets the max compute units
- */
-static PyObject* get_max_compute_units(PyObject* self, PyObject* args);
 
 #ifdef __cplusplus
 }   /* extern "C" */
-#endif
+#endif /* __cplusplus */
 
-#endif /* __OPENCL_CONTEXT_H__ */
+
+#endif /* __OPENCL_COORDINATES_TRANSFORM_H__ */

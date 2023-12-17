@@ -21,62 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __OPENCL_CONTEXT_H__
-#define __OPENCL_CONTEXT_H__
+#ifndef __OPENCL_MODELS_EARTH_NUTATION_H__
+#define __OPENCL_MODELS_EARTH_NUTATION_H__
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
-#ifdef __APPLE__
-#include <OpenCL/opencl.h>
-#else
-#include <CL/cl.h>
-#endif
+#include "models/earth/nutation.h"
+#include "opencl/context.h"
 
-/**
- * @brief OpenCL context
- */
-typedef struct {
-    cl_platform_id platform_id;
-    cl_device_id device_id;
-    cl_context context;
-    cl_command_queue command_queue;
-} OpenCLContext;
-
-typedef struct {
-    OpenCLContext* context;
-    cl_program program;
-    cl_kernel kernel;
-} OpenCLKernel;
+#ifdef __compile_opencl_models_earth_nutation__
 
 /**
- * @brief Creates a new opencl context
+ * @brief Compute nutation values of date along with the equation of the equinoxes.
  */
-static PyObject* new_opencl_context(PyObject* self, PyObject* args);
+void nutation_values_of_date_opencl(OpenCLKernel* kernel, long double t, NutationSeries* series, long double* nutation_longitude,
+    long double* nutation_obliquity, long double* mean_obliquity_date, long double* equation_of_the_equinoxes);
 
-/**
- * @brief Deletes an opencl context
- */
-static void delete_opencl_context(PyObject* obj);
 
-/**
- * @brief Creates a new opencl kernel
- */
-static PyObject* new_opencl_kernel(PyObject* self, PyObject* args);
+#endif /* __compile_opencl_models_earth_nutation */
 
-/**
- * @brief Deletes an opencl kernel
- */
-static void delete_opencl_kernel(PyObject* obj);
-
-/**
- * @brief Gets the max compute units
- */
-static PyObject* get_max_compute_units(PyObject* self, PyObject* args);
 
 #ifdef __cplusplus
 }   /* extern "C" */
-#endif
+#endif /* __cplusplus */
 
-#endif /* __OPENCL_CONTEXT_H__ */
+
+#endif /* __OPENCL_MODELS_EARTH_NUTATION_H__ */

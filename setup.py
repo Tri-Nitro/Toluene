@@ -79,17 +79,30 @@ found_opencl = False
 opencl_include_dir = []
 opencl_library_dir = []
 
-
-if 'darwin' in sys.platform:
-    pass
-elif 'linux' in sys.platform:
-    pass
-elif 'win32' in sys.platform:
-    if 'CUDA_PATH' in os.environ:
-        print('Found OpenCL at ' + os.environ['CUDA_PATH'])
-        opencl_include_dir = [os.environ['CUDA_PATH'] + '/include']
-        opencl_library_dir = [os.environ['CUDA_PATH'] + '/lib/x64']
-        found_opencl = True
+if 'TOLUENE_OPENCL' in os.environ and os.environ['TOLUENE_OPENCL'] == '1':
+    if 'darwin' in sys.platform:
+        if 'TOLUENE_OPENCL_INCLUDE_DIR' in os.environ and 'TOLUENE_OPENCL_LIBRARY_DIR' in os.environ:
+            print('Found OpenCL at ' + os.environ['TOLUENE_OPENCL_INCLUDE_DIR'])
+            opencl_include_dir = [os.environ['TOLUENE_OPENCL_INCLUDE_DIR']]
+            opencl_library_dir = [os.environ['TOLUENE_OPENCL_LIBRARY_DIR']]
+            found_opencl = True
+    elif 'linux' in sys.platform:
+        if 'TOLUENE_OPENCL_INCLUDE_DIR' in os.environ and 'TOLUENE_OPENCL_LIBRARY_DIR' in os.environ:
+            print('Found OpenCL at ' + os.environ['TOLUENE_OPENCL_INCLUDE_DIR'])
+            opencl_include_dir = [os.environ['TOLUENE_OPENCL_INCLUDE_DIR']]
+            opencl_library_dir = [os.environ['TOLUENE_OPENCL_LIBRARY_DIR']]
+            found_opencl = True
+    elif 'win32' in sys.platform:
+        if 'TOLUENE_OPENCL_INCLUDE_DIR' in os.environ and 'TOLUENE_OPENCL_LIBRARY_DIR' in os.environ:
+            print('Found OpenCL at ' + os.environ['TOLUENE_OPENCL_INCLUDE_DIR'])
+            opencl_include_dir = [os.environ['TOLUENE_OPENCL_INCLUDE_DIR']]
+            opencl_library_dir = [os.environ['TOLUENE_OPENCL_LIBRARY_DIR']]
+            found_opencl = True
+        if 'CUDA_PATH' in os.environ:
+            print('Found OpenCL at ' + os.environ['CUDA_PATH'])
+            opencl_include_dir = [os.environ['CUDA_PATH'] + '/include']
+            opencl_library_dir = [os.environ['CUDA_PATH'] + '/lib/x64']
+            found_opencl = True
 
 if not found_opencl:
     print('OpenCL not found. OpenCL is required for some extensions.')
@@ -97,6 +110,32 @@ if not found_opencl:
     print('If you do not have OpenCL installed, you can install it from https://www.khronos.org/opencl/')
     print('If you do not want to install OpenCL, you can still use the rest of the library.')
 else:
+    extensions.append(
+        Extension(
+            'toluene_extensions.opencl.coordinates.transform',
+            [
+                'c/src/coordinates/state_vector.c',
+                'c/src/math/constants.c',
+                'c/src/math/linear_algebra.c',
+                'c/src/models/earth/bias.c',
+                'c/src/models/earth/constants.c',
+                'c/src/models/earth/earth_orientation_parameters.c',
+                'c/src/models/earth/nutation.c',
+                'c/src/models/earth/polar_motion.c',
+                'c/src/models/earth/precession.c',
+                'c/src/models/earth/rotation.c',
+                'c/src/models/moon/constants.c',
+                'c/src/models/sun/constants.c',
+                'c/src/opencl/coordinates/transform.c',
+                'c/src/opencl/models/earth/nutation.c',
+                'c/src/time/constants.c',
+                'c/src/time/delta_t.c',
+            ],
+            include_dirs=['c/include'] + opencl_include_dir,
+            library_dirs=opencl_library_dir,
+            libraries=['OpenCL']
+        ),
+    )
     extensions.append(
         Extension(
             'toluene_extensions.opencl.context',
@@ -108,6 +147,7 @@ else:
             libraries=['OpenCL']
         )
     )
+
 
 setup_args = dict(
     ext_modules=extensions,
