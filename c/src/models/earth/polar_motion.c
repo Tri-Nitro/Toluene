@@ -25,7 +25,9 @@
 #include <Python.h>
 
 #include "math/constants.h"
+#include "models/earth/constants.h"
 #include "models/earth/polar_motion.h"
+#include "time/constants.h"
 
 #if defined(_WIN32) || defined(WIN32)
 
@@ -51,20 +53,25 @@ void wobble(long double t, EOPTable* earth_orientation_parameter_table, Mat3* ma
         EOPTableRecord record;
         eop_table_record_lookup(earth_orientation_parameter_table, t, &record);
 
+        t = (t-J2000_UNIX_TIME)/ SECONDS_PER_JULIAN_CENTURY;
+        long double s_prime = -0.0015 * (CHANDLER_WOBBLE/1.2 + ANNUAL_WOBBLE) * t;
+
         long double sin_x = sin(record.bulletin_a_PM_x * ARCSECONDS_TO_RADIANS);
         long double cos_x = cos(record.bulletin_a_PM_x * ARCSECONDS_TO_RADIANS);
         long double sin_y = sin(record.bulletin_a_PM_y * ARCSECONDS_TO_RADIANS);
         long double cos_y = cos(record.bulletin_a_PM_y * ARCSECONDS_TO_RADIANS);
+        long double sin_s = sin(s_prime * ARCSECONDS_TO_RADIANS);
+        long double cos_s = cos(s_prime * ARCSECONDS_TO_RADIANS);
 
-        matrix->w11 = cos_x;
-        matrix->w12 = sin_x * sin_y;
-        matrix->w13 = -1.0 * sin_x * cos_y;
-        matrix->w21 = 0.0;
-        matrix->w22 = cos_y;
-        matrix->w23 = sin_y;
+        matrix->w11 = cos_x * cos_s;
+        matrix->w12 = -cos_y* sin_s + sin_y * sin_x * cos_s;
+        matrix->w13 = -sin_y * sin_s - cos_y * sin_x * cos_s;
+        matrix->w21 = cos_x * sin_s;
+        matrix->w22 = cos_y * cos_s + sin_y * sin_x * sin_s;
+        matrix->w23 = sin_y * cos_s - cos_y * sin_x * sin_s;
         matrix->w31 = sin_x;
-        matrix->w32 = -1.0 * cos_x * sin_y;
-        matrix->w33 = cos_x * cos_y;
+        matrix->w32 = -sin_y * cos_x;
+        matrix->w33 = cos_y * cos_x;
 
     }
 }

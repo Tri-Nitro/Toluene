@@ -119,11 +119,11 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     gast += equation_of_the_equinoxes/15.0;
 
     wobble(state_vector->time, &model->earth_orientation_parameters, &matrix);
-    dot_product(&matrix, &temp.r, &retval->r);
-    dot_product(&matrix, &temp.v, &retval->v);
-    dot_product(&matrix, &temp.a, &retval->a);
-    dot_product(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
-    dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
+    dot_product_transpose(&matrix, &temp.r, &retval->r);
+    dot_product_transpose(&matrix, &temp.v, &retval->v);
+    dot_product_transpose(&matrix, &temp.a, &retval->a);
+    dot_product_transpose(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
+    dot_product_transpose(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
 
     long double rate;
     Vec3 coriolis_rotation;
@@ -142,36 +142,36 @@ static PyObject* itrf_to_gcrf(PyObject *self, PyObject *args) {
     centrifugal_acceleration.z *= 2.0;
 
     earth_rotation_matrix(gast/SECONDS_PER_DAY * 2.0 * M_PI, &matrix);
-    dot_product(&matrix, &retval->r, &temp.r);
-    dot_product(&matrix, &retval->v, &temp.v);
-    dot_product(&matrix, &retval->a, &temp.a);
-    dot_product(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
-    dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
-    dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
+    dot_product_transpose(&matrix, &retval->r, &temp.r);
+    dot_product_transpose(&matrix, &retval->v, &temp.v);
+    dot_product_transpose(&matrix, &retval->a, &temp.a);
+    dot_product_transpose(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
+    dot_product_transpose(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
+    dot_product_transpose(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
 
     nutation_matrix(mean_obliquity_date, nutation_longitude, mean_obliquity_date-nutation_obliquity, &matrix);
-    dot_product(&matrix, &temp.r, &retval->r);
-    dot_product(&matrix, &temp.v, &retval->v);
-    dot_product(&matrix, &temp.a, &retval->a);
-    dot_product(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
-    dot_product(&matrix, &coriolis_acceleration_prime, &coriolis_acceleration);
-    dot_product(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
+    dot_product_transpose(&matrix, &temp.r, &retval->r);
+    dot_product_transpose(&matrix, &temp.v, &retval->v);
+    dot_product_transpose(&matrix, &temp.a, &retval->a);
+    dot_product_transpose(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
+    dot_product_transpose(&matrix, &coriolis_acceleration_prime, &coriolis_acceleration);
+    dot_product_transpose(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
 
     iau_2000a_precession(state_vector->time, &matrix);
-    dot_product(&matrix, &retval->r, &temp.r);
-    dot_product(&matrix, &retval->v, &temp.v);
-    dot_product(&matrix, &retval->a, &temp.a);
-    dot_product(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
-    dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
-    dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
+    dot_product_transpose(&matrix, &retval->r, &temp.r);
+    dot_product_transpose(&matrix, &retval->v, &temp.v);
+    dot_product_transpose(&matrix, &retval->a, &temp.a);
+    dot_product_transpose(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
+    dot_product_transpose(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
+    dot_product_transpose(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
 
     icrs_frame_bias(&matrix);
-    dot_product(&matrix, &temp.r, &retval->r);
-    dot_product(&matrix, &temp.v, &retval->v);
-    dot_product(&matrix, &temp.a, &retval->a);
-    dot_product(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
-    dot_product(&matrix, &coriolis_acceleration_prime, &coriolis_acceleration);
-    dot_product(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
+    dot_product_transpose(&matrix, &temp.r, &retval->r);
+    dot_product_transpose(&matrix, &temp.v, &retval->v);
+    dot_product_transpose(&matrix, &temp.a, &retval->a);
+    dot_product_transpose(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
+    dot_product_transpose(&matrix, &coriolis_acceleration_prime, &coriolis_acceleration);
+    dot_product_transpose(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
 
     retval->v.x += coriolis_velocity.x;
     retval->v.y += coriolis_velocity.y;
@@ -250,25 +250,25 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
     gast += equation_of_the_equinoxes/15.0;
 
     icrs_frame_bias(&matrix);
-    dot_product_transpose(&matrix, &temp.r, &retval->r);
-    dot_product_transpose(&matrix, &temp.v, &retval->v);
-    dot_product_transpose(&matrix, &temp.a, &retval->a);
-    dot_product_transpose(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
-    dot_product_transpose(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
+    dot_product(&matrix, &temp.r, &retval->r);
+    dot_product(&matrix, &temp.v, &retval->v);
+    dot_product(&matrix, &temp.a, &retval->a);
+    dot_product(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
+    dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
 
     iau_2000a_precession(state_vector->time, &matrix);
-    dot_product_transpose(&matrix, &retval->r, &temp.r);
-    dot_product_transpose(&matrix, &retval->v, &temp.v);
-    dot_product_transpose(&matrix, &retval->a, &temp.a);
-    dot_product_transpose(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
-    dot_product_transpose(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
+    dot_product(&matrix, &retval->r, &temp.r);
+    dot_product(&matrix, &retval->v, &temp.v);
+    dot_product(&matrix, &retval->a, &temp.a);
+    dot_product(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
+    dot_product(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
 
     nutation_matrix(mean_obliquity_date, nutation_longitude, mean_obliquity_date-nutation_obliquity, &matrix);
-    dot_product_transpose(&matrix, &temp.r, &retval->r);
-    dot_product_transpose(&matrix, &temp.v, &retval->v);
-    dot_product_transpose(&matrix, &temp.a, &retval->a);
-    dot_product_transpose(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
-    dot_product_transpose(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
+    dot_product(&matrix, &temp.r, &retval->r);
+    dot_product(&matrix, &temp.v, &retval->v);
+    dot_product(&matrix, &temp.a, &retval->a);
+    dot_product(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
+    dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
 
     long double rate;
     Vec3 coriolis_rotation;
@@ -287,20 +287,20 @@ static PyObject* gcrf_to_itrf(PyObject *self, PyObject *args) {
     centrifugal_acceleration.z *= 2.0;
 
     earth_rotation_matrix(gast/SECONDS_PER_DAY * 2.0 * M_PI, &matrix);
-    dot_product_transpose(&matrix, &retval->r, &temp.r);
-    dot_product_transpose(&matrix, &retval->v, &temp.v);
-    dot_product_transpose(&matrix, &retval->a, &temp.a);
-    dot_product_transpose(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
-    dot_product_transpose(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
-    dot_product_transpose(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
+    dot_product(&matrix, &retval->r, &temp.r);
+    dot_product(&matrix, &retval->v, &temp.v);
+    dot_product(&matrix, &retval->a, &temp.a);
+    dot_product(&matrix, &coriolis_velocity, &coriolis_velocity_prime);
+    dot_product(&matrix, &coriolis_acceleration, &coriolis_acceleration_prime);
+    dot_product(&matrix, &centrifugal_acceleration, &centrifugal_acceleration_prime);
 
     wobble(state_vector->time, &model->earth_orientation_parameters, &matrix);
-    dot_product_transpose(&matrix, &temp.r, &retval->r);
-    dot_product_transpose(&matrix, &temp.v, &retval->v);
-    dot_product_transpose(&matrix, &temp.a, &retval->a);
-    dot_product_transpose(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
-    dot_product_transpose(&matrix, &coriolis_acceleration_prime, &coriolis_acceleration);
-    dot_product_transpose(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
+    dot_product(&matrix, &temp.r, &retval->r);
+    dot_product(&matrix, &temp.v, &retval->v);
+    dot_product(&matrix, &temp.a, &retval->a);
+    dot_product(&matrix, &coriolis_velocity_prime, &coriolis_velocity);
+    dot_product(&matrix, &coriolis_acceleration_prime, &coriolis_acceleration);
+    dot_product(&matrix, &centrifugal_acceleration_prime, &centrifugal_acceleration);
 
     retval->v.x -= coriolis_velocity.x;
     retval->v.y -= coriolis_velocity.y;

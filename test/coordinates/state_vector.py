@@ -159,6 +159,9 @@ class TestStateVectorTransform:
         earth_model = EarthModel()
         for idx in range(len(itrf_test_points)):
             itrf_point = itrf_test_points[idx].get_gcrs(earth_model).get_itrs(earth_model)
+            print(itrf_test_points[idx].get_gcrs(earth_model).position)
+            print(itrf_test_points[idx].get_gcrs(earth_model).velocity)
+            print(itrf_test_points[idx].get_gcrs(earth_model).acceleration)
             assert itrf_point is not None
             assert itrf_point.position[0] == pytest.approx(itrf_test_points[idx].position[0], abs=1e-3)
             assert itrf_point.position[1] == pytest.approx(itrf_test_points[idx].position[1], abs=1e-3)
