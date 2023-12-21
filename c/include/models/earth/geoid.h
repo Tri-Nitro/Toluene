@@ -29,26 +29,19 @@ extern "C" {
 #endif
 
 typedef struct {
-    long double lat;
-    long double lon;
-    long double height;
-} InterpolationGrid;
-
-typedef struct {
     int degree;
     int order;
-    long double C;
-    long double S;
-    long double C_dot;
-    long double S_dot;
+    double C;
+    double S;
+    double C_dot;
+    double S_dot;
 } SurfaceSphericalHarmonicCoefficients;
 
 typedef struct {
-    int ninterpolation;
+    double interpolation_spacing;
+    double* interpolation;
     int ncoefficients;
-    int ninterpolation_allocated;
     int ncoefficients_allocated;
-    InterpolationGrid *interpolation;
     SurfaceSphericalHarmonicCoefficients *coefficients;
 } Geoid;
 

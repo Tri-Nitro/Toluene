@@ -23,15 +23,16 @@
 #   SOFTWARE.                                                                       #
 #                                                                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+from typing import List
 
-from toluene_extensions.models.earth.geoid import new_Geoid, add_grid_point, add_harmonic
+from toluene_extensions.models.earth import geoid
 
 class Geoid:
     def __init__(self):
-        self.__geoid = new_Geoid()
+        self.__geoid = geoid.new_Geoid()
 
-    def add_grid_point(self, latitude: float, longitude: float, height: float):
-        add_grid_point(self.__geoid, latitude, longitude, height)
+    def add_interpolation(self, spacing: float, points: List[float]):
+        geoid.add_interpolation(self.__geoid, spacing, points)
 
-    def add_harmonic_coefficient(self, order, degree, c, s):
-        add_harmonic(self.__geoid, order, degree, c, s)
+    def add_coefficients(self, order, degree, c, s):
+        geoid.add_coefficients(self.__geoid, order, degree, c, s)

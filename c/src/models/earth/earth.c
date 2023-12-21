@@ -54,8 +54,7 @@ static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
 
     model->ellipsoid.a = 0.0;
     model->ellipsoid.b = 0.0;
-    model->geoid.ninterpolation = 0;
-    model->geoid.ninterpolation_allocated = 0;
+    model->geoid.interpolation_spacing = 0.0;
     model->geoid.interpolation = NULL;
     model->geoid.ncoefficients = 0;
     model->geoid.ncoefficients_allocated = 0;
@@ -130,16 +129,14 @@ static PyObject* earth_model_set_geoid(PyObject* self, PyObject* args) {
 
     model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
 
-    model->geoid.ninterpolation = geoid->ninterpolation;
-    model->geoid.ninterpolation_allocated = geoid->ninterpolation_allocated;
+    model->geoid.interpolation_spacing = geoid->interpolation_spacing;
     model->geoid.interpolation = geoid->interpolation;
     model->geoid.ncoefficients = geoid->ncoefficients;
     model->geoid.ncoefficients_allocated = geoid->ncoefficients_allocated;
     model->geoid.coefficients = geoid->coefficients;
 
     /* Kill their version of the geoid because now it's managed by earth model */
-    geoid->ninterpolation = 0;
-    geoid->ninterpolation_allocated = 0;
+    geoid->interpolation_spacing = 0.0;
     geoid->interpolation = NULL;
     geoid->ncoefficients = 0;
     geoid->ncoefficients_allocated = 0;

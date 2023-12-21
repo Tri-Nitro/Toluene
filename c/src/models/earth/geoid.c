@@ -48,12 +48,11 @@ static PyObject* new_Geoid(PyObject* self, PyObject* args) {
         return PyErr_Occurred();
     }
 
-    geoid->ninterpolation = 0;
+    geoid->interpolation_spacing = 0.0;
+    geoid->interpolation = NULL;
     geoid->ncoefficients = 0;
-    geoid->ninterpolation_allocated = 0;
     geoid->ncoefficients_allocated = 0;
     geoid->coefficients = NULL;
-    geoid->interpolation = NULL;
 
     return PyCapsule_New(geoid, "Geoid", delete_Geoid);
 }
@@ -75,114 +74,68 @@ void delete_Geoid(PyObject* self) {
 
 static PyObject* add_interpolation(PyObject* self, PyObject* args) {
 
-    PyObject* capsule;
-    Geoid* geoid;
+        PyObject* pList;
+        PyObject* pItem;
+        PyObject* capsule;
+        Geoid* geoid = NULL;
+        double spacing;
 
-    double latitude, longitude, height;
+        if(!PyArg_ParseTuple(args, "OdO!", &capsule, &spacing, &PyList_Type, &pList)) {
+            PyErr_SetString(PyExc_TypeError, "Unable to parse arguments.");
+            return NULL;
+        }
 
-    if(!PyArg_ParseTuple(args, "Oddd", &capsule, &latitude, &longitude, &height)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. add_interpolation()");
-        return PyErr_Occurred();
-    }
+        geoid = (Geoid*)PyCapsule_GetPointer(capsule, "Geoid");
 
-    geoid = (Geoid*)PyCapsule_GetPointer(capsule, "Geoid");
-    if(!geoid) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the Geoid from capsule.");
-        return PyErr_Occurred();
-    }
+        if(geoid->interpolation) {
+            free(geoid->interpolation);
+        }
 
-    if(geoid->ninterpolation_allocated < geoid->ninterpolation + 1) {
-        geoid->ninterpolation_allocated += 1000;
-        InterpolationGrid* new_interpolation =
-            (InterpolationGrid*)malloc(sizeof(InterpolationGrid) * geoid->ninterpolation_allocated);
-        memcpy(new_interpolation, geoid->interpolation, sizeof(InterpolationGrid) * geoid->ninterpolation);
-        free(geoid->interpolation);
-        geoid->interpolation = new_interpolation;
-    }
+        geoid->interpolation_spacing = spacing;
+        geoid->interpolation = (double*)malloc(sizeof(double) * 360/spacing * 180/spacing);
 
-    int insertion_point = geoid->ninterpolation;
-    while(insertion_point > 0 && geoid->interpolation[insertion_point-1].lat > latitude) {
-        geoid->interpolation[insertion_point] = geoid->interpolation[insertion_point-1];
-        insertion_point--;
-    }
-    while(insertion_point > 0 && geoid->interpolation[insertion_point-1].lat == latitude && geoid->interpolation[insertion_point-1].lon > longitude) {
-        geoid->interpolation[insertion_point] = geoid->interpolation[insertion_point-1];
-        insertion_point--;
-    }
+        geoid = (Geoid*)PyCapsule_GetPointer(capsule, "Geoid");
 
-    geoid->interpolation[insertion_point].lat = latitude;
-    geoid->interpolation[insertion_point].lon = longitude;
-    geoid->interpolation[insertion_point].height = height;
-    geoid->ninterpolation++;
+        Py_ssize_t n = PyList_Size(pList);
+        if(n != (int)((360/spacing + 1) * (180/spacing + 1))) {
+            PyErr_SetString(PyExc_TypeError, "list must be (360/spacing + 1) * (180/spacing + 1) in length.");
+            return NULL;
+        }
+        for (int i = 0; i < n; ++i) {
+            pItem = PyList_GetItem(pList, i);
+            if(!PyFloat_Check(pItem)) {
+                PyErr_SetString(PyExc_TypeError, "list items must be floats.");
+                return NULL;
+            }
+            geoid->interpolation[i] = PyFloat_AsDouble(pItem);
+        }
 
-    return Py_BuildValue("i", geoid->ninterpolation);
+        return Py_None;
 }
 
 static PyObject* add_coefficients(PyObject* self, PyObject* args) {
 
-    PyObject* capsule;
-    Geoid* geoid;
-
-    int degree, order;
-    double C, S, C_dot, S_dot;
-
-    if(!PyArg_ParseTuple(args, "Oiidddd", &capsule, &degree, &order, &C, &S, &C_dot, &S_dot)) {
-        PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. add_interpolation()");
-        return PyErr_Occurred();
-    }
-
-    geoid = (Geoid*)PyCapsule_GetPointer(capsule, "Geoid");
-    if(!geoid) {
-        PyErr_SetString(PyExc_MemoryError, "Unable to get the Geoid from capsule.");
-        return PyErr_Occurred();
-    }
-
-    if(geoid->ncoefficients_allocated < geoid->ncoefficients + 1) {
-        geoid->ncoefficients_allocated += 1000;
-        GeoidCoefficient* new_coefficients =
-            (GeoidCoefficient*)malloc(sizeof(GeoidCoefficient) * geoid->ncoefficients_allocated);
-        memcpy(new_coefficients, geoid->coefficients, sizeof(GeoidCoefficient) * geoid->ncoefficients);
-        free(geoid->coefficients);
-        geoid->coefficients = new_coefficients;
-    }
-
-    int insertion_point = geoid->ncoe;
-    while(insertion_point > 0 && geoid->interpolation[insertion_point-1].lat > latitude) {
-        geoid->interpolation[insertion_point] = geoid->interpolation[insertion_point-1];
-        insertion_point--;
-    }
-    while(insertion_point > 0 && geoid->interpolation[insertion_point-1].lat == latitude && geoid->interpolation[insertion_point-1].lon > longitude) {
-        geoid->interpolation[insertion_point] = geoid->interpolation[insertion_point-1];
-        insertion_point--;
-    }
 }
 
-static PyMethodDef tolueneModelsEarthEllipsoidMethods[] = {
-    {"set_axes", set_axes, METH_VARARGS, "Sets the ellipsoid axes."},
-    {"get_axes", get_axes, METH_VARARGS, "Gets the ellipsoid axes."},
-    {"set_semi_major_axis", set_semi_major_axis, METH_VARARGS, "Sets the ellipsoid semi-major axis."},
-    {"get_semi_major_axis", get_semi_major_axis, METH_VARARGS, "Gets the ellipsoid semi-major axis."},
-    {"set_semi_minor_axis", set_semi_minor_axis, METH_VARARGS, "Sets the ellipsoid semi-minor axis."},
-    {"get_semi_minor_axis", get_semi_minor_axis, METH_VARARGS, "Gets the ellipsoid semi-minor axis."},
-    {"get_flattening", get_flattening, METH_VARARGS, "Gets the ellipsoid flattening."},
-    {"get_eccentricity_squared", get_eccentricity_squared, METH_VARARGS, "Calculates the eccentricity squared."},
-    {"get_ellipsoid_radius", get_ellipsoid_radius, METH_VARARGS, "Gets the ellipsoid radius at a given latitude."},
-    {"new_Ellipsoid", new_Ellipsoid, METH_VARARGS, "Create a new Ellipsoid object"},
+static PyMethodDef tolueneModelsEarthGeoidMethods[] = {
+    {"new_Geoid", new_Geoid, METH_VARARGS, "Create a new Geoid."},
+    {"add_interpolation", add_interpolation, METH_VARARGS, "Add an interpolation point to the Geoid."},
+    {"add_coefficients", add_coefficients, METH_VARARGS, "Add a coefficient to the Geoid."},
     {NULL, NULL, 0, NULL}
 };
 
 
-static struct PyModuleDef models_earth_ellipsoid = {
+static struct PyModuleDef models_earth_geoid = {
     PyModuleDef_HEAD_INIT,
-    "models.earth.ellipsoid",
-    "C Extensions to working with an ellipsoid model.",
+    "models.earth.geoid",
+    "C Extensions to working with Geoids in Toluene..",
     -1,
-    tolueneModelsEarthEllipsoidMethods
+    tolueneModelsEarthGeoidMethods
 };
 
 
-PyMODINIT_FUNC PyInit_ellipsoid(void) {
-    return PyModule_Create(&models_earth_ellipsoid);
+PyMODINIT_FUNC PyInit_geoid(void) {
+    return PyModule_Create(&models_earth_geoid);
 }
 
 

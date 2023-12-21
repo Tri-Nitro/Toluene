@@ -83,13 +83,13 @@ static PyObject* eop_table_add_record(PyObject* self, PyObject* args) {
                             &is_bulletin_a_dut1_predicted, &bulletin_a_dut1, &bulletin_a_dut1_error, &bulletin_a_lod,
                             &bulletin_a_lod_error, &bulletin_b_PM_x, &bulletin_b_PM_y, &bulletin_b_dut1)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. add_record()");
-        return PyErr_Occurred();
+        return NULL;
     }
 
     table = (EOPTable*)PyCapsule_GetPointer(capsule, "EOPTable");
     if(!table) {
         PyErr_SetString(PyExc_MemoryError, "Unable to get the EOPTable from capsule.");
-        return PyErr_Occurred();
+        return NULL;
     }
 
     if (table->nrecords_allocated < table->nrecords+1) {
@@ -97,7 +97,7 @@ static PyObject* eop_table_add_record(PyObject* self, PyObject* args) {
         EOPTableRecord* new_table = (EOPTableRecord*)malloc(table->nrecords_allocated * sizeof(EOPTableRecord));
         if(!new_table) {
             PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for EOPTable records.");
-            return PyErr_Occurred();
+            return NULL;
         }
         memcpy(new_table, table->records, table->nrecords * sizeof(EOPTableRecord));
         free(table->records);
@@ -138,7 +138,7 @@ static PyObject* new_EOPTable(PyObject* self, PyObject* args)  {
 
     if(!table) {
         PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for new_EOPTable.");
-        return PyErr_Occurred();
+        return NULL;
     }
 
     table->nrecords = 0;

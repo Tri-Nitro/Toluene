@@ -41,6 +41,13 @@ extensions = [
         include_dirs=['c/include'],
     ),
     Extension(
+        'toluene_extensions.models.earth.geoid',
+        [
+            'c/src/models/earth/geoid.c',
+        ],
+        include_dirs=['c/include'],
+    ),
+    Extension(
         'toluene_extensions.models.earth.earth_orientation_parameters',
         [
             'c/src/models/earth/earth_orientation_parameters.c',
