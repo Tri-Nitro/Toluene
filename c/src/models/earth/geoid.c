@@ -92,7 +92,7 @@ static PyObject* add_interpolation(PyObject* self, PyObject* args) {
         }
 
         geoid->interpolation_spacing = spacing;
-        geoid->interpolation = (double*)malloc(sizeof(double) * 360/spacing * 180/spacing);
+        geoid->interpolation = (double*)malloc(sizeof(double) * (int)((360/spacing + 1) * (180/spacing + 1)));
 
         geoid = (Geoid*)PyCapsule_GetPointer(capsule, "Geoid");
 
@@ -110,17 +110,55 @@ static PyObject* add_interpolation(PyObject* self, PyObject* args) {
             geoid->interpolation[i] = PyFloat_AsDouble(pItem);
         }
 
-        return Py_None;
+        return Py_BuildValue("");
 }
 
-static PyObject* add_coefficients(PyObject* self, PyObject* args) {
+static PyObject* add_coefficient(PyObject* self, PyObject* args) {
 
+        PyObject* capsule;
+        int degree, order;
+        double c, s, c_dot, s_dot;
+
+        if(!PyArg_ParseTuple(args, "Oiidddd", &capsule, &degree, &order, &c, &s, &c_dot, &s_dot)) {
+            PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. add_coefficients()");
+            return NULL;
+        }
+
+        Geoid* geoid = (Geoid*)PyCapsule_GetPointer(capsule, "Geoid");
+        if(!geoid) {
+            PyErr_SetString(PyExc_TypeError, "Unable to get Geoid from capsule.");
+            return NULL;
+        }
+
+        if(geoid->ncoefficients_allocated < geoid->ncoefficients + 1) {
+            geoid->ncoefficients_allocated += degree + 1;
+            SurfaceSphericalHarmonicCoefficients* new_coefficients = (SurfaceSphericalHarmonicCoefficients*)malloc(
+                sizeof(SurfaceSphericalHarmonicCoefficients) * geoid->ncoefficients_allocated);
+            if(!new_coefficients) {
+                PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for new_coefficients.");
+                return PyErr_Occurred();
+            }
+            memcpy(new_coefficients, geoid->coefficients, sizeof(SurfaceSphericalHarmonicCoefficients) *
+                geoid->ncoefficients);
+            free(geoid->coefficients);
+            geoid->coefficients = new_coefficients;
+        }
+
+        geoid->coefficients[geoid->ncoefficients].degree = degree;
+        geoid->coefficients[geoid->ncoefficients].order = order;
+        geoid->coefficients[geoid->ncoefficients].C = c;
+        geoid->coefficients[geoid->ncoefficients].S = s;
+        geoid->coefficients[geoid->ncoefficients].C_dot = c_dot;
+        geoid->coefficients[geoid->ncoefficients].S_dot = s_dot;
+        geoid->ncoefficients++;
+
+        return Py_BuildValue("");
 }
 
 static PyMethodDef tolueneModelsEarthGeoidMethods[] = {
     {"new_Geoid", new_Geoid, METH_VARARGS, "Create a new Geoid."},
     {"add_interpolation", add_interpolation, METH_VARARGS, "Add an interpolation point to the Geoid."},
-    {"add_coefficients", add_coefficients, METH_VARARGS, "Add a coefficient to the Geoid."},
+    {"add_coefficient", add_coefficient, METH_VARARGS, "Add a coefficient to the Geoid."},
     {NULL, NULL, 0, NULL}
 };
 

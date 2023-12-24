@@ -29,9 +29,12 @@ from toluene.models.earth.geoid import Geoid
 
 class EGM84(Geoid):
 
-    def __init__(self, file_path: str = None):
+    def __init__(self, interpolation_file_path: str = None, spherical_harmonics_file_path: str = None):
         super().__init__()
-        self.grid_from_file(file_path)
+        if interpolation_file_path is not None:
+            self.grid_from_file(interpolation_file_path)
+        if spherical_harmonics_file_path is not None:
+            self.coefficients_from_file(spherical_harmonics_file_path)
 
     def grid_from_file(self, file_path: str):
         with open(file_path, 'r') as file:
@@ -41,3 +44,15 @@ class EGM84(Geoid):
                 height_list.append(float(line[2]))
 
         self.add_interpolation(0.5, height_list)
+
+    def coefficients_from_file(self, file_path: str):
+        with open(file_path, 'r') as file:
+            for line in file:
+                degree = int(line[:5])
+                order = int(line[6:10])
+                c = float(line[11:25])
+                s = float(line[26:])
+                self.add_coefficient(degree, order, c, s)
+
+
+

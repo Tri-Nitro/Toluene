@@ -34,5 +34,5 @@ class Geoid:
     def add_interpolation(self, spacing: float, points: List[float]):
         geoid.add_interpolation(self.__geoid, spacing, points)
 
-    def add_coefficients(self, order, degree, c, s):
-        geoid.add_coefficients(self.__geoid, order, degree, c, s)
+    def add_coefficient(self, degree, order, c, s, c_dot=0.0, s_dot=0.0):
+        geoid.add_coefficient(self.__geoid, degree, order, c, s, c_dot, s_dot)

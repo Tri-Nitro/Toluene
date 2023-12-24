@@ -54,7 +54,7 @@ void delete_Geoid(PyObject* self);
 
 static PyObject* add_interpolation(PyObject* self, PyObject* args);
 
-static PyObject* add_coefficients(PyObject* self, PyObject* args);
+static PyObject* add_coefficient(PyObject* self, PyObject* args);
 
 #endif /* __compile_models_earth_geoid__ */
 
