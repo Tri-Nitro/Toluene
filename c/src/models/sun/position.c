@@ -54,7 +54,6 @@ extern "C"
 void sun_position(long double t, long double* x, long double* y, long double* z) {
 
     t = (t-J2000_UNIX_TIME)/ SECONDS_PER_JULIAN_CENTURY;
-    printf("t: %Lf\n", t);
 
     long double L = ((MEAN_LONGITUDE_SUN[2] * t + MEAN_LONGITUDE_SUN[1]) * t + MEAN_LONGITUDE_SUN[0]) * M_PI / 180.0;
     long double M = ((((MEAN_ANOMALY_SUN[4] * t + MEAN_ANOMALY_SUN[3]) * t + MEAN_ANOMALY_SUN[2]) * t +
@@ -64,7 +63,7 @@ void sun_position(long double t, long double* x, long double* y, long double* z)
         ARCSECONDS_TO_RADIANS;
 
     L += 0.033423055 * sin(M) + 0.0003490659 * sin(2 * M);
-    long double magnitude = (1.00014 - 0.01671 * cosl(M) - 0.00014 * cosl(2*M)) * ASTRO_UNIT_TO_METERS;
+    long double magnitude = (1.000140612 - 0.016708617 * cosl(M) - 0.000139589 * cosl(2*M)) * ASTRO_UNIT_TO_METERS;
 
     *x = magnitude * cosl(L);
     *y = magnitude * cosl(e) * sinl(L);
