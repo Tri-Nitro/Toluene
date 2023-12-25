@@ -30,6 +30,7 @@ extern "C" {
 
 #include "models/earth/earth_orientation_parameters.h"
 #include "models/earth/ellipsoid.h"
+#include "models/earth/geoid.h"
 #include "models/earth/nutation.h"
 #include "time/delta_t.h"
 
@@ -37,6 +38,7 @@ typedef struct {
 
     /* Earth Shape */
     Ellipsoid ellipsoid;
+    Geoid geoid;
 
     /* Earth Motion */
     NutationSeries nutation_series;
@@ -81,6 +83,16 @@ static PyObject* earth_model_set_earth_orientation_parameters(PyObject* self, Py
  * @brief Get the Earth Model's Ellipsoid
  */
 static PyObject* earth_model_get_ellipsoid(PyObject* self, PyObject* args);
+
+/**
+ * @brief Set the Earth Model's Geoid
+ */
+static PyObject* earth_model_set_geoid(PyObject* self, PyObject* args);
+
+/**
+ * @brief Get the Earth Model's Geoid
+ */
+static PyObject* earth_model_get_geoid(PyObject* self, PyObject* args);
 
 /**
  * @brief Get the Earth Model's Nutation Series

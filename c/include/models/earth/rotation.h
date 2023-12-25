@@ -47,6 +47,34 @@ void gmst(long double t, EarthModel* model, long double* gmst);
 void earth_rotation_matrix(long double angle, Mat3* matrix);
 
 /**
+ * @brief Calculate the Earth rotation angle.
+ *
+ * @param[in] t Unix time
+ * @param[in] model Earth model
+ * @param[out] era the Earth rotation angle in rad.
+ */
+void earth_rotation_angle(long double t, EarthModel* model, long double* era);
+
+/**
+ * @brief Calculate the equation of origins.
+ *
+ * @param[in] t Unix time
+ * @param[out] eo the equation of origins in rad.
+ */
+void equation_of_origins(long double t, long double nutation_longitude, long double mean_obliquity_date,
+    long double* eo);
+
+/**
+ * @brief Calculate the Greenwich Apparent Sidereal Time (GAST).
+ *
+ * @param[in] t Unix time
+ * @param[in] model Earth model
+ * @param[out] gast the Greenwich Apparent Sidereal Time in rad.
+ */
+void gast_2000(long double t, EarthModel* model, long double nutation_longitude, long double mean_obliquity_date,
+    long double* gast);
+
+/**
  * @brief Calculate the Earth rotation matrix.
  *
  * @param[in] t Unix time

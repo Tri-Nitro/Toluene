@@ -54,6 +54,11 @@ static PyObject* new_EarthModel(PyObject* self, PyObject* args) {
 
     model->ellipsoid.a = 0.0;
     model->ellipsoid.b = 0.0;
+    model->geoid.interpolation_spacing = 0.0;
+    model->geoid.interpolation = NULL;
+    model->geoid.ncoefficients = 0;
+    model->geoid.ncoefficients_allocated = 0;
+    model->geoid.coefficients = NULL;
     model->nutation_series.nrecords = 0;
     model->nutation_series.nrecords_allocated = 0;
     model->nutation_series.records = NULL;
@@ -104,6 +109,38 @@ static PyObject* earth_model_set_ellipsoid(PyObject* self, PyObject* args) {
 
     model->ellipsoid.a = a;
     model->ellipsoid.b = b;
+
+    Py_RETURN_NONE;
+}
+
+/**
+ * @brief Set the Earth Model's Geoid
+ */
+static PyObject* earth_model_set_geoid(PyObject* self, PyObject* args) {
+
+    PyObject* capsule;
+    EarthModel* model;
+    Geoid* geoid;
+
+    if(!PyArg_ParseTuple(args, "OO", &capsule, &geoid)) {
+        PyErr_SetString(PyExc_TypeError, "Invalid arguments passed to earth_model_set_geoid.");
+        return PyErr_Occurred();
+    }
+
+    model = (EarthModel*)PyCapsule_GetPointer(capsule, "EarthModel");
+
+    model->geoid.interpolation_spacing = geoid->interpolation_spacing;
+    model->geoid.interpolation = geoid->interpolation;
+    model->geoid.ncoefficients = geoid->ncoefficients;
+    model->geoid.ncoefficients_allocated = geoid->ncoefficients_allocated;
+    model->geoid.coefficients = geoid->coefficients;
+
+    /* Kill their version of the geoid because now it's managed by earth model */
+    geoid->interpolation_spacing = 0.0;
+    geoid->interpolation = NULL;
+    geoid->ncoefficients = 0;
+    geoid->ncoefficients_allocated = 0;
+    geoid->coefficients = NULL;
 
     Py_RETURN_NONE;
 }
