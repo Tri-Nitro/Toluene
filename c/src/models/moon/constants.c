@@ -48,7 +48,7 @@ const long double MEAN_LONGITUDE_MOON_MEAN_ASCENDING_NODE[5] = {450160.398036, -
     -0.00005939};
 const long double MEAN_LONGITUDE_MOON[3] = {785938.211998, 1732564371.16289, -4.06};
 
-const long double MEAN_LUNAR_HORIZONTAL_PARALLAX = 0.016594591;
+const long double MEAN_LUNAR_HORIZONTAL_PARALLAX = 0.9508;
 
 #ifdef __cplusplus
 } /* extern "C" */

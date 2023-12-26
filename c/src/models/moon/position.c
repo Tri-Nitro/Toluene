@@ -71,21 +71,19 @@ void moon_position(long double t, long double* x, long double* y, long double* z
         + OBLIQUITY_MEAN_EQUATOR[2]) * t + OBLIQUITY_MEAN_EQUATOR[1]) * t + OBLIQUITY_MEAN_EQUATOR[0]) *
         ARCSECONDS_TO_RADIANS;
 
-    long double eliptic_longitude = ((MEAN_LONGITUDE_MOON[2] * t + MEAN_LONGITUDE_MOON[1]) * t + MEAN_LONGITUDE_MOON[0]+
+    long double eliptic_longitude = ((((MEAN_LONGITUDE_MOON[2] * t + MEAN_LONGITUDE_MOON[1]) * t +
+        MEAN_LONGITUDE_MOON[0]) * ARCSECONDS_TO_RADIANS * 180/M_PI) +
         6.29 * sinl(mean_anomaly_moon) - 1.27 * sinl(mean_anomaly_moon - 2 * mean_elongation_moon) +
         0.66 * sinl(2*mean_elongation_moon) + 0.21 * sinl(2*mean_anomaly_moon) -
         0.19 * sinl(mean_anomaly_sun) - 0.11 * sinl(2*mean_argument_latitude_moon)) * M_PI / 180.0;
-        printf("eliptic_longitude: %Lf\n", fmod(eliptic_longitude * 180/M_PI, 360));
-    long double eliptic_latitude = (5.13 * sinl(mean_elongation_moon) +
-        0.28 * sinl(mean_anomaly_moon + mean_elongation_moon) -
-        0.28 * sinl(mean_elongation_moon - mean_anomaly_moon) -
-        0.17 * sinl(mean_elongation_moon - 2*mean_argument_latitude_moon)) * M_PI / 180.0;
-        printf("eliptic_latitude: %Lf\n", fmod(eliptic_latitude * 180/M_PI, 360));
-    long double horizontal_parallax = (MEAN_LUNAR_HORIZONTAL_PARALLAX * 180/M_PI +
-        0.00518 * cosl(mean_anomaly_moon) +
+    long double eliptic_latitude = (5.13 * sinl(mean_argument_latitude_moon) +
+        0.28 * sinl(mean_anomaly_moon + mean_argument_latitude_moon) -
+        0.28 * sinl(mean_argument_latitude_moon- mean_anomaly_moon) -
+        0.17 * sinl(mean_argument_latitude_moon - 2*mean_elongation_moon)) * M_PI / 180.0;
+    long double horizontal_parallax = (MEAN_LUNAR_HORIZONTAL_PARALLAX +
+        0.0518 * cosl(mean_anomaly_moon) +
         0.0095 * cosl(mean_anomaly_moon - 2*mean_elongation_moon) +
         0.0078 * cosl(2*mean_elongation_moon) + 0.0028 * cosl(2*mean_anomaly_moon)) * M_PI / 180.0;
-        printf("horizontal_parallax: %Lf\n", fmod(horizontal_parallax * 180/M_PI, 360));
 
     long double magnitude = 1.0/ sinl(horizontal_parallax);
 
