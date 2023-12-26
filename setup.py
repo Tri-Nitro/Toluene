@@ -74,6 +74,18 @@ extensions = [
         include_dirs=['c/include'],
     ),
     Extension(
+        'toluene_extensions.models.moon.position',
+        [
+            'c/src/math/constants.c',
+            'c/src/models/earth/constants.c',
+            'c/src/models/moon/constants.c',
+            'c/src/models/moon/position.c',
+            'c/src/models/sun/constants.c',
+            'c/src/time/constants.c',
+        ],
+        include_dirs=['c/include'],
+    ),
+    Extension(
         'toluene_extensions.models.sun.position',
         [
             'c/src/math/constants.c',

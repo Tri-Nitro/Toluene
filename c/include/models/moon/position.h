@@ -21,23 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#ifndef __MODELS_MOON_CONSTANTS_H__
-#define __MODELS_MOON_CONSTANTS_H__
+#ifndef __MODELS_MOON_POSITION_H__
+#define __MODELS_MOON_POSITION_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern const long double MEAN_ANOMALY_MOON[5];
-extern const long double MEAN_ARGUMENT_LATITUDE_MOON[5];
-extern const long double MEAN_ELONGATION_MOON_FROM_SUN[5];
-extern const long double MEAN_LONGITUDE_MOON_MEAN_ASCENDING_NODE[5];
-extern const long double MEAN_LONGITUDE_MOON[3];
-extern const long double MEAN_LUNAR_HORIZONTAL_PARALLAX;
+
+/**
+ * @brief Get the moon position object
+ *
+ * @param time The time in seconds
+ * @param x The x position of the sun
+ * @param y The y position of the sun
+ * @param z The z position of the sun
+ */
+void moon_position(long double time, long double* x, long double* y, long double* z);
+
+/**
+ * @brief Get the moon position object
+ */
+static PyObject* get_moon_position(PyObject* self, PyObject* args);
 
 #ifdef __cplusplus
 }   /* extern "C" */
-#endif /* __cplusplus */
+#endif
 
-
-#endif /* __MODELS_MOON_ELLIPSOID_H__ */
+#endif /* __MODELS_MOON_POSITION_H__ */
