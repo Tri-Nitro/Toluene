@@ -184,13 +184,13 @@ static PyObject* nutation_series_add_record(PyObject* self, PyObject* args) {
     if(!PyArg_ParseTuple(args, "Oiiiiiiiiiiiiiidddddd", &capsule, &a, &b, &c, &d, &e, &f, &g, &h, &j, &k, &m, &n, &o,
         &r, &S, &S_dot, &C_prime, &C, &C_dot, &S_prime)) {
         PyErr_SetString(PyExc_TypeError, "Unable to parse arguments. add_record()");
-        return PyErr_Occurred();
+        return NULL;
     }
 
     table = (NutationSeries*)PyCapsule_GetPointer(capsule, "NutationSeries");
     if(!table) {
         PyErr_SetString(PyExc_MemoryError, "Unable to get the NutationSeries from capsule.");
-        return PyErr_Occurred();
+        return NULL;
     }
 
     if (table->nrecords_allocated < table->nrecords+1) {
@@ -199,7 +199,7 @@ static PyObject* nutation_series_add_record(PyObject* self, PyObject* args) {
             sizeof(NutationSeriesRecord));
         if(!new_table) {
             PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for NutationSeries records.");
-            return PyErr_Occurred();
+            return NULL;
         }
         memcpy(new_table, table->records, table->nrecords * sizeof(NutationSeriesRecord));
         free(table->records);
@@ -239,7 +239,7 @@ static PyObject* new_NutationSeries(PyObject* self, PyObject* args) {
 
     if(!table) {
         PyErr_SetString(PyExc_MemoryError, "Unable to allocate memory for new_NutationSeries.");
-        return PyErr_Occurred();
+        return NULL;
     }
 
     table->nrecords = 0;

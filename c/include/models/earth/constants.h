@@ -40,6 +40,11 @@ extern const long double ICRS_Y_POLE_OFFSET;
 extern const long double ICRS_RIGHT_ASCENSION_OFFSET;
 
 extern const long double GMST_FUNCTION_JULIAN_DU[6];
+extern const long double ERA_DUT1[2];
+extern const long double EQUATION_OF_ORIGINS[544];
+
+extern const long double CHANDLER_WOBBLE;
+extern const long double ANNUAL_WOBBLE;
 
 #ifdef __cplusplus
 }   /* extern "C" */

@@ -21,27 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
-
-#include "math/constants.h"
-
-#if defined(_WIN32) || defined(WIN32)
-
-#define _USE_MATH_DEFINES
-#include <math.h>
-
-#endif /* _WIN32 */
+#ifndef __OPENCL_COORDINATES_TRANSFORM_H__
+#define __OPENCL_COORDINATES_TRANSFORM_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif /* __cplusplus */
 
-const long double ARCSECONDS_TO_RADIANS = M_PI / (180 * 3600);
+/**
+ * @brief Converts itrf coordinates to the equivalent gcrf coordinates.
+ */
+static PyObject* opencl_itrf_to_gcrf(PyObject* self, PyObject* args);
 
-const long double ASTRO_UNIT_TO_METERS = 149597870691.0;
+/**
+ * @brief Converts gcrf coordinates to the equivalent itrf coordinates.
+ */
+static PyObject* opencl_gcrf_to_itrf(PyObject* self, PyObject* args);
+
 
 #ifdef __cplusplus
-} /* extern "C" */
+}   /* extern "C" */
 #endif /* __cplusplus */
+
+
+#endif /* __OPENCL_COORDINATES_TRANSFORM_H__ */

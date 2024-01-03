@@ -38,6 +38,7 @@ extern const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_URANUS[];
 extern const long double MEAN_HELIOCENTRIC_ECLIPTIC_LONGITUDE_NEPTUNE[];
 
 extern const long double MEAN_ANOMALY_SUN[];
+extern const long double MEAN_LONGITUDE_SUN[];
 
 #ifdef __cplusplus
 }   /* extern "C" */

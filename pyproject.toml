@@ -9,7 +9,7 @@ include = ["toluene*"]
 exclude = ["docs*", "scratch*", "tests*", "wheelhouse*"]
 
 [tool.setuptools.package-data]
-"*" = ["*.yml"]
+"*" = ["*.yml", "*.cl"]
 toluene = [
     "data/deltat.data",
     "data/finals2000A.all",

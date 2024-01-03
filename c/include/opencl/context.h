@@ -34,12 +34,21 @@ extern "C" {
 #include <CL/cl.h>
 #endif
 
+/**
+ * @brief OpenCL context
+ */
 typedef struct {
     cl_platform_id platform_id;
     cl_device_id device_id;
     cl_context context;
     cl_command_queue command_queue;
 } OpenCLContext;
+
+typedef struct {
+    OpenCLContext* context;
+    cl_program program;
+    cl_kernel kernel;
+} OpenCLKernel;
 
 /**
  * @brief Creates a new opencl context
@@ -52,19 +61,14 @@ static PyObject* new_opencl_context(PyObject* self, PyObject* args);
 static void delete_opencl_context(PyObject* obj);
 
 /**
- * @brief Gets the device name
+ * @brief Creates a new opencl kernel
  */
-static PyObject* get_device_name(PyObject* self, PyObject* args);
+static PyObject* new_opencl_kernel(PyObject* self, PyObject* args);
 
 /**
- * @brief Gets the device version
+ * @brief Deletes an opencl kernel
  */
-static PyObject* get_device_version(PyObject* self, PyObject* args);
-
-/**
- * @brief Gets the driver version
- */
-static PyObject* get_driver_version(PyObject* self, PyObject* args);
+static void delete_opencl_kernel(PyObject* obj);
 
 /**
  * @brief Gets the max compute units

@@ -21,27 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
-
-#include "math/constants.h"
-
-#if defined(_WIN32) || defined(WIN32)
-
-#define _USE_MATH_DEFINES
-#include <math.h>
-
-#endif /* _WIN32 */
+#ifndef __OPENCL_MODELS_EARTH_NUTATION_H__
+#define __OPENCL_MODELS_EARTH_NUTATION_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif /* __cplusplus */
 
-const long double ARCSECONDS_TO_RADIANS = M_PI / (180 * 3600);
+#include "models/earth/nutation.h"
+#include "opencl/context.h"
 
-const long double ASTRO_UNIT_TO_METERS = 149597870691.0;
+#ifdef __compile_opencl_models_earth_nutation__
+
+/**
+ * @brief Compute nutation values of date along with the equation of the equinoxes.
+ */
+void nutation_values_of_date_opencl(OpenCLKernel* kernel, long double t, NutationSeries* series, long double* nutation_longitude,
+    long double* nutation_obliquity, long double* mean_obliquity_date, long double* equation_of_the_equinoxes);
+
+
+#endif /* __compile_opencl_models_earth_nutation */
+
 
 #ifdef __cplusplus
-} /* extern "C" */
+}   /* extern "C" */
 #endif /* __cplusplus */
+
+
+#endif /* __OPENCL_MODELS_EARTH_NUTATION_H__ */
