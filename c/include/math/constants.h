@@ -30,6 +30,8 @@ extern "C" {
 
 extern const long double ARCSECONDS_TO_RADIANS;
 
+extern const long double ASTRO_UNIT_TO_METERS;
+
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif /* __cplusplus */

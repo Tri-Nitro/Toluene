@@ -21,27 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  * */
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
-
-#include "math/constants.h"
-
-#if defined(_WIN32) || defined(WIN32)
-
-#define _USE_MATH_DEFINES
-#include <math.h>
-
-#endif /* _WIN32 */
+#ifndef __MODELS_MOON_POSITION_H__
+#define __MODELS_MOON_POSITION_H__
 
 #ifdef __cplusplus
-extern "C"
-{
-#endif /* __cplusplus */
+extern "C" {
+#endif
 
-const long double ARCSECONDS_TO_RADIANS = M_PI / (180 * 3600);
 
-const long double ASTRO_UNIT_TO_METERS = 149597870691.0;
+/**
+ * @brief Get the moon position object
+ *
+ * @param time The time in seconds
+ * @param x The x position of the sun
+ * @param y The y position of the sun
+ * @param z The z position of the sun
+ */
+void moon_position(long double time, long double* x, long double* y, long double* z);
+
+/**
+ * @brief Get the moon position object
+ */
+static PyObject* get_moon_position(PyObject* self, PyObject* args);
 
 #ifdef __cplusplus
-} /* extern "C" */
-#endif /* __cplusplus */
+}   /* extern "C" */
+#endif
+
+#endif /* __MODELS_MOON_POSITION_H__ */

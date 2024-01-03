@@ -32,6 +32,8 @@ extern const long double MEAN_ANOMALY_MOON[5];
 extern const long double MEAN_ARGUMENT_LATITUDE_MOON[5];
 extern const long double MEAN_ELONGATION_MOON_FROM_SUN[5];
 extern const long double MEAN_LONGITUDE_MOON_MEAN_ASCENDING_NODE[5];
+extern const long double MEAN_LONGITUDE_MOON[3];
+extern const long double MEAN_LUNAR_HORIZONTAL_PARALLAX;
 
 #ifdef __cplusplus
 }   /* extern "C" */
